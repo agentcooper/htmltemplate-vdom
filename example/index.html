@@ -6,23 +6,6 @@
 <body>
     <script src="build/runtime.js"></script>
 
-    <script>
-    window.env = {
-        title: 'List',
-        people: [
-            {
-                name: 'x',
-                inner: [{ title: 'a1' }, { title: 'b1' }],
-                active: true
-            },
-            {
-                name: 'y',
-                inner: [{ title: 'a2' }, { title: 'b2' }]
-            }
-        ]
-    };
-    </script>
-
     <script id="tmpl" type="text/template">
         <TMPL_VAR title>
         <ul>
@@ -43,9 +26,24 @@
     </script>
 
     <script>
+        var env = {
+            title: 'List',
+            people: [
+                {
+                    name: 'John',
+                    inner: [{ title: 'a1' }, { title: 'b1' }],
+                    active: true
+                },
+                {
+                    name: 'Mary',
+                    inner: [{ title: 'a2' }, { title: 'b2' }]
+                }
+            ]
+        };
+
         var template = document.querySelector('#tmpl').innerHTML.trim();
 
-        var output = renderTemplate(template, window.env);
+        var output = renderTemplate(template, env);
 
         document.body.appendChild(output.node);
 
