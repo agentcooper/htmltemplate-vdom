@@ -19,7 +19,8 @@
     "test": "mocha",
     "build-parser": "pegjs htmltemplate.pegjs lib/htmltemplate-parser.js",
     "precommit": "npm test",
-    "prepush": "npm test"
+    "prepush": "npm test",
+    "build-production": "NODE_ENV=production webpack -p"
   },
   "license": "MIT",
   "dependencies": {
