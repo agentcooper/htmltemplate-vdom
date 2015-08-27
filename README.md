@@ -10,7 +10,7 @@ npm install htmltemplate-vdom
 
 Parser is modified version of https://github.com/Lapple/htmltemplate-parser.
 
-Full client runtime, including `virtual-dom` is around 15kb (minified + gzip).
+Full client runtime including `virtual-dom` is around 15kb (minified + gzip).
 
 #### Example
 
