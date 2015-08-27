@@ -16,8 +16,7 @@ Full client runtime is around 10kb (minified + gzip).
 npm install
 webpack
 
-cd example
-open index.html
+open example/index.html
 ```
 
 #### Building parser
