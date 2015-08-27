@@ -14,7 +14,7 @@
     </style>
 </head>
 <body>
-    <script src="../../build/runtime.js"></script>
+    <script src="../../build/clientRuntime.js"></script>
 
     <script id="tmpl" type="text/template">
         <TMPL_VAR title>
@@ -53,7 +53,7 @@
 
         var template = document.querySelector('#tmpl').innerHTML.trim();
 
-        var output = renderTemplate(template, env);
+        var output = clientRuntime.render(template, env);
 
         document.body.appendChild(output.node);
 
