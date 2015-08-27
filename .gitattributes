@@ -1,1 +1,2 @@
 lib/htmltemplate-parser.js -diff
+dist/clientRuntime.js -diff

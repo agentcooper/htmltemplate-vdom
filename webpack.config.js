@@ -7,7 +7,7 @@ module.exports = {
   entry: path.resolve(__dirname, './lib/clientRuntime.js'),
 
   output: {
-    path: path.resolve(__dirname, 'build'),
+    path: path.resolve(__dirname, 'dist'),
     filename: 'clientRuntime.js',
 
     library: 'clientRuntime',
