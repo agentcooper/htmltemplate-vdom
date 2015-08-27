@@ -39,6 +39,8 @@
                         </TMPL_LOOP>
                     </ul>
 
+                    <div><TMPL_VAR city></div>
+
                     <a href="#/items/<TMPL_VAR id>">link</a>
 
                     <TMPL_IF active>active<TMPL_ELSE>not active</TMPL_IF>
@@ -55,12 +57,14 @@
                     id: 'id1',
                     name: 'John',
                     inner: [{ title: 'a1' }, { title: 'b1' }],
+                    city: 'New York',
                     active: true
                 },
                 {
                     id: 'id2',
                     name: 'Mary',
-                    inner: [{ title: 'a2' }, { title: 'b2' }]
+                    inner: [{ title: 'a2' }, { title: 'b2' }],
+                    city: 'Moscow'
                 }
             ]
         };
