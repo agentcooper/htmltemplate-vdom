@@ -12,6 +12,10 @@
         .item--active {
             background-color: #EEE;
         }
+
+        .input {
+            padding: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -26,6 +30,8 @@
             <TMPL_LOOP people>
                 <li class="item <TMPL_IF active>item--active</TMPL_IF>" data-id="<TMPL_VAR id>">
                     <TMPL_VAR name> <TMPL_VAR title>
+
+                    <div class="input"><input type="text"/></div>
 
                     <ul>
                         <TMPL_LOOP inner>

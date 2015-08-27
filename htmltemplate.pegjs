@@ -58,7 +58,7 @@
   }
 }
 
-Content = (Comment / ConditionalTag / BlockTag / SingleTag / BlockHtmlTag / InvalidTag / Text)*
+Content = (Comment / ConditionalTag / BlockTag / SingleTag / BlockHtmlTag / SingleHtmlTag / InvalidTag / Text)*
 
 Comment
   = CommentTag
@@ -66,6 +66,14 @@ Comment
   / SingleLineComment
 
 SingleTag = OpeningBracket name:$(SingleTagName !TagNameCharacter+) attributes:Attributes* ClosingBracket {
+  return token({
+    type: BLOCK_TYPES.TAG,
+    name: name,
+    attributes: attributes
+  }, line, column);
+}
+
+SingleHtmlTag = OpeningBracket name:$(HtmlTagName !TagNameCharacter+) attributes:Attributes* SelfClosingBracket {
   return token({
     type: BLOCK_TYPES.TAG,
     name: name,
@@ -340,6 +348,12 @@ OpeningEndBracket
 
 ClosingBracket
   = WhiteSpace* WhiteSpaceControlEnd? ">"
+  / !">" SourceCharacter+ {
+    throw syntaxError("Expected a closing bracket.", offset, line, column);
+  }
+
+SelfClosingBracket
+  = WhiteSpace* WhiteSpaceControlEnd? "/>"
   / !">" SourceCharacter+ {
     throw syntaxError("Expected a closing bracket.", offset, line, column);
   }
