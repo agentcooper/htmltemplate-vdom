@@ -36,3 +36,11 @@ node example/server/index.js
 npm install pegjs -g
 npm run build-parser # produces lib/parser.js from htmltemplate.pegjs
 ```
+
+#### Tests
+
+```bash
+# npm install mocha -g
+
+npm test
+```
