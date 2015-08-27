@@ -20,7 +20,7 @@ describe('htmltemplate-vdom', function() {
             items: ['a', 'b', 'c', 'd', 'e']
         });
 
-        assert.equal(vdom.children[0].children.length, 5);
+        assert.equal(vdom.children.length, 5);
     });
 
     it('Nested TMPL_LOOP', function() {
@@ -34,9 +34,9 @@ describe('htmltemplate-vdom', function() {
             ]
         });
 
-        var outer = vdom.children[0].children;
+        var outer = vdom.children;
 
         assert.equal(outer.length, 3);
-        assert.equal(outer[0].children[0].children.length, 2);
+        assert.equal(outer[0].children.length, 2);
     });
 });
