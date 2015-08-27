@@ -2,15 +2,25 @@
 <html>
 <head>
     <title>Example</title>
+
+    <style>
+        .item {
+            padding: 10px;
+        }
+
+        .item--active {
+            border: 1px solid #333;
+        }
+    </style>
 </head>
 <body>
-    <script src="build/runtime.js"></script>
+    <script src="../../build/runtime.js"></script>
 
     <script id="tmpl" type="text/template">
         <TMPL_VAR title>
-        <ul>
+        <ul id="list">
             <TMPL_LOOP people>
-                <li>
+                <li class="item <TMPL_IF active>item--active</TMPL_IF>">
                     <TMPL_VAR name> <TMPL_VAR title>
 
                     <ul>

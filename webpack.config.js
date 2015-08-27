@@ -7,7 +7,7 @@ module.exports = {
   entry: path.resolve(__dirname, './lib/client.js'),
 
   output: {
-    path: path.resolve(__dirname, 'example/build'),
+    path: path.resolve(__dirname, 'build'),
     filename: 'runtime.js',
 
     library: 'renderTemplate',

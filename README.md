@@ -10,13 +10,23 @@ Full client runtime is around 10kb (minified + gzip).
 
 #### Example
 
-[Example](example/index.html)
+[example/client/index.html](example/client/index.html)
 
 ```bash
+# client render
+
 npm install
 webpack
 
-open example/index.html
+open example/client/index.html
+```
+
+[example/client/index.html](example/server/index.js)
+
+```bash
+# server render
+
+node example/server/index.js
 ```
 
 #### Building parser
