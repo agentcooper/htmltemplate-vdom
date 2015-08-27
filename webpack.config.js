@@ -4,11 +4,14 @@ module.exports = {
   devtool:
     process.env.NODE_ENV === 'production' ? undefined : 'inline-source-map',
 
-  entry: path.resolve(__dirname, 'index.js'),
+  entry: path.resolve(__dirname, './lib/client.js'),
 
   output: {
-    path: path.resolve(__dirname, 'build'),
-    filename: 'app.js'
+    path: path.resolve(__dirname, 'example/build'),
+    filename: 'runtime.js',
+
+    library: 'renderTemplate',
+    libraryTarget: 'umd'
   },
 
   module: {

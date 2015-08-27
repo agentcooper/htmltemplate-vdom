@@ -10,9 +10,9 @@ Parser is modified version of https://github.com/Lapple/htmltemplate-parser.
 
 ```bash
 npm install
+webpack
 
 cd example
-webpack
 open index.html
 ```
 
