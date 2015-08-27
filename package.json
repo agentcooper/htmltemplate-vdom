@@ -1,0 +1,23 @@
+{
+  "name": "htmltemplate-vdom",
+  "version": "0.0.1",
+  "description": "HTML::Template engine on top of virtual-dom",
+  "keywords": [
+    "htmltemplate",
+    "HTML::Template",
+    "template",
+    "virtual",
+    "dom"
+  ],
+  "author": "Artem Tyurin <artem.tyurin@gmail.com>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-parser": "pegjs htmltemplate.pegjs lib/htmltemplate-parser.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "traverse": "^0.6.6",
+    "virtual-dom": "^2.1.1"
+  }
+}

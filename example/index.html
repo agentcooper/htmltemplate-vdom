@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Run</title>
+</head>
+<body>
+    <script>
+    window.env = {
+        title: 'List',
+        people: [
+            {
+                name: 'x',
+                inner: [{ title: 'a1' }, { title: 'b1' }],
+                active: true
+            },
+            {
+                name: 'y',
+                inner: [{ title: 'a2' }, { title: 'b2' }]
+            }
+        ]
+    };
+    </script>
+
+    <script id="tmpl" type="text/template">
+        <TMPL_VAR title>
+        <ul>
+            <TMPL_LOOP people>
+                <li>
+                    <TMPL_VAR name> <TMPL_VAR title>
+
+                    <ul class="item <TMPL_IF active>item--active</TMPL_IF>">
+                        <TMPL_LOOP inner>
+                            <li><TMPL_VAR title></li>
+                        </TMPL_LOOP>
+                    </ul>
+
+                    <TMPL_IF active>active<TMPL_ELSE>not active</TMPL_IF>
+                </li>
+            </TMPL_LOOP>
+        </ul>
+    </script>
+
+    <script src="build/app.js"></script>
+</body>
+</html>
