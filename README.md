@@ -2,7 +2,7 @@
 
 WIP [HTML::Template](http://search.cpan.org/~samtregar/HTML-Template/Template.pm) engine on top of virtual-dom.
 
-Parser is modified from https://github.com/Lapple/htmltemplate-parser
+Parser is modified version of https://github.com/Lapple/htmltemplate-parser.
 
 #### Example
 
