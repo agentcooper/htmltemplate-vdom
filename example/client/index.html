@@ -6,21 +6,25 @@
     <style>
         .item {
             padding: 10px;
+            cursor: pointer;
         }
 
         .item--active {
-            border: 1px solid #333;
+            background-color: #EEE;
         }
     </style>
 </head>
 <body>
+    <!-- for event delegation -->
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
     <script src="../../build/clientRuntime.js"></script>
 
     <script id="tmpl" type="text/template">
         <TMPL_VAR title>
         <ul id="list">
             <TMPL_LOOP people>
-                <li class="item <TMPL_IF active>item--active</TMPL_IF>">
+                <li class="item <TMPL_IF active>item--active</TMPL_IF>" data-id="<TMPL_VAR id>">
                     <TMPL_VAR name> <TMPL_VAR title>
 
                     <ul>
@@ -28,6 +32,8 @@
                             <li><TMPL_VAR title></li>
                         </TMPL_LOOP>
                     </ul>
+
+                    <a href="#/items/<TMPL_VAR id>">link</a>
 
                     <TMPL_IF active>active<TMPL_ELSE>not active</TMPL_IF>
                 </li>
@@ -40,11 +46,13 @@
             title: 'List',
             people: [
                 {
+                    id: 'id1',
                     name: 'John',
                     inner: [{ title: 'a1' }, { title: 'b1' }],
                     active: true
                 },
                 {
+                    id: 'id2',
                     name: 'Mary',
                     inner: [{ title: 'a2' }, { title: 'b2' }]
                 }
@@ -53,11 +61,21 @@
 
         var template = document.querySelector('#tmpl').innerHTML.trim();
 
-        var output = clientRuntime.render(template, env);
+        var loop = clientRuntime.loop(env, function(state) {
+            return clientRuntime.createVdom(template, state);
+        });
 
-        document.body.appendChild(output.node);
+        $(document.body).on('click', '.item', function(event) {
+            var id = $(event.currentTarget).attr('data-id');
 
-        console.log(output.vdom);
+            env.people.forEach(function(person) {
+                person.active = String(person.id) === String(id);
+            });
+
+            loop.update(env);
+        });
+
+        document.body.appendChild(loop.target);
     </script>
 </body>
 </html>
