@@ -48,3 +48,7 @@ npm run build-parser # produces lib/parser.js from htmltemplate.pegjs
 
 npm test
 ```
+
+#### Related
+
+[https://github.com/agentcooper/htmltemplate-react](https://github.com/agentcooper/htmltemplate-react)
