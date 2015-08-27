@@ -10,15 +10,24 @@
     "dom"
   ],
   "author": "Artem Tyurin <artem.tyurin@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agentcooper/htmltemplate-vdom"
+  },
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "build-parser": "pegjs htmltemplate.pegjs lib/htmltemplate-parser.js"
+    "build-parser": "pegjs htmltemplate.pegjs lib/htmltemplate-parser.js",
+    "precommit": "npm test",
+    "prepush": "npm test"
   },
   "license": "MIT",
   "dependencies": {
     "lodash.flatten": "^3.0.2",
     "traverse": "^0.6.6",
     "virtual-dom": "^2.1.1"
+  },
+  "devDependencies": {
+    "husky": "^0.9.3"
   }
 }
