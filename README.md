@@ -4,6 +4,8 @@ WIP [HTML::Template](http://search.cpan.org/~samtregar/HTML-Template/Template.pm
 
 Parser is modified version of https://github.com/Lapple/htmltemplate-parser.
 
+Full client runtime is around 10kb (minified + gzip).
+
 #### Example
 
 [Example](example/index.html)
