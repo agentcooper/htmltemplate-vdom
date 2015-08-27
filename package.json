@@ -17,7 +17,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "lodash": "^3.10.1",
+    "lodash.flatten": "^3.0.2",
     "traverse": "^0.6.6",
     "virtual-dom": "^2.1.1"
   }
