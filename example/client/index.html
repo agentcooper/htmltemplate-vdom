@@ -4,6 +4,11 @@
     <title>Example</title>
 
     <style>
+        .app {
+            width: 500px;
+            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+        }
+
         .item {
             padding: 10px;
             cursor: pointer;
@@ -25,13 +30,17 @@
     <script src="../../dist/clientRuntime.js"></script>
 
     <script id="tmpl" type="text/template">
-        <TMPL_VAR title>
+    <div class="app">
+        <h2><TMPL_VAR title></h2>
+
+        <p><TMPL_VAR description></p>
+
         <ul id="list">
             <TMPL_LOOP people>
-                <li class="item <TMPL_IF active>item--active</TMPL_IF>" data-id="<TMPL_VAR id>">
-                    <TMPL_VAR name> <TMPL_VAR title>
+                <li class="item <TMPL_IF active>item--active</TMPL_IF> js-item" data-id="<TMPL_VAR id>">
+                    <TMPL_VAR name> <a href="#/items/<TMPL_VAR id>">some link</a>
 
-                    <div class="input"><input type="text"/></div>
+                    <div class="input"><input type="text" placeholder="Type something here"/></div>
 
                     <ul>
                         <TMPL_LOOP inner>
@@ -39,19 +48,28 @@
                         </TMPL_LOOP>
                     </ul>
 
-                    <div><TMPL_VAR city></div>
-
-                    <a href="#/items/<TMPL_VAR id>">link</a>
+                    <div><TMPL_VAR city_copy><TMPL_VAR city></div>
 
                     <TMPL_IF active>active<TMPL_ELSE>not active</TMPL_IF>
+
+                    <div>
+                        <button class="js-increase-counter">
+                            <span>Click me</span>
+                        </button>
+                        <span><TMPL_VAR counter></span>
+                    </div>
                 </li>
             </TMPL_LOOP>
         </ul>
+    </div>
     </script>
 
     <script>
         var env = {
-            title: 'List',
+            title: 'HTML::Template powered by virtual-dom',
+
+            city_copy: 'City: ',
+
             people: [
                 {
                     id: 'id1',
@@ -66,20 +84,40 @@
                     inner: [{ title: 'a2' }, { title: 'b2' }],
                     city: 'Moscow'
                 }
-            ]
+            ],
+            description: 'Interact with UI and check inspector for DOM changes. Notice how local state (like input text) stays there. Raw template can be found by viewing page source.'
         };
 
         var template = document.querySelector('#tmpl').innerHTML.trim();
 
         var loop = clientRuntime.loop(env, function(state) {
-            return clientRuntime.createVdom(template, state);
+            var vdom = clientRuntime.createVdom(template, state);
+
+            return vdom;
         });
 
-        $(document.body).on('click', '.item', function(event) {
-            var id = $(event.currentTarget).attr('data-id');
+        function getIdFromEvent(event) {
+            return $(event.currentTarget).closest('.item').attr('data-id');
+        }
+
+        $(document.body)
+        .on('click', '.js-item', function(event) {
+            var id = getIdFromEvent(event);
 
             env.people.forEach(function(person) {
                 person.active = String(person.id) === String(id);
+            });
+
+            loop.update(env);
+        })
+        .on('click', '.js-increase-counter', function(event) {
+            var id = getIdFromEvent(event);
+
+            env.people.forEach(function(person) {
+                if (String(person.id) === String(id)) {
+                    person.counter = person.counter || 0;
+                    person.counter += 1;
+                }
             });
 
             loop.update(env);
