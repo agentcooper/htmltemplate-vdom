@@ -5,8 +5,15 @@
 
     <style>
         .app {
+            padding: 10px;
             width: 500px;
             font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+        }
+
+        .list {
+            padding: 25px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #CCC;
         }
 
         .item {
@@ -35,7 +42,7 @@
 
         <p><TMPL_VAR description></p>
 
-        <ul id="list">
+        <ul class="list">
             <TMPL_LOOP people>
                 <li class="item <TMPL_IF active>item--active</TMPL_IF> js-item" data-id="<TMPL_VAR id>">
                     <TMPL_VAR name> <a href="#/items/<TMPL_VAR id>">some link</a>
@@ -61,6 +68,10 @@
                 </li>
             </TMPL_LOOP>
         </ul>
+
+        <div>
+            <a href="<TMPL_VAR githubLink>"><TMPL_VAR githubLink></a>
+        </div>
     </div>
     </script>
 
@@ -85,7 +96,9 @@
                     city: 'Moscow'
                 }
             ],
-            description: 'Interact with UI and check inspector for DOM changes. Notice how local state (like input text) stays there. Raw template can be found by viewing page source.'
+            description: 'Interact with UI and check inspector for DOM changes. Notice how local state (like input text) stays there. Raw template can be found by viewing page source.',
+
+            githubLink: 'https://github.com/agentcooper/htmltemplate-vdom'
         };
 
         var template = document.querySelector('#tmpl').innerHTML.trim();
