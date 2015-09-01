@@ -21,7 +21,7 @@
     "precommit": "npm test",
     "prepush": "npm test",
     "build-production": "NODE_ENV=production webpack -p",
-    "precompile": "node ./bin/compile-template.js --path ../example/precompile/tmpl.inc > example/precompile/template.js"
+    "precompile": "node ./bin/compile-template.js --path ../example/precompile/tmpl.inc > example/precompile/template.js; cat example/precompile/template.js | uglifyjs -c -m > example/precompile/template.min.js"
   },
   "license": "MIT",
   "dependencies": {
