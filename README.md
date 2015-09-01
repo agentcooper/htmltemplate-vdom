@@ -21,15 +21,15 @@ node ./bin/compile-template.js --path ../example/precompile/tmpl.inc
 
 #### Example
 
-Precompile
+###### Precompile
 
 [example/precompile/index.html](example/precompile/index.html)
 
-[Demo](http://agentcooper.github.io/htmltemplate-vdom/example/client/)
+[Demo](http://agentcooper.github.io/htmltemplate-vdom/example/precompile/)
 
 Use `npm run precompile` to precompile example template.
 
-Client render
+###### Client render
 
 [example/client/index.html](example/client/index.html)
 
@@ -41,7 +41,7 @@ webpack
 open example/client/index.html
 ```
 
-Server render
+###### Server render
 
 [example/server/index.js](example/server/index.js)
 
