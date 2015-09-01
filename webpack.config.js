@@ -4,13 +4,16 @@ module.exports = {
   devtool:
     process.env.NODE_ENV === 'production' ? undefined : 'inline-source-map',
 
-  entry: path.resolve(__dirname, './lib/clientRuntime.js'),
+  entry: {
+    'createVdom': path.resolve(__dirname, './lib/create-vdom.js'),
+    'clientRuntime': path.resolve(__dirname, './lib/client-runtime.js')
+  },
 
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'clientRuntime.js',
+    filename: '[name].js',
 
-    library: 'clientRuntime',
+    library: '[name]',
     libraryTarget: 'umd'
   },
 

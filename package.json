@@ -20,14 +20,17 @@
     "build-parser": "pegjs htmltemplate.pegjs lib/htmltemplate-parser.js",
     "precommit": "npm test",
     "prepush": "npm test",
-    "build-production": "NODE_ENV=production webpack -p"
+    "build-production": "NODE_ENV=production webpack -p",
+    "precompile": "node ./bin/compile-template.js --path ../example/precompile/tmpl.inc > example/precompile/template.js"
   },
   "license": "MIT",
   "dependencies": {
+    "escodegen": "^1.6.1",
     "lodash.flatten": "^3.0.2",
     "main-loop": "^3.1.0",
     "traverse": "^0.6.6",
-    "virtual-dom": "^2.1.1"
+    "virtual-dom": "^2.1.1",
+    "yargs": "^3.23.0"
   },
   "devDependencies": {
     "husky": "^0.9.3"
