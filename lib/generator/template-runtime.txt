@@ -43,5 +43,3 @@ function render(state, h) {
 
 // return body
 }
-
-module.exports = render;

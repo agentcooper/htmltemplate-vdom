@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "husky": "^0.9.3",
-    "json-loader": "^0.5.2"
+    "json-loader": "^0.5.2",
+    "raw-loader": "^0.5.1"
   }
 }

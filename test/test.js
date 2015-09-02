@@ -1,8 +1,24 @@
 var assert = require('assert');
 
+var fs = require('fs');
+
+var path = require('path');
+
 var h = require('virtual-dom/h');
 
-var createVdom = require('../lib/create-vdom');
+var generator = require('../lib/generator/generator');
+
+var templateRuntime = fs.readFileSync(
+    path.resolve(__dirname, '../lib/generator/template-runtime.txt')
+).toString();
+
+function createVdom(string, state, h) {
+    var renderFunctionString = generator(string, templateRuntime);
+
+    var renderFunction = eval('(' + renderFunctionString + ')');
+
+    return renderFunction(state, h);
+}
 
 describe('htmltemplate-vdom', function() {
     it('TMPL_IF', function() {
