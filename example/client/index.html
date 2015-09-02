@@ -32,9 +32,6 @@
     </style>
 </head>
 <body>
-    <!-- for event delegation -->
-    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-
     <script src="../../dist/createVdom.js"></script>
     <script src="../../dist/clientRuntime.js"></script>
 
@@ -46,7 +43,7 @@
 
         <ul class="list">
             <TMPL_LOOP people>
-                <li class="item <TMPL_IF active>item--active</TMPL_IF> js-item" data-id="<TMPL_VAR id>">
+                <li class="item <TMPL_IF active>item--active</TMPL_IF>" onclick="itemClick(<TMPL_VAR id>)">
                     <TMPL_VAR name> <a href="#/items/<TMPL_VAR id>">some link</a>
 
                     <div class="input"><input type="text" placeholder="Type something here"/></div>
@@ -62,7 +59,7 @@
                     <TMPL_IF active>active<TMPL_ELSE>not active</TMPL_IF>
 
                     <div>
-                        <button class="js-increase-counter">
+                        <button onclick="counterClick(<TMPL_VAR id>)">
                             <span>Click me</span>
                         </button>
                         <span><TMPL_VAR counter></span>
@@ -98,42 +95,36 @@
                     city: 'Moscow'
                 }
             ],
-            description: 'Interact with UI and check inspector for DOM changes. Notice how local state (like input text) stays there. Raw template can be found by viewing page source.',
+            description: 'Interact with UI and check inspector for DOM changes. Notice how local state (like input text) stays there.',
 
-            githubLink: 'https://github.com/agentcooper/htmltemplate-vdom'
+            githubLink: 'https://github.com/agentcooper/htmltemplate-vdom',
+
+            itemClick: function(id) {
+                env.people.forEach(function(person) {
+                    person.active = String(person.id) === String(id);
+                });
+
+                loop.update(env);
+            },
+
+            counterClick: function(id) {
+                env.people.forEach(function(person) {
+                    if (String(person.id) === String(id)) {
+                        person.counter = person.counter || 0;
+                        person.counter += 1;
+                    }
+                });
+
+                loop.update(env);
+            }
         };
 
         var template = document.querySelector('#tmpl').innerHTML.trim();
 
         var loop = clientRuntime.loop(env, function(state) {
-            return createVdom(template, state, clientRuntime.h);
-        });
+            var vdom = createVdom(template, state, clientRuntime.h);
 
-        function getIdFromEvent(event) {
-            return $(event.currentTarget).closest('.item').attr('data-id');
-        }
-
-        $(document.body)
-        .on('click', '.js-item', function(event) {
-            var id = getIdFromEvent(event);
-
-            env.people.forEach(function(person) {
-                person.active = String(person.id) === String(id);
-            });
-
-            loop.update(env);
-        })
-        .on('click', '.js-increase-counter', function(event) {
-            var id = getIdFromEvent(event);
-
-            env.people.forEach(function(person) {
-                if (String(person.id) === String(id)) {
-                    person.counter = person.counter || 0;
-                    person.counter += 1;
-                }
-            });
-
-            loop.update(env);
+            return vdom;
         });
 
         document.body.appendChild(loop.target);
