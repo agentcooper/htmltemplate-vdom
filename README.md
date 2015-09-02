@@ -49,13 +49,6 @@ webpack
 open example/client/index.html
 ```
 
-#### Building parser
-
-```bash
-npm install pegjs -g
-npm run build-parser # produces lib/parser.js from htmltemplate.pegjs
-```
-
 #### Tests
 
 ```bash
