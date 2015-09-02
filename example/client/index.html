@@ -105,7 +105,7 @@
         var template = document.querySelector('#tmpl').innerHTML.trim();
 
         var loop = clientRuntime.loop(env, function(state) {
-            return createVdom(template, state);
+            return createVdom(template, state, clientRuntime.h);
         });
 
         function getIdFromEvent(event) {

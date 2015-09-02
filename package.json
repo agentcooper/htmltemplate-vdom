@@ -33,6 +33,7 @@
     "yargs": "^3.23.0"
   },
   "devDependencies": {
-    "husky": "^0.9.3"
+    "husky": "^0.9.3",
+    "json-loader": "^0.5.2"
   }
 }

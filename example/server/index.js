@@ -1,5 +1,7 @@
 var path = require('path');
 
+var h = require('virtual-dom/h');
+
 var createVdom = require('../../lib/create-vdom');
 
 var env = {
@@ -21,6 +23,6 @@ var templatePath = path.resolve(__dirname, 'tmpl.inc');
 
 var template = require('fs').readFileSync(templatePath).toString().trim();
 
-var vdom = createVdom(template, env);
+var vdom = createVdom(template, env, h);
 
 console.log(vdom);
