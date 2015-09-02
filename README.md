@@ -8,30 +8,38 @@ npm install htmltemplate-vdom
 
 [HTML::Template](http://search.cpan.org/~samtregar/HTML-Template/Template.pm) engine on top of [virtual-dom](https://github.com/Matt-Esch/virtual-dom).
 
-Parser is modified version of https://github.com/Lapple/htmltemplate-parser.
-
-Full client runtime including `virtual-dom` is around 15kb (minified + gzip).
-
 #### Generator
 
-```
+```bash
 # will output compiled template
 node ./bin/compile-template.js --path ../example/precompile/tmpl.inc
 ```
 
-#### Example
+#### Examples
 
-###### Precompile
+##### Precompiled
 
-[example/precompile/index.html](example/precompile/index.html)
+[Demo](http://agentcooper.github.io/htmltemplate-vdom/example/precompiled/)
 
-[Demo](http://agentcooper.github.io/htmltemplate-vdom/example/precompile/)
+[Source](example/precompile/index.html)
 
-Use `npm run precompile` to precompile example template.
+Use `npm run precompile` to precompiled example template.
 
-###### Client render
+##### Server render
 
-[example/client/index.html](example/client/index.html)
+[Source](example/server/index.js)
+
+```bash
+node example/server/index.js
+```
+
+##### Client runtime render
+
+**Not recommended, requires full parser and escodegen on the client.**
+
+[Demo](http://agentcooper.github.io/htmltemplate-vdom/example/client/)
+
+[Source](example/client/index.html)
 
 ```bash
 
@@ -39,14 +47,6 @@ npm install
 webpack
 
 open example/client/index.html
-```
-
-###### Server render
-
-[example/server/index.js](example/server/index.js)
-
-```bash
-node example/server/index.js
 ```
 
 #### Building parser
