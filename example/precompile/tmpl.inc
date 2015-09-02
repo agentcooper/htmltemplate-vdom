@@ -5,7 +5,7 @@
 
     <ul class="list">
         <TMPL_LOOP people>
-            <li class="item <TMPL_IF active>item--active</TMPL_IF>" data-id="<TMPL_VAR id>" onclick="itemClick(<TMPL_VAR id>)">
+            <li class="item <TMPL_IF active>item--active</TMPL_IF>" onclick="itemClick(<TMPL_VAR id>)">
                 <TMPL_VAR name> <a href="#/items/<TMPL_VAR id>">some link</a>
 
                 <div class="input"><input type="text" placeholder="Type something here"/></div>
