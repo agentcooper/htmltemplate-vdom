@@ -13,6 +13,12 @@ function render(state, h) {
         return lookupValue(condition) ? (a && a()) : (b && b());
     }
 
+    function tmpl_call(name) {
+        var args = Array.prototype.slice.call(arguments, 1);
+
+        return lookupValue(name).apply(this, args);
+    }
+
     function lookupValue(propertyName) {
         var value = null;
 
@@ -49,7 +55,8 @@ return h('div', { 'className': buildAttribute('app') }, [
                 h('li', {
                     'className': buildAttribute('item ', tmpl_if('active', function () {
                         return 'item--active';
-                    }), ' js-item'),
+                    })),
+                    'onclick': tmpl_call.bind(null, 'itemClick', tmpl_var('id')),
                     attributes: { 'data-id': buildAttribute(tmpl_var('id')) }
                 }, [
                     '\n                ',
@@ -87,7 +94,7 @@ return h('div', { 'className': buildAttribute('app') }, [
                     '\n\n                ',
                     h('div', {}, [
                         '\n                    ',
-                        h('button', { 'className': buildAttribute('js-increase-counter') }, [
+                        h('button', { 'onclick': tmpl_call.bind(null, 'counterClick', tmpl_var('id')) }, [
                             '\n                        ',
                             h('span', {}, ['Click me']),
                             '\n                    '

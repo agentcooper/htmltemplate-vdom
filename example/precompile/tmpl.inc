@@ -5,7 +5,7 @@
 
     <ul class="list">
         <TMPL_LOOP people>
-            <li class="item <TMPL_IF active>item--active</TMPL_IF> js-item" data-id="<TMPL_VAR id>">
+            <li class="item <TMPL_IF active>item--active</TMPL_IF>" data-id="<TMPL_VAR id>" onclick="itemClick(<TMPL_VAR id>)">
                 <TMPL_VAR name> <a href="#/items/<TMPL_VAR id>">some link</a>
 
                 <div class="input"><input type="text" placeholder="Type something here"/></div>
@@ -21,7 +21,7 @@
                 <TMPL_IF active>active<TMPL_ELSE>not active</TMPL_IF>
 
                 <div>
-                    <button class="js-increase-counter">
+                    <button onclick="counterClick(<TMPL_VAR id>)">
                         <span>Click me</span>
                     </button>
                     <span><TMPL_VAR counter></span>

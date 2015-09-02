@@ -31,9 +31,6 @@
     </style>
 </head>
 <body>
-    <!-- for event delegation -->
-    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-
     <script src="../../dist/clientRuntime.js"></script>
 
     <!-- check template.js for non-minified version -->
@@ -62,40 +59,32 @@
             ],
             description: 'Interact with UI and check inspector for DOM changes. Notice how local state (like input text) stays there. Raw template can be found by viewing page source.',
 
-            githubLink: 'https://github.com/agentcooper/htmltemplate-vdom'
+            githubLink: 'https://github.com/agentcooper/htmltemplate-vdom',
+
+            itemClick: function(id) {
+                env.people.forEach(function(person) {
+                    person.active = String(person.id) === String(id);
+                });
+
+                loop.update(env);
+            },
+
+            counterClick: function(id) {
+                env.people.forEach(function(person) {
+                    if (String(person.id) === String(id)) {
+                        person.counter = person.counter || 0;
+                        person.counter += 1;
+                    }
+                });
+
+                loop.update(env);
+            }
         };
 
         var loop = clientRuntime.loop(env, function(state) {
             var vdom = render(state, clientRuntime.h);
 
             return vdom;
-        });
-
-        function getIdFromEvent(event) {
-            return $(event.currentTarget).closest('.item').attr('data-id');
-        }
-
-        $(document.body)
-        .on('click', '.js-item', function(event) {
-            var id = getIdFromEvent(event);
-
-            env.people.forEach(function(person) {
-                person.active = String(person.id) === String(id);
-            });
-
-            loop.update(env);
-        })
-        .on('click', '.js-increase-counter', function(event) {
-            var id = getIdFromEvent(event);
-
-            env.people.forEach(function(person) {
-                if (String(person.id) === String(id)) {
-                    person.counter = person.counter || 0;
-                    person.counter += 1;
-                }
-            });
-
-            loop.update(env);
         });
 
         document.body.appendChild(loop.target);

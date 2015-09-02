@@ -1,3 +1,5 @@
 lib/htmltemplate-parser.js -diff
 dist/clientRuntime.js -diff
 dist/createVdom.js -diff
+example/precompile/template.js -diff
+example/precompile/template.min.js -diff
