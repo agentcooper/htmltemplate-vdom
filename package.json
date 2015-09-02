@@ -17,7 +17,6 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "build-parser": "pegjs htmltemplate.pegjs lib/htmltemplate-parser.js",
     "precommit": "npm test",
     "prepush": "npm test",
     "build-production": "NODE_ENV=production webpack -p",
@@ -26,6 +25,7 @@
   "license": "MIT",
   "dependencies": {
     "escodegen": "^1.6.1",
+    "htmltemplate-parser": "^0.1.0",
     "lodash.flatten": "^3.0.2",
     "main-loop": "^3.1.0",
     "traverse": "^0.6.6",
