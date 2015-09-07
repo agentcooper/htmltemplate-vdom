@@ -12,7 +12,7 @@ npm install htmltemplate-vdom
 
 ```bash
 # will output compiled template
-node ./bin/compile-template.js --path ../example/precompiled/tmpl.inc
+./bin/compile --path ../example/precompiled/tmpl.inc
 ```
 
 #### Examples
@@ -23,7 +23,7 @@ node ./bin/compile-template.js --path ../example/precompiled/tmpl.inc
 
 [Source](example/precompiled/index.html)
 
-Use `npm run precompile` to precompiled example template.
+Use `npm run precompile` to precompile example template.
 
 ##### Server render
 

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var path = require('path');
 
 var fs = require('fs');
@@ -9,9 +11,7 @@ var argv = require('yargs')
     .demand(['path'])
     .argv;
 
-var templatePath = path.resolve(__dirname, argv.path);
-
-var template = fs.readFileSync(templatePath).toString().trim();
+var template = fs.readFileSync(argv.path).toString().trim();
 
 var templateRuntime = fs.readFileSync(
     path.resolve(__dirname, '../lib/generator/template-runtime.txt')
