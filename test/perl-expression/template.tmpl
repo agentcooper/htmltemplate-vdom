@@ -1,0 +1,25 @@
+<div class="app">
+    <TMPL_IF [% $a or $b or $c %]>x</TMPL_IF>
+    <TMPL_IF [% ($a or $b) and $c %]>x</TMPL_IF>
+    <TMPL_IF [% $a or $b || $c %]>x</TMPL_IF>
+    <TMPL_IF [% not $a and $b or $c and not($c) %]>x</TMPL_IF>
+    <TMPL_IF [% $a < $c && $b >= $c %]>x</TMPL_IF>
+    <TMPL_IF [% $a / $b * $c % $d %]>x</TMPL_IF>
+    <TMPL_IF [% !$a && $b || + $c %]>x</TMPL_IF>
+    <TMPL_IF [% $a + $b - $c %]>x</TMPL_IF>
+    <TMPL_IF [% $a ? ($a + $b) : $c %]>x</TMPL_IF>
+    <TMPL_IF [% $a > 3 %]>x</TMPL_IF>
+    <TMPL_IF [% 5.5 * $a >= .3 %]>x</TMPL_IF>
+    <TMPL_IF [% $a ne 'ok' %]>x</TMPL_IF>
+    <TMPL_IF [% $a->{prop} && $b->{$prop} && $a->{b}->{c} && $a->{b}->[0]->[1] && $a[1] && $a->{b}[9] && $a->{3} %]>x</TMPL_IF>
+    <TMPL_IF [% $a->[$b] && $a[1][$b] && $a{b}{$c} && $a->b && $a->{1x1} %]>x</TMPL_IF>
+    <TMPL_IF [% $a->[$b-1] && $a->{@$b % 3} && $a -> [ 0 ] %]>x</TMPL_IF>
+
+    <TMPL_IF [% substr($string, 1, -1) %]>x</TMPL_IF>
+
+    <TMPL_IF [% $a1 and $b2 and not ($c3 or $d4) and $e5 %]>x</TMPL_IF>
+
+    <TMPL_IF [% fn($a, $b) >= 0 ? substr($c, fn($c, $b)) : "" %]>x</TMPL_IF>
+
+    <TMPL_IF [% !!$a %]>x</TMPL_IF>
+</div>

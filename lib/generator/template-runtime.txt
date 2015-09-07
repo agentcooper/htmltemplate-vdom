@@ -10,7 +10,7 @@ function render(state, h) {
     }
 
     function tmpl_if(condition, a, b) {
-        return lookupValue(condition) ? (a && a()) : (b && b());
+        return condition() ? (a && a()) : (b && b());
     }
 
     function tmpl_call(name) {

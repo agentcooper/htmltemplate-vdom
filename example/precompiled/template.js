@@ -10,7 +10,7 @@ function render(state, h) {
     }
 
     function tmpl_if(condition, a, b) {
-        return lookupValue(condition) ? (a && a()) : (b && b());
+        return condition() ? (a && a()) : (b && b());
     }
 
     function tmpl_call(name) {
@@ -53,7 +53,9 @@ return h('div', { 'className': buildAttribute('app') }, [
             return [
                 '\n            ',
                 h('li', {
-                    'className': buildAttribute('item ', tmpl_if('active', function () {
+                    'className': buildAttribute('item ', tmpl_if(function () {
+                        return lookupValue('active');
+                    }, function () {
                         return 'item--active';
                     })),
                     'onclick': tmpl_call.bind(null, 'itemClick', tmpl_var('id'))
@@ -85,7 +87,9 @@ return h('div', { 'className': buildAttribute('app') }, [
                         tmpl_var('city')
                     ]),
                     '\n\n                ',
-                    tmpl_if('active', function () {
+                    tmpl_if(function () {
+                        return lookupValue('active');
+                    }, function () {
                         return 'active';
                     }, function () {
                         return 'not active';
