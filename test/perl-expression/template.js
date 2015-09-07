@@ -80,7 +80,7 @@ return h('div', { 'className': buildAttribute('app') }, [
     }),
     '\n    ',
     tmpl_if(function () {
-        return !lookupValue('$a') && lookupValue('$b') || perl_unary_expr('+', lookupValue('$c'));
+        return !lookupValue('$a') && lookupValue('$b') || +lookupValue('$c');
     }, function () {
         return 'x';
     }),
