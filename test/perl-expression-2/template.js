@@ -53,5 +53,33 @@ function render(state, h) {
         throw new Error(operator + ' is not implemented');
     }
 
-// return body
+return h('div', { 'className': buildAttribute('header') }, [
+    '\n    ',
+    tmpl_if(function () {
+        return lookupValue('showNotifications') && lookupValue('loggedIn');
+    }, function () {
+        return h('div', { 'className': buildAttribute('notifications') }, [
+            '\n            ',
+            tmpl_loop('notifications', function () {
+                return [
+                    '\n                ',
+                    h('div', {
+                        'className': buildAttribute('\n                    notification\n                    ', tmpl_if(function () {
+                            return perl_binary_expr('eq', lookupValue('type'), 'urgent');
+                        }, function () {
+                            return '\n                        notification--urgent\n                    ';
+                        }), '\n                ')
+                    }, [
+                        '\n                ',
+                        tmpl_var('text'),
+                        '\n                '
+                    ]),
+                    '\n            '
+                ];
+            }),
+            '\n    '
+        ]);
+    }),
+    '\n'
+])
 }

@@ -4,19 +4,47 @@ var path = require('path');
 
 var fs = require('fs');
 
+var h = require('hyperscript');
+
+var colors = require('colors/safe');
+
 var generator = require('../lib/generator/generator');
 
 var argv = require('yargs')
-    .usage('Usage: compile-template.js --path tmpl.inc')
-    .demand(['path'])
+    .usage('Usage: $0 [options]')
+    .options({
+        'path': {
+            demand: true,
+            describe: 'file to compile',
+            type: 'string'
+        },
+
+        'run': {
+            describe: 'run template with given JS env',
+            type: 'string'
+        }
+    })
     .argv;
 
 var template = fs.readFileSync(argv.path).toString().trim();
 
 var templateRuntime = fs.readFileSync(
-    path.resolve(__dirname, '../lib/generator/template-runtime.txt')
-).toString();
+    path.resolve(__dirname, '../lib/generator/template-runtime.txt'),
+    'utf-8'
+);
 
-var renderFunction = generator(template, templateRuntime);
+var renderFunctionString = generator(template, templateRuntime);
 
-console.log(renderFunction);
+var renderFunction = eval('(' + renderFunctionString + ')');
+
+console.log(
+    colors.green(renderFunctionString)
+);
+
+if (argv.run) {
+    var env = require(argv.run);
+
+    console.log(
+        colors.yellow(renderFunction(env, h).outerHTML)
+    );
+}

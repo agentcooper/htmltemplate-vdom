@@ -41,6 +41,18 @@ function render(state, h) {
         });
     }
 
+    function perl_binary_expr(operator, left, right) {
+        if (operator === 'ne') {
+            return String(left) !== String(right);
+        }
+
+        if (operator === 'eq') {
+            return String(left) === String(right);
+        }
+
+        throw new Error(operator + ' is not implemented');
+    }
+
 return h('div', { 'className': buildAttribute('app') }, [
     '\n    ',
     h('h2', {}, [tmpl_var('title')]),
