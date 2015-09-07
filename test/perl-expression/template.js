@@ -116,19 +116,19 @@ return h('div', { 'className': buildAttribute('app') }, [
     }),
     '\n    ',
     tmpl_if(function () {
-        return $a['prop'] && $b[lookupValue('$prop')] && $a.undefined['c'] && $a.undefined.undefined[1] && $a[1] && $a.undefined[9] && $a[3];
+        return lookupValue('$a')['prop'] && lookupValue('$b')[lookupValue('$prop')] && lookupValue('$a')['b']['c'] && lookupValue('$a')['b'][0][1] && lookupValue('$a')[1] && lookupValue('$a')['b'][9] && lookupValue('$a')[3];
     }, function () {
         return 'x';
     }),
     '\n    ',
     tmpl_if(function () {
-        return $a[lookupValue('$b')] && $a.undefined[lookupValue('$b')] && $a.undefined[lookupValue('$c')] && $a['b'] && $a['1x1'];
+        return lookupValue('$a')[lookupValue('$b')] && lookupValue('$a')[1][lookupValue('$b')] && lookupValue('$a')['b'][lookupValue('$c')] && lookupValue('$a')['b'] && lookupValue('$a')['1x1'];
     }, function () {
         return 'x';
     }),
     '\n    ',
     tmpl_if(function () {
-        return $a[lookupValue('$b') - 1] && $a[perl_binary_expr('%', lookupValue('@$b'), 3)] && $a[0];
+        return lookupValue('$a')[lookupValue('$b') - 1] && lookupValue('$a')[perl_binary_expr('%', lookupValue('@$b'), 3)] && lookupValue('$a')[0];
     }, function () {
         return 'x';
     }),
