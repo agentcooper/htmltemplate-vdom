@@ -68,7 +68,7 @@ return h('div', { 'className': buildAttribute('app') }, [
                     'className': buildAttribute('item ', tmpl_if(function () {
                         return lookupValue('active');
                     }, function () {
-                        return 'item--active';
+                        return ['item--active'];
                     })),
                     'onclick': tmpl_call.bind(null, 'itemClick', tmpl_var('id'))
                 }, [
@@ -102,9 +102,9 @@ return h('div', { 'className': buildAttribute('app') }, [
                     tmpl_if(function () {
                         return lookupValue('active');
                     }, function () {
-                        return 'active';
+                        return ['active'];
                     }, function () {
-                        return 'not active';
+                        return ['not active'];
                     }),
                     '\n\n                ',
                     h('div', {}, [

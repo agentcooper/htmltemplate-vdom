@@ -1,5 +1,6 @@
 <div class="header">
-    <TMPL_IF [% $showNotifications && $loggedIn %]><div class="notifications">
+    <TMPL_IF [% $showNotifications && $loggedIn %]>
+        <div class="notifications">
             <TMPL_LOOP notifications>
                 <div class="
                     notification
@@ -10,5 +11,6 @@
                 <TMPL_VAR text>
                 </div>
             </TMPL_LOOP>
-    </div></TMPL_IF>
+        </div>
+    </TMPL_IF>
 </div>

@@ -58,27 +58,31 @@ return h('div', { 'className': buildAttribute('header') }, [
     tmpl_if(function () {
         return lookupValue('showNotifications') && lookupValue('loggedIn');
     }, function () {
-        return h('div', { 'className': buildAttribute('notifications') }, [
-            '\n            ',
-            tmpl_loop('notifications', function () {
-                return [
-                    '\n                ',
-                    h('div', {
-                        'className': buildAttribute('\n                    notification\n                    ', tmpl_if(function () {
-                            return perl_binary_expr('eq', lookupValue('type'), 'urgent');
-                        }, function () {
-                            return '\n                        notification--urgent\n                    ';
-                        }), '\n                ')
-                    }, [
+        return [
+            '\n        ',
+            h('div', { 'className': buildAttribute('notifications') }, [
+                '\n            ',
+                tmpl_loop('notifications', function () {
+                    return [
                         '\n                ',
-                        tmpl_var('text'),
-                        '\n                '
-                    ]),
-                    '\n            '
-                ];
-            }),
+                        h('div', {
+                            'className': buildAttribute('\n                    notification\n                    ', tmpl_if(function () {
+                                return perl_binary_expr('eq', lookupValue('type'), 'urgent');
+                            }, function () {
+                                return ['\n                        notification--urgent\n                    '];
+                            }), '\n                ')
+                        }, [
+                            '\n                ',
+                            tmpl_var('text'),
+                            '\n                '
+                        ]),
+                        '\n            '
+                    ];
+                }),
+                '\n        '
+            ]),
             '\n    '
-        ]);
+        ];
     }),
     '\n'
 ])
