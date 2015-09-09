@@ -9,10 +9,6 @@ function render(state, h) {
         return lookupValue(propertyName);
     }
 
-    function tmpl_if(condition, a, b) {
-        return condition() ? (a && a()) : (b && b());
-    }
-
     function tmpl_call(name) {
         var args = Array.prototype.slice.call(arguments, 1);
 
@@ -65,11 +61,9 @@ return h('div', { 'className': buildAttribute('app') }, [
             return [
                 '\n            ',
                 h('li', {
-                    'className': buildAttribute('item ', tmpl_if(function () {
-                        return lookupValue('active');
-                    }, function () {
+                    'className': buildAttribute('item ', lookupValue('active') ? function () {
                         return ['item--active'];
-                    })),
+                    }() : null),
                     'onclick': tmpl_call.bind(null, 'itemClick', tmpl_var('id'))
                 }, [
                     '\n                ',
@@ -99,13 +93,11 @@ return h('div', { 'className': buildAttribute('app') }, [
                         tmpl_var('city')
                     ]),
                     '\n\n                ',
-                    tmpl_if(function () {
-                        return lookupValue('active');
-                    }, function () {
+                    lookupValue('active') ? function () {
                         return ['active'];
-                    }, function () {
+                    }() : function () {
                         return ['not active'];
-                    }),
+                    }(),
                     '\n\n                ',
                     h('div', {}, [
                         '\n                    ',
