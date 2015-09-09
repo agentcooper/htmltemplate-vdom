@@ -12,7 +12,10 @@ npm install htmltemplate-vdom
 
 ```bash
 # will output compiled template
-./bin/compile --path ../example/precompiled/tmpl.inc
+./bin/compile --path test/basic/template.tmpl
+
+# will output compiled template and html using provided data
+./bin/compile --path test/basic/template.tmpl --run test/basic/env.js
 ```
 
 #### Examples

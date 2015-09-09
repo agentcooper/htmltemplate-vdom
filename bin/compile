@@ -42,7 +42,7 @@ console.log(
 );
 
 if (argv.run) {
-    var env = require(argv.run);
+    var env = require(path.resolve('./', argv.run));
 
     console.log(
         colors.yellow(renderFunction(env, h).outerHTML)
