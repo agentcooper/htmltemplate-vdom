@@ -53,35 +53,32 @@ function render(state, h) {
         throw new Error(operator + ' is not implemented');
     }
 
-return h('div', { 'className': buildAttribute('header') }, [
+return h('div', {}, [
     '\n    ',
-    lookupValue('showNotifications') && lookupValue('loggedIn') ? function () {
+    tmpl_setvar('number', 1 + 2),
+    '\n\n    ',
+    tmpl_setvar('message', [
+        'Nanana ',
+        tmpl_var('superhero'),
+        tmpl_var('number')
+    ]),
+    '\n\n    ',
+    tmpl_var('message'),
+    ', ',
+    tmpl_var('message'),
+    '\n\n    ',
+    tmpl_loop('items', function () {
         return [
             '\n        ',
-            h('div', { 'className': buildAttribute('notifications') }, [
-                '\n            ',
-                tmpl_loop('notifications', function () {
-                    return [
-                        '\n                ',
-                        h('div', {
-                            'className': buildAttribute('\n                    notification\n                    ', perl_binary_expr('eq', lookupValue('type'), 'warning') ? function () {
-                                return ['\n                        notification--warning\n                    '];
-                            }() : perl_binary_expr('eq', lookupValue('type'), 'urgent') ? function () {
-                                return ['\n                        notification--urgent\n                    '];
-                            }() : null, '\n                ')
-                        }, [
-                            '\n                ',
-                            tmpl_var('text'),
-                            '\n                '
-                        ]),
-                        '\n            '
-                    ];
-                }),
-                '\n        '
+            tmpl_setvar('name', [
+                'Mr. ',
+                tmpl_var('name')
             ]),
+            '\n        Name: ',
+            tmpl_var('name'),
             '\n    '
         ];
-    }() : null,
+    }),
     '\n'
 ])
 }

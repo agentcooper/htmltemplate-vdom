@@ -30,7 +30,7 @@ function trimNewLines(text) {
     }).join('\n');
 }
 
-describe('template => JS function', function() {
+describe('template => VDOM => HTML', function() {
     tests
     .filter(function(name) {
         return (
@@ -38,39 +38,41 @@ describe('template => JS function', function() {
         );
     })
     .forEach(function(name) {
-        var tmpl = fs.readFileSync(
-            path.join(__dirname, name, 'template.tmpl'),
-            'utf8'
-        );
+        describe(name, function() {
+            var tmpl = fs.readFileSync(
+                path.join(__dirname, name, 'template.tmpl'),
+                'utf8'
+            );
 
-        var expected = fs.readFileSync(
-            path.join(__dirname, name, 'template.js'),
-            'utf8'
-        );
+            var expected = fs.readFileSync(
+                path.join(__dirname, name, 'template.js'),
+                'utf8'
+            );
 
-        var renderFunctionString = generator(tmpl, templateRuntime);
+            var renderFunctionString = generator(tmpl, templateRuntime);
 
-        it(name, function() {
-            assert.equal(renderFunctionString, expected);
-        });
-
-        if (existsSync(path.join(__dirname, name, 'output.html'))) {
-            it(name + ', html output', function() {
-                var h = require('hyperscript');
-
-                var env = require(path.join(__dirname, name, 'env.js'));
-
-                var expected = fs.readFileSync(
-                    path.join(__dirname, name, 'output.html'),
-                    'utf8'
-                );
-
-                var renderFunction = eval('(' + renderFunctionString + ')');
-
-                var actual = renderFunction(env, h).outerHTML;
-
-                assert.equal(trimNewLines(actual), trimNewLines(expected));
+            it('vdom', function() {
+                assert.equal(renderFunctionString, expected);
             });
-        }
+
+            if (existsSync(path.join(__dirname, name, 'output.html'))) {
+                it('html', function() {
+                    var h = require('hyperscript');
+
+                    var env = require(path.join(__dirname, name, 'env.js'));
+
+                    var expected = fs.readFileSync(
+                        path.join(__dirname, name, 'output.html'),
+                        'utf8'
+                    );
+
+                    var renderFunction = eval('(' + renderFunctionString + ')');
+
+                    var actual = renderFunction(env, h).outerHTML;
+
+                    assert.equal(trimNewLines(actual), trimNewLines(expected));
+                });
+            }
+        });
     });
 });

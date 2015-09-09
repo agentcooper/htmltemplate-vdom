@@ -9,6 +9,10 @@ function render(state, h) {
         return lookupValue(propertyName);
     }
 
+    function tmpl_setvar(propertyName, value) {
+        lookupChain[lookupChain.length - 1][propertyName] = value;
+    }
+
     function tmpl_call(name) {
         var args = Array.prototype.slice.call(arguments, 1);
 
