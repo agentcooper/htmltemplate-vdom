@@ -63,6 +63,8 @@ function render(state, h) {
 return h('div', {}, [
     '\n    ',
     tmpl_setvar('number', 1 + 2),
+    '\n    ',
+    tmpl_setvar('show', lookupValue('loggedIn') && lookupValue('showItems')),
     '\n\n    ',
     tmpl_setvar('message', [
         'Nanana ',
@@ -74,18 +76,24 @@ return h('div', {}, [
     ', ',
     tmpl_var('message'),
     '\n\n    ',
-    tmpl_loop('items', function () {
+    lookupValue('show') ? function () {
         return [
             '\n        ',
-            tmpl_setvar('name', [
-                'Mr. ',
-                tmpl_var('name')
-            ]),
-            '\n        Name: ',
-            tmpl_var('name'),
+            tmpl_loop('items', function () {
+                return [
+                    '\n            ',
+                    tmpl_setvar('name', [
+                        'Mr. ',
+                        tmpl_var('name')
+                    ]),
+                    '\n            Name: ',
+                    tmpl_var('name'),
+                    '\n        '
+                ];
+            }),
             '\n    '
         ];
-    }),
+    }() : null,
     '\n'
 ]);
 }

@@ -1,5 +1,8 @@
 module.exports = {
 	superhero: 'batman',
 
-	items: [{ name: 'John' }]
+	items: [{ name: 'John' }],
+
+	loggedIn: true,
+	showItems: true
 };

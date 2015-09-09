@@ -35,14 +35,14 @@ var templateRuntime = fs.readFileSync(
 
 var renderFunctionString = generator(template, templateRuntime);
 
-var renderFunction = eval('(' + renderFunctionString + ')');
-
 console.log(
     colors.green(renderFunctionString)
 );
 
 if (argv.run) {
     var env = require(path.resolve('./', argv.run));
+
+    var renderFunction = eval('(' + renderFunctionString + ')');
 
     console.log(
         colors.yellow(renderFunction(env, h).outerHTML)

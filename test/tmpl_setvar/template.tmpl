@@ -1,12 +1,15 @@
 <div>
     <TMPL_ASSIGN number [% 1 + 2 %]>
+    <TMPL_ASSIGN show [% $loggedIn and $showItems %]>
 
     <TMPL_SETVAR message>Nanana <TMPL_VAR superhero><TMPL_VAR number></TMPL_SETVAR>
 
     <TMPL_VAR message>, <TMPL_VAR message>
 
-    <TMPL_LOOP items>
-        <TMPL_SETVAR name>Mr. <TMPL_VAR name></TMPL_SETVAR>
-        Name: <TMPL_VAR name>
-    </TMPL_LOOP>
+    <TMPL_IF show>
+        <TMPL_LOOP items>
+            <TMPL_SETVAR name>Mr. <TMPL_VAR name></TMPL_SETVAR>
+            Name: <TMPL_VAR name>
+        </TMPL_LOOP>
+    </TMPL_IF>
 </div>
