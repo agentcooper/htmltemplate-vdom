@@ -60,12 +60,13 @@ function render(state, h) {
         throw new Error(operator + ' is not implemented');
     }
 
-function block_block_name() {
-    return [
+function block_navbar(blockParameters) {
+    lookupChain.push(blockParameters);
+    var blockResult = [
         '\n    ',
         h('nav', { 'id': buildAttribute('navbar') }, [
             '\n        ',
-            h('h1', {}, ['Logo']),
+            h('h1', {}, [tmpl_var('title')]),
             '\n        ',
             h('ul', {}, [
                 '\n            ',
@@ -80,6 +81,34 @@ function block_block_name() {
         ]),
         '\n'
     ];
+    lookupChain.pop(blockParameters);
+    return blockResult;
 }
-return h('div', {}, ['\n    <header>\n        Header\n    </header>\n']);
+return h('div', {}, [
+    '\n    ',
+    h('div', { 'className': buildAttribute('header') }, [
+        '\n        Header\n        ',
+        tmpl_setvar('logo', ['Logo']),
+        '\n        ',
+        block_navbar({ 'title': lookupValue('logo') }),
+        '\n    '
+    ]),
+    '\n\n    ',
+    block_footer({}),
+    '\n'
+]);
+function block_footer(blockParameters) {
+    lookupChain.push(blockParameters);
+    var blockResult = [
+        '\n    ',
+        h('footer', {}, [
+            '\n        Footer\n        ',
+            block_navbar({ 'title': 'Bye bye' }),
+            '\n    '
+        ]),
+        '\n'
+    ];
+    lookupChain.pop(blockParameters);
+    return blockResult;
+}
 }
