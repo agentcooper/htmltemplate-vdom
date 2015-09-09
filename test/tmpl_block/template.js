@@ -29,15 +29,22 @@ function render(state, h) {
         }
     }
 
-    function tmpl_loop(property, body) {
+    function tmpl_loop(property, body, iterationVariableName) {
         return lookupValue(property).map(function(item) {
-            lookupChain.push(item);
 
-            var out = body();
+            if (iterationVariableName) {
+                var obj = {};
+                obj[iterationVariableName] = item;
+                lookupChain.push(obj);
+            } else {
+                lookupChain.push(item);
+            }
+
+            var iteration = body();
 
             lookupChain.pop();
 
-            return out;
+            return iteration;
         });
     }
 
