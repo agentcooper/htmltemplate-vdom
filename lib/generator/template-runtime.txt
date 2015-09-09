@@ -9,10 +9,6 @@ function render(state, h) {
         return lookupValue(propertyName);
     }
 
-    function tmpl_if(condition, a, b) {
-        return condition() ? (a && a()) : (b && b());
-    }
-
     function tmpl_call(name) {
         var args = Array.prototype.slice.call(arguments, 1);
 

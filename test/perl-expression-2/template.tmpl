@@ -4,7 +4,9 @@
             <TMPL_LOOP notifications>
                 <div class="
                     notification
-                    <TMPL_IF [% $type eq 'urgent' %]>
+                    <TMPL_IF [% $type eq 'warning' %]>
+                        notification--warning
+                    <TMPL_ELSIF [% $type eq 'urgent' %]>
                         notification--urgent
                     </TMPL_IF>
                 ">

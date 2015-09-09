@@ -9,10 +9,6 @@ function render(state, h) {
         return lookupValue(propertyName);
     }
 
-    function tmpl_if(condition, a, b) {
-        return condition() ? (a && a()) : (b && b());
-    }
-
     function tmpl_call(name) {
         var args = Array.prototype.slice.call(arguments, 1);
 
@@ -55,9 +51,7 @@ function render(state, h) {
 
 return h('div', { 'className': buildAttribute('header') }, [
     '\n    ',
-    tmpl_if(function () {
-        return lookupValue('showNotifications') && lookupValue('loggedIn');
-    }, function () {
+    lookupValue('showNotifications') && lookupValue('loggedIn') ? function () {
         return [
             '\n        ',
             h('div', { 'className': buildAttribute('notifications') }, [
@@ -66,11 +60,11 @@ return h('div', { 'className': buildAttribute('header') }, [
                     return [
                         '\n                ',
                         h('div', {
-                            'className': buildAttribute('\n                    notification\n                    ', tmpl_if(function () {
-                                return perl_binary_expr('eq', lookupValue('type'), 'urgent');
-                            }, function () {
+                            'className': buildAttribute('\n                    notification\n                    ', perl_binary_expr('eq', lookupValue('type'), 'warning') ? function () {
+                                return ['\n                        notification--warning\n                    '];
+                            }() : perl_binary_expr('eq', lookupValue('type'), 'urgent') ? function () {
                                 return ['\n                        notification--urgent\n                    '];
-                            }), '\n                ')
+                            }() : null, '\n                ')
                         }, [
                             '\n                ',
                             tmpl_var('text'),
@@ -83,7 +77,7 @@ return h('div', { 'className': buildAttribute('header') }, [
             ]),
             '\n    '
         ];
-    }),
+    }() : null,
     '\n'
 ])
 }

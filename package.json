@@ -37,6 +37,7 @@
   "devDependencies": {
     "husky": "^0.9.3",
     "json-loader": "^0.5.2",
+    "mocha": "2.3.2",
     "raw-loader": "^0.5.1"
   }
 }
