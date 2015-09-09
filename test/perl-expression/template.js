@@ -138,5 +138,5 @@ return h('div', { 'className': buildAttribute('app') }, [
         return ['x'];
     }() : null,
     '\n'
-])
+]);
 }

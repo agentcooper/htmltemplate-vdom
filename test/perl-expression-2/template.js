@@ -90,5 +90,5 @@ return h('div', { 'className': buildAttribute('header') }, [
         ];
     }() : null,
     '\n'
-])
+]);
 }

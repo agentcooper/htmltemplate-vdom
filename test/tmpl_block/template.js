@@ -29,22 +29,15 @@ function render(state, h) {
         }
     }
 
-    function tmpl_loop(property, body, iterationVariableName) {
+    function tmpl_loop(property, body) {
         return lookupValue(property).map(function(item) {
+            lookupChain.push(item);
 
-            if (iterationVariableName) {
-                var obj = {};
-                obj[iterationVariableName] = item;
-                lookupChain.push(obj);
-            } else {
-                lookupChain.push(item);
-            }
-
-            var iteration = body();
+            var out = body();
 
             lookupChain.pop();
 
-            return iteration;
+            return out;
         });
     }
 
@@ -60,32 +53,26 @@ function render(state, h) {
         throw new Error(operator + ' is not implemented');
     }
 
-return h('div', {}, [
-    '\n    ',
-    tmpl_setvar('number', 1 + 2),
-    '\n\n    ',
-    tmpl_setvar('message', [
-        'Nanana ',
-        tmpl_var('superhero'),
-        tmpl_var('number')
-    ]),
-    '\n\n    ',
-    tmpl_var('message'),
-    ', ',
-    tmpl_var('message'),
-    '\n\n    ',
-    tmpl_loop('items', function () {
-        return [
+function block_block_name() {
+    return [
+        '\n    ',
+        h('nav', { 'id': buildAttribute('navbar') }, [
             '\n        ',
-            tmpl_setvar('name', [
-                'Mr. ',
-                tmpl_var('name')
+            h('h1', {}, ['Logo']),
+            '\n        ',
+            h('ul', {}, [
+                '\n            ',
+                h('li', {}, [h('a', { 'href': buildAttribute('#') }, ['Home'])]),
+                '\n            ',
+                h('li', {}, [h('a', { 'href': buildAttribute('#') }, ['About'])]),
+                '\n            ',
+                h('li', {}, [h('a', { 'href': buildAttribute('#') }, ['Log in'])]),
+                '\n        '
             ]),
-            '\n        Name: ',
-            tmpl_var('name'),
             '\n    '
-        ];
-    }),
-    '\n'
-]);
+        ]),
+        '\n'
+    ];
+}
+return h('div', {}, ['\n    <header>\n        Header\n    </header>\n']);
 }

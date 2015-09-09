@@ -135,5 +135,5 @@ return h('div', { 'className': buildAttribute('app') }, [
         '\n    '
     ]),
     '\n'
-])
+]);
 }
