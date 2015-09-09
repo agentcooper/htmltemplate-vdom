@@ -1,0 +1,9 @@
+<div>
+    <TMPL_FOR person in=people>
+        <TMPL_IF [% $person->{age} > 18 %]>
+            cool
+        <TMPL_ELSE>
+            not cool
+        </TMPL_IF>
+    </TMPL_FOR>
+</div>

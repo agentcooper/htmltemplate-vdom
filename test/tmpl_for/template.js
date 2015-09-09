@@ -60,5 +60,19 @@ function render(state, h) {
         throw new Error(operator + ' is not implemented');
     }
 
-// return body
+return h('div', {}, [
+    '\n    ',
+    tmpl_loop('people', function () {
+        return [
+            '\n        ',
+            lookupValue('person')['age'] > 18 ? function () {
+                return ['\n            cool\n        '];
+            }() : function () {
+                return ['\n            not cool\n        '];
+            }(),
+            '\n    '
+        ];
+    }, 'person'),
+    '\n'
+])
 }
