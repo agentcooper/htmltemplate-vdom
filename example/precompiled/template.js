@@ -9,8 +9,8 @@ function render(state, h) {
         return lookupValue(propertyName);
     }
 
-    function tmpl_if(condition, a, b) {
-        return condition() ? (a && a()) : (b && b());
+    function tmpl_setvar(propertyName, value) {
+        lookupChain[lookupChain.length - 1][propertyName] = value;
     }
 
     function tmpl_call(name) {
@@ -29,15 +29,22 @@ function render(state, h) {
         }
     }
 
-    function tmpl_loop(property, body) {
+    function tmpl_loop(property, body, iterationVariableName) {
         return lookupValue(property).map(function(item) {
-            lookupChain.push(item);
 
-            var out = body();
+            if (iterationVariableName) {
+                var obj = {};
+                obj[iterationVariableName] = item;
+                lookupChain.push(obj);
+            } else {
+                lookupChain.push(item);
+            }
+
+            var iteration = body();
 
             lookupChain.pop();
 
-            return out;
+            return iteration;
         });
     }
 
@@ -65,11 +72,9 @@ return h('div', { 'className': buildAttribute('app') }, [
             return [
                 '\n            ',
                 h('li', {
-                    'className': buildAttribute('item ', tmpl_if(function () {
-                        return lookupValue('active');
-                    }, function () {
+                    'className': buildAttribute('item ', lookupValue('active') ? function () {
                         return ['item--active'];
-                    })),
+                    }() : null),
                     'onclick': tmpl_call.bind(null, 'itemClick', tmpl_var('id'))
                 }, [
                     '\n                ',
@@ -99,13 +104,11 @@ return h('div', { 'className': buildAttribute('app') }, [
                         tmpl_var('city')
                     ]),
                     '\n\n                ',
-                    tmpl_if(function () {
-                        return lookupValue('active');
-                    }, function () {
+                    lookupValue('active') ? function () {
                         return ['active'];
-                    }, function () {
+                    }() : function () {
                         return ['not active'];
-                    }),
+                    }(),
                     '\n\n                ',
                     h('div', {}, [
                         '\n                    ',
