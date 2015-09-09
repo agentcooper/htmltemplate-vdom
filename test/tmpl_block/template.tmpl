@@ -1,6 +1,6 @@
-<TMPL_BLOCK block_name>
+<TMPL_BLOCK navbar>
     <nav id="navbar">
-        <h1>Logo</h1>
+        <h1><TMPL_VAR title></h1>
         <ul>
             <li><a href="#">Home</a></li>
             <li><a href="#">About</a></li>
@@ -10,7 +10,20 @@
 </TMPL_BLOCK>
 
 <div>
-    <header>
+    <div class="header">
         Header
-    </header>
+        <TMPL_SETVAR logo>Logo</TMPL_SETVAR>
+        <TMPL_INLINE navbar
+            title=[% $logo %]>
+    </div>
+
+    <TMPL_INLINE footer>
 </div>
+
+<TMPL_BLOCK footer>
+    <footer>
+        Footer
+        <TMPL_INLINE navbar
+            title="Bye bye">
+    </footer>
+</TMPL_BLOCK>
