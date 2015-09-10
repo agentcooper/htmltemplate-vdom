@@ -4,12 +4,7 @@ var fs = require('fs');
 
 var path = require('path');
 
-var generator = require('../lib/generator/generator');
-
-var templateRuntime = fs.readFileSync(
-    path.resolve(__dirname, '../lib/generator/template-runtime.txt'),
-    'utf8'
-);
+var htmltemplateVdom = require('../');
 
 var tests = fs.readdirSync(__dirname);
 
@@ -39,19 +34,20 @@ describe('template => VDOM => HTML', function() {
     })
     .forEach(function(name) {
         describe(name, function() {
-            var tmpl = fs.readFileSync(
+            var template = fs.readFileSync(
                 path.join(__dirname, name, 'template.tmpl'),
                 'utf8'
             );
 
-            var expected = fs.readFileSync(
-                path.join(__dirname, name, 'template.js'),
-                'utf8'
-            );
-
-            var renderFunctionString = generator.fromString(tmpl, templateRuntime);
-
             it('vdom', function() {
+                var expected = fs.readFileSync(
+                    path.join(__dirname, name, 'template.js'),
+                    'utf8'
+                );
+
+                var renderFunctionString
+                    = htmltemplateVdom.compile.fromString(template);
+
                 assert.equal(renderFunctionString, expected);
             });
 
@@ -66,9 +62,8 @@ describe('template => VDOM => HTML', function() {
                         'utf8'
                     );
 
-                    var renderFunction = eval('(' + renderFunctionString + ')');
-
-                    var actual = renderFunction(env, h).outerHTML;
+                    var actual
+                        = htmltemplateVdom.render(template, env, h).outerHTML;
 
                     assert.equal(trimNewLines(actual), trimNewLines(expected));
                 });
