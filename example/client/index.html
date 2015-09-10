@@ -32,8 +32,8 @@
     </style>
 </head>
 <body>
-    <script src="../../dist/createVdom.js"></script>
     <script src="../../dist/clientRuntime.js"></script>
+    <script src="../../dist/render.js"></script>
 
     <script id="tmpl" type="text/template">
     <div class="app">
@@ -122,7 +122,7 @@
         var template = document.querySelector('#tmpl').innerHTML.trim();
 
         var loop = clientRuntime.loop(env, function(state) {
-            var vdom = createVdom(template, state, clientRuntime.h);
+            var vdom = render(template, state, clientRuntime.h);
 
             return vdom;
         });

@@ -49,7 +49,7 @@ describe('template => VDOM => HTML', function() {
                 'utf8'
             );
 
-            var renderFunctionString = generator(tmpl, templateRuntime);
+            var renderFunctionString = generator.fromString(tmpl, templateRuntime);
 
             it('vdom', function() {
                 assert.equal(renderFunctionString, expected);

@@ -33,7 +33,7 @@ var templateRuntime = fs.readFileSync(
     'utf-8'
 );
 
-var renderFunctionString = generator(template, templateRuntime);
+var renderFunctionString = generator.fromString(template, templateRuntime);
 
 console.log(
     colors.green(renderFunctionString)

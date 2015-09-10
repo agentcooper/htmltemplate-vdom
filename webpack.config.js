@@ -5,7 +5,7 @@ module.exports = {
     process.env.NODE_ENV === 'production' ? undefined : 'inline-source-map',
 
   entry: {
-    'createVdom': path.resolve(__dirname, './lib/create-vdom.js'),
+    'render': path.resolve(__dirname, './lib/render.js'),
     'clientRuntime': path.resolve(__dirname, './lib/client-runtime.js')
   },
 

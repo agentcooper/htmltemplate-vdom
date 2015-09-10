@@ -1,1 +1,4 @@
-module.exports = require('./lib/create-vdom');
+module.exports = {
+	render: require('./lib/render/'),
+	compile: require('./lib/generator/generator')
+};
