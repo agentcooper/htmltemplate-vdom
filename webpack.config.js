@@ -5,8 +5,8 @@ module.exports = {
     process.env.NODE_ENV === 'production' ? undefined : 'inline-source-map',
 
   entry: {
-    'render': path.resolve(__dirname, './lib/render.js'),
-    'clientRuntime': path.resolve(__dirname, './lib/client-runtime.js')
+    'clientRender': path.resolve(__dirname, './lib/render.js'),
+    'clientRuntime': path.resolve(__dirname, './lib/client/runtime.js')
   },
 
   output: {
@@ -19,7 +19,7 @@ module.exports = {
 
   module: {
     loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader'},
+      { test: /\.js$/, exclude: /node_modules/, loader: 'transform?brfs!babel-loader'},
       { test: /\.json$/, loader: 'json-loader'}
     ]
   }

@@ -8,14 +8,14 @@ npm install htmltemplate-vdom
 
 [HTML::Template](http://search.cpan.org/~samtregar/HTML-Template/Template.pm) engine on top of [virtual-dom](https://github.com/Matt-Esch/virtual-dom).
 
-#### Generator
+#### CLI
 
 ```bash
 # will output compiled template
-./bin/compile --path test/basic/template.tmpl
+htmltemplate-vdom --path test/basic/template.tmpl
 
 # will output compiled template and html using provided data
-./bin/compile --path test/basic/template.tmpl --run test/basic/env.js
+htmltemplate-vdom --path test/basic/template.tmpl --run test/basic/env.js
 ```
 
 #### Examples

@@ -82,7 +82,7 @@
             }
         };
 
-        var loop = clientRuntime.loop(env, function(state) {
+        var loop = clientRuntime.mainLoop(env, function(state) {
             var vdom = render(state, clientRuntime.h);
 
             return vdom;

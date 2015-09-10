@@ -1,10 +1,12 @@
+var fs = require('fs');
+
 var path = require('path');
 
-var h = require('virtual-dom/h');
+var h = require('hyperscript');
 
-var createVdom = require('../../lib/create-vdom');
+var htmltemplateVdom = require('../../');
 
-var env = {
+var state = {
     title: 'List',
     people: [
         {
@@ -19,10 +21,11 @@ var env = {
     ]
 };
 
-var templatePath = path.resolve(__dirname, 'tmpl.inc');
+var template = fs.readFileSync(
+    path.resolve(__dirname, 'tmpl.inc'),
+    'utf-8'
+).trim();
 
-var template = require('fs').readFileSync(templatePath).toString().trim();
+var html = htmltemplateVdom.render(template, state, h).outerHTML;
 
-var vdom = createVdom(template, env, h);
-
-console.log(vdom);
+console.log(html);

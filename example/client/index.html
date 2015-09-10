@@ -33,7 +33,7 @@
 </head>
 <body>
     <script src="../../dist/clientRuntime.js"></script>
-    <script src="../../dist/render.js"></script>
+    <script src="../../dist/clientRender.js"></script>
 
     <script id="tmpl" type="text/template">
     <div class="app">
@@ -121,8 +121,8 @@
 
         var template = document.querySelector('#tmpl').innerHTML.trim();
 
-        var loop = clientRuntime.loop(env, function(state) {
-            var vdom = render(template, state, clientRuntime.h);
+        var loop = clientRuntime.mainLoop(env, function(state) {
+            var vdom = clientRender(template, state, clientRuntime.h);
 
             return vdom;
         });
