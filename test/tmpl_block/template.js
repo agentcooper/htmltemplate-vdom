@@ -1,10 +1,6 @@
 function render(state, h, userHook) {
     var lookupChain = [state];
 
-    function buildAttribute() {
-        return Array.prototype.slice.call(arguments).join('');
-    }
-
     function tmpl_setvar(propertyName, value) {
         lookupChain[lookupChain.length - 1][propertyName] = value;
     }
@@ -16,13 +12,13 @@ function render(state, h, userHook) {
     }
 
     function lookupValue(propertyName) {
-        var value = null;
-
         for (var i = lookupChain.length - 1; i >= 0; i--) {
-            if (lookupChain[i][propertyName]) {
+            if (propertyName in lookupChain[i]) {
                 return lookupChain[i][propertyName];
             }
         }
+
+        return null;
     }
 
     function tmpl_loop(property, body, iterationVariableName) {
@@ -44,33 +40,21 @@ function render(state, h, userHook) {
         });
     }
 
-    function perl_binary_expr(operator, left, right) {
-        if (operator === 'ne') {
-            return String(left) !== String(right);
-        }
-
-        if (operator === 'eq') {
-            return String(left) === String(right);
-        }
-
-        throw new Error(operator + ' is not implemented');
-    }
-
 function block_navbar(blockParameters) {
     lookupChain.push(blockParameters);
     var blockResult = [
         '\n    ',
-        h('nav', { 'id': buildAttribute('navbar') }, [
+        h('nav', { 'id': 'navbar' }, [
             '\n        ',
             h('h1', {}, [lookupValue('title')]),
             '\n        ',
             h('ul', {}, [
                 '\n            ',
-                h('li', {}, [h('a', { 'href': buildAttribute('#') }, ['Home'])]),
+                h('li', {}, [h('a', { 'href': '#' }, ['Home'])]),
                 '\n            ',
-                h('li', {}, [h('a', { 'href': buildAttribute('#') }, ['About'])]),
+                h('li', {}, [h('a', { 'href': '#' }, ['About'])]),
                 '\n            ',
-                h('li', {}, [h('a', { 'href': buildAttribute('#') }, ['Log in'])]),
+                h('li', {}, [h('a', { 'href': '#' }, ['Log in'])]),
                 '\n        '
             ]),
             '\n    '
@@ -82,7 +66,7 @@ function block_navbar(blockParameters) {
 }
 return h('div', {}, [
     '\n    ',
-    h('div', { 'className': buildAttribute('header') }, [
+    h('div', { 'className': 'header' }, [
         '\n        Header\n        ',
         tmpl_setvar('logo', ['Logo']),
         '\n        ',

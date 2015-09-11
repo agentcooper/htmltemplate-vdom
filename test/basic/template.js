@@ -1,10 +1,6 @@
 function render(state, h, userHook) {
     var lookupChain = [state];
 
-    function buildAttribute() {
-        return Array.prototype.slice.call(arguments).join('');
-    }
-
     function tmpl_setvar(propertyName, value) {
         lookupChain[lookupChain.length - 1][propertyName] = value;
     }
@@ -16,13 +12,13 @@ function render(state, h, userHook) {
     }
 
     function lookupValue(propertyName) {
-        var value = null;
-
         for (var i = lookupChain.length - 1; i >= 0; i--) {
-            if (lookupChain[i][propertyName]) {
+            if (propertyName in lookupChain[i]) {
                 return lookupChain[i][propertyName];
             }
         }
+
+        return null;
     }
 
     function tmpl_loop(property, body, iterationVariableName) {
@@ -44,43 +40,39 @@ function render(state, h, userHook) {
         });
     }
 
-    function perl_binary_expr(operator, left, right) {
-        if (operator === 'ne') {
-            return String(left) !== String(right);
-        }
-
-        if (operator === 'eq') {
-            return String(left) === String(right);
-        }
-
-        throw new Error(operator + ' is not implemented');
-    }
-
-return h('div', { 'className': buildAttribute('app') }, [
+return h('div', { 'className': 'app' }, [
     '\n    ',
     h('h2', {}, [lookupValue('title')]),
     '\n\n    ',
     h('p', {}, [lookupValue('description')]),
     '\n\n    ',
-    h('ul', { 'className': buildAttribute('list') }, [
+    h('ul', { 'className': 'list' }, [
         '\n        ',
         tmpl_loop('people', function () {
             return [
                 '\n            ',
                 h('li', {
-                    'className': buildAttribute('item ', lookupValue('active') ? function () {
-                        return ['item--active'];
-                    }() : null),
+                    'className': [
+                        'item ',
+                        lookupValue('active') ? function () {
+                            return ['item--active'];
+                        }() : null
+                    ].join(''),
                     'onclick': tmpl_call.bind(state, 'itemClick', lookupValue('id'))
                 }, [
                     '\n                ',
                     lookupValue('name'),
                     ' ',
-                    h('a', { 'href': buildAttribute('#/items/', lookupValue('id')) }, ['some link']),
+                    h('a', {
+                        'href': [
+                            '#/items/',
+                            lookupValue('id')
+                        ].join('')
+                    }, ['some link']),
                     '\n\n                ',
-                    h('div', { 'className': buildAttribute('input') }, [h('input', {
-                            'type': buildAttribute('text'),
-                            'placeholder': buildAttribute('Type something here')
+                    h('div', { 'className': 'input' }, [h('input', {
+                            'type': 'text',
+                            'placeholder': 'Type something here'
                         })]),
                     '\n\n                ',
                     h('ul', {}, [
@@ -127,7 +119,7 @@ return h('div', { 'className': buildAttribute('app') }, [
     '\n\n    ',
     h('div', {}, [
         '\n        ',
-        h('a', { 'href': buildAttribute(lookupValue('githubLink')) }, [lookupValue('githubLink')]),
+        h('a', { 'href': [lookupValue('githubLink')].join('') }, [lookupValue('githubLink')]),
         '\n    '
     ]),
     '\n'

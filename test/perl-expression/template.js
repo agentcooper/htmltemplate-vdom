@@ -1,10 +1,6 @@
 function render(state, h, userHook) {
     var lookupChain = [state];
 
-    function buildAttribute() {
-        return Array.prototype.slice.call(arguments).join('');
-    }
-
     function tmpl_setvar(propertyName, value) {
         lookupChain[lookupChain.length - 1][propertyName] = value;
     }
@@ -16,13 +12,13 @@ function render(state, h, userHook) {
     }
 
     function lookupValue(propertyName) {
-        var value = null;
-
         for (var i = lookupChain.length - 1; i >= 0; i--) {
-            if (lookupChain[i][propertyName]) {
+            if (propertyName in lookupChain[i]) {
                 return lookupChain[i][propertyName];
             }
         }
+
+        return null;
     }
 
     function tmpl_loop(property, body, iterationVariableName) {
@@ -44,19 +40,7 @@ function render(state, h, userHook) {
         });
     }
 
-    function perl_binary_expr(operator, left, right) {
-        if (operator === 'ne') {
-            return String(left) !== String(right);
-        }
-
-        if (operator === 'eq') {
-            return String(left) === String(right);
-        }
-
-        throw new Error(operator + ' is not implemented');
-    }
-
-return h('div', { 'className': buildAttribute('app') }, [
+return h('div', { 'className': 'app' }, [
     '\n    ',
     lookupValue('a') || lookupValue('b') || lookupValue('c') ? function () {
         return ['x'];
@@ -78,7 +62,7 @@ return h('div', { 'className': buildAttribute('app') }, [
         return ['x'];
     }() : null,
     '\n    ',
-    perl_binary_expr('%', lookupValue('a') / lookupValue('b') * lookupValue('c'), lookupValue('d')) ? function () {
+    lookupValue('a') / lookupValue('b') * lookupValue('c') % lookupValue('d') ? function () {
         return ['x'];
     }() : null,
     '\n    ',
@@ -102,7 +86,7 @@ return h('div', { 'className': buildAttribute('app') }, [
         return ['x'];
     }() : null,
     '\n    ',
-    perl_binary_expr('ne', lookupValue('a'), 'ok') ? function () {
+    String(lookupValue('a')) !== 'ok' ? function () {
         return ['x'];
     }() : null,
     '\n    ',
@@ -114,11 +98,11 @@ return h('div', { 'className': buildAttribute('app') }, [
         return ['x'];
     }() : null,
     '\n    ',
-    lookupValue('a')[lookupValue('b') - 1] && lookupValue('a')[perl_binary_expr('%', lookupValue('@b'), 3)] && lookupValue('a')[0] ? function () {
+    lookupValue('a')[lookupValue('b') - 1] && lookupValue('a')[lookupValue('@b') % 3] && lookupValue('a')[0] ? function () {
         return ['x'];
     }() : null,
     '\n\n    ',
-    perl_call('substr', lookupValue('string'), 1, -1) ? function () {
+    ht.x.substr(lookupValue('string'), 1, -1) ? function () {
         return ['x'];
     }() : null,
     '\n\n    ',
@@ -126,7 +110,7 @@ return h('div', { 'className': buildAttribute('app') }, [
         return ['x'];
     }() : null,
     '\n\n    ',
-    (perl_call('fn', lookupValue('a'), lookupValue('b')) >= 0 ? perl_call('substr', lookupValue('c'), perl_call('fn', lookupValue('c'), lookupValue('b'))) : '') ? function () {
+    (ht.x.fn(lookupValue('a'), lookupValue('b')) >= 0 ? ht.x.substr(lookupValue('c'), ht.x.fn(lookupValue('c'), lookupValue('b'))) : '') ? function () {
         return ['x'];
     }() : null,
     '\n\n    ',

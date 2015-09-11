@@ -1,10 +1,6 @@
 function render(state, h, userHook) {
     var lookupChain = [state];
 
-    function buildAttribute() {
-        return Array.prototype.slice.call(arguments).join('');
-    }
-
     function tmpl_setvar(propertyName, value) {
         lookupChain[lookupChain.length - 1][propertyName] = value;
     }
@@ -16,13 +12,13 @@ function render(state, h, userHook) {
     }
 
     function lookupValue(propertyName) {
-        var value = null;
-
         for (var i = lookupChain.length - 1; i >= 0; i--) {
-            if (lookupChain[i][propertyName]) {
+            if (propertyName in lookupChain[i]) {
                 return lookupChain[i][propertyName];
             }
         }
+
+        return null;
     }
 
     function tmpl_loop(property, body, iterationVariableName) {
@@ -44,34 +40,26 @@ function render(state, h, userHook) {
         });
     }
 
-    function perl_binary_expr(operator, left, right) {
-        if (operator === 'ne') {
-            return String(left) !== String(right);
-        }
-
-        if (operator === 'eq') {
-            return String(left) === String(right);
-        }
-
-        throw new Error(operator + ' is not implemented');
-    }
-
-return h('div', { 'className': buildAttribute('header') }, [
+return h('div', { 'className': 'header' }, [
     '\n    ',
     lookupValue('showNotifications') && lookupValue('loggedIn') ? function () {
         return [
             '\n        ',
-            h('div', { 'className': buildAttribute('notifications') }, [
+            h('div', { 'className': 'notifications' }, [
                 '\n            ',
                 tmpl_loop('notifications', function () {
                     return [
                         '\n                ',
                         h('div', {
-                            'className': buildAttribute('\n                    notification\n                    ', perl_binary_expr('eq', lookupValue('type'), 'warning') ? function () {
-                                return ['\n                        notification--warning\n                    '];
-                            }() : perl_binary_expr('eq', lookupValue('type'), 'urgent') ? function () {
-                                return ['\n                        notification--urgent\n                    '];
-                            }() : null, '\n                ')
+                            'className': [
+                                '\n                    notification\n                    ',
+                                String(lookupValue('type')) === 'warning' ? function () {
+                                    return ['\n                        notification--warning\n                    '];
+                                }() : String(lookupValue('type')) === 'urgent' ? function () {
+                                    return ['\n                        notification--urgent\n                    '];
+                                }() : null,
+                                '\n                '
+                            ].join('')
                         }, [
                             '\n                ',
                             lookupValue('text'),
