@@ -1,4 +1,4 @@
-function render(state, h) {
+function render(state, h, userHook) {
     var lookupChain = [state];
 
     function buildAttribute() {

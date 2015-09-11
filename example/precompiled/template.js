@@ -1,4 +1,4 @@
-function render(state, h) {
+function render(state, h, userHook) {
     var lookupChain = [state];
 
     function buildAttribute() {
@@ -60,78 +60,113 @@ function render(state, h) {
         throw new Error(operator + ' is not implemented');
     }
 
-return h('div', { 'className': buildAttribute('app') }, [
+function block_person(blockParameters) {
+    lookupChain.push(blockParameters);
+    var blockResult = [
+        '\n    ',
+        h('li', {
+            'className': buildAttribute('item ', lookupValue('active') ? function () {
+                return ['item--active'];
+            }() : null),
+            'onclick': tmpl_call.bind(state, 'itemClick', tmpl_var('id')),
+            'user-hook': userHook
+        }, [
+            '\n        ',
+            tmpl_var('name'),
+            ' ',
+            h('a', {
+                'href': buildAttribute('#/items/', tmpl_var('id')),
+                'user-hook': userHook
+            }, ['some link']),
+            '\n\n        ',
+            h('div', {
+                'className': buildAttribute('input'),
+                'user-hook': userHook
+            }, [h('input', {
+                    'type': buildAttribute('text'),
+                    'placeholder': buildAttribute('Type something here'),
+                    'user-hook': userHook
+                })]),
+            '\n\n        ',
+            h('ul', { 'user-hook': userHook }, [
+                '\n            ',
+                tmpl_loop('inner', function () {
+                    return [
+                        '\n                ',
+                        h('li', { 'user-hook': userHook }, [tmpl_var('title')]),
+                        '\n            '
+                    ];
+                }),
+                '\n        '
+            ]),
+            '\n\n        ',
+            h('div', { 'user-hook': userHook }, [
+                tmpl_var('city_copy'),
+                tmpl_var('city')
+            ]),
+            '\n\n        ',
+            lookupValue('active') ? function () {
+                return ['active'];
+            }() : function () {
+                return ['not active'];
+            }(),
+            '\n\n        ',
+            h('div', { 'user-hook': userHook }, [
+                '\n            ',
+                h('button', {
+                    'onclick': tmpl_call.bind(state, 'counterClick', tmpl_var('id')),
+                    'user-hook': userHook
+                }, [
+                    '\n                ',
+                    h('span', { 'user-hook': userHook }, ['Click me']),
+                    '\n            '
+                ]),
+                '\n            ',
+                h('span', { 'user-hook': userHook }, [tmpl_var('counter')]),
+                '\n        '
+            ]),
+            '\n    '
+        ]),
+        '\n'
+    ];
+    lookupChain.pop(blockParameters);
+    return blockResult;
+}
+return h('div', {
+    'className': buildAttribute('app'),
+    'user-hook': userHook
+}, [
     '\n    ',
-    h('h2', {}, [tmpl_var('title')]),
+    h('h2', { 'user-hook': userHook }, [tmpl_var('title')]),
     '\n\n    ',
-    h('p', {}, [tmpl_var('description')]),
+    h('p', { 'user-hook': userHook }, [tmpl_var('description')]),
     '\n\n    ',
-    h('ul', { 'className': buildAttribute('list') }, [
+    h('ul', {
+        'className': buildAttribute('list'),
+        'user-hook': userHook
+    }, [
         '\n        ',
         tmpl_loop('people', function () {
             return [
                 '\n            ',
-                h('li', {
-                    'className': buildAttribute('item ', lookupValue('active') ? function () {
-                        return ['item--active'];
-                    }() : null),
-                    'onclick': tmpl_call.bind(null, 'itemClick', tmpl_var('id'))
-                }, [
-                    '\n                ',
-                    tmpl_var('name'),
-                    ' ',
-                    h('a', { 'href': buildAttribute('#/items/', tmpl_var('id')) }, ['some link']),
-                    '\n\n                ',
-                    h('div', { 'className': buildAttribute('input') }, [h('input', {
-                            'type': buildAttribute('text'),
-                            'placeholder': buildAttribute('Type something here')
-                        })]),
-                    '\n\n                ',
-                    h('ul', {}, [
-                        '\n                    ',
-                        tmpl_loop('inner', function () {
-                            return [
-                                '\n                        ',
-                                h('li', {}, [tmpl_var('title')]),
-                                '\n                    '
-                            ];
-                        }),
-                        '\n                '
-                    ]),
-                    '\n\n                ',
-                    h('div', {}, [
-                        tmpl_var('city_copy'),
-                        tmpl_var('city')
-                    ]),
-                    '\n\n                ',
-                    lookupValue('active') ? function () {
-                        return ['active'];
-                    }() : function () {
-                        return ['not active'];
-                    }(),
-                    '\n\n                ',
-                    h('div', {}, [
-                        '\n                    ',
-                        h('button', { 'onclick': tmpl_call.bind(null, 'counterClick', tmpl_var('id')) }, [
-                            '\n                        ',
-                            h('span', {}, ['Click me']),
-                            '\n                    '
-                        ]),
-                        '\n                    ',
-                        h('span', {}, [tmpl_var('counter')]),
-                        '\n                '
-                    ]),
-                    '\n            '
-                ]),
+                block_person({}),
                 '\n        '
             ];
         }),
         '\n    '
     ]),
     '\n\n    ',
-    h('div', {}, [
+    h('p', { 'user-hook': userHook }, [h('button', {
+            'onclick': tmpl_call.bind(state, 'addClick', tmpl_var('id')),
+            'user-hook': userHook
+        }, ['Add person'])]),
+    '\n\n    ',
+    h('div', { 'user-hook': userHook }, [
         '\n        ',
-        h('a', { 'href': buildAttribute(tmpl_var('githubLink')) }, [tmpl_var('githubLink')]),
+        h('a', {
+            'href': buildAttribute(tmpl_var('githubLink')),
+            'user-hook': userHook
+        }, [tmpl_var('githubLink')]),
         '\n    '
     ]),
     '\n'

@@ -1,4 +1,4 @@
-function render(state, h) {
+function render(state, h, userHook) {
     var lookupChain = [state];
 
     function buildAttribute() {
@@ -75,7 +75,7 @@ return h('div', { 'className': buildAttribute('app') }, [
                     'className': buildAttribute('item ', lookupValue('active') ? function () {
                         return ['item--active'];
                     }() : null),
-                    'onclick': tmpl_call.bind(null, 'itemClick', tmpl_var('id'))
+                    'onclick': tmpl_call.bind(state, 'itemClick', tmpl_var('id'))
                 }, [
                     '\n                ',
                     tmpl_var('name'),
@@ -112,7 +112,7 @@ return h('div', { 'className': buildAttribute('app') }, [
                     '\n\n                ',
                     h('div', {}, [
                         '\n                    ',
-                        h('button', { 'onclick': tmpl_call.bind(null, 'counterClick', tmpl_var('id')) }, [
+                        h('button', { 'onclick': tmpl_call.bind(state, 'counterClick', tmpl_var('id')) }, [
                             '\n                        ',
                             h('span', {}, ['Click me']),
                             '\n                    '

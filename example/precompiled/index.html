@@ -32,12 +32,16 @@
     </style>
 </head>
 <body>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
     <script src="../../dist/clientRuntime.js"></script>
 
     <!-- check template.js for non-minified version -->
     <script src="template.min.js"></script>
 
     <script>
+        var id = 3;
+
         var env = {
             title: 'HTML::Template powered by virtual-dom',
 
@@ -63,32 +67,59 @@
             githubLink: 'https://github.com/agentcooper/htmltemplate-vdom',
 
             itemClick: function(id) {
-                env.people.forEach(function(person) {
+                this.people.forEach(function(person) {
                     person.active = String(person.id) === String(id);
                 });
 
-                loop.update(env);
+                loop.update(this);
             },
 
             counterClick: function(id) {
-                env.people.forEach(function(person) {
+                this.people.forEach(function(person) {
                     if (String(person.id) === String(id)) {
                         person.counter = person.counter || 0;
                         person.counter += 1;
                     }
                 });
 
-                loop.update(env);
+                loop.update(this);
+            },
+
+            addClick: function() {
+                var names = ['Jack', 'Kirk', 'Liza', 'Matthew', 'Joe', 'Jennifer'];
+
+                this.people.push({
+                    id: 'id' + id,
+                    name: names[id % names.length],
+                    inner: [],
+                    city: 'New York'
+                });
+
+                id++;
+
+                loop.update(this);
             }
         };
 
         var loop = clientRuntime.mainLoop(env, function(state) {
-            var vdom = render(state, clientRuntime.h);
-
-            return vdom;
+            return render(state, clientRuntime.h, userHook);
         });
 
         document.body.appendChild(loop.target);
+
+        var Hook = function() {};
+
+        Hook.prototype.hook = function(node, propertyName, previousValue) {
+            if (!document.body.contains(node) && node.classList.contains('item')) {
+                $(node).hide();
+
+                setTimeout(function() {
+                    $(node).slideDown();
+                }, 0);
+            }
+        }
+
+        var userHook = new Hook();
     </script>
 </body>
 </html>
