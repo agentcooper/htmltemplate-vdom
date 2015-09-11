@@ -5,10 +5,6 @@ function render(state, h, userHook) {
         return Array.prototype.slice.call(arguments).join('');
     }
 
-    function tmpl_var(propertyName) {
-        return lookupValue(propertyName);
-    }
-
     function tmpl_setvar(propertyName, value) {
         lookupChain[lookupChain.length - 1][propertyName] = value;
     }
@@ -68,13 +64,13 @@ return h('div', {}, [
     '\n\n    ',
     tmpl_setvar('message', [
         'Nanana ',
-        tmpl_var('superhero'),
-        tmpl_var('number')
+        lookupValue('superhero'),
+        lookupValue('number')
     ]),
     '\n\n    ',
-    tmpl_var('message'),
+    lookupValue('message'),
     ', ',
-    tmpl_var('message'),
+    lookupValue('message'),
     '\n\n    ',
     lookupValue('show') ? function () {
         return [
@@ -84,10 +80,10 @@ return h('div', {}, [
                     '\n            ',
                     tmpl_setvar('name', [
                         'Mr. ',
-                        tmpl_var('name')
+                        lookupValue('name')
                     ]),
                     '\n            Name: ',
-                    tmpl_var('name'),
+                    lookupValue('name'),
                     '\n        '
                 ];
             }),

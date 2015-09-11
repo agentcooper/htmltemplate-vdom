@@ -5,10 +5,6 @@ function render(state, h, userHook) {
         return Array.prototype.slice.call(arguments).join('');
     }
 
-    function tmpl_var(propertyName) {
-        return lookupValue(propertyName);
-    }
-
     function tmpl_setvar(propertyName, value) {
         lookupChain[lookupChain.length - 1][propertyName] = value;
     }

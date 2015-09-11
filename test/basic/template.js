@@ -5,10 +5,6 @@ function render(state, h, userHook) {
         return Array.prototype.slice.call(arguments).join('');
     }
 
-    function tmpl_var(propertyName) {
-        return lookupValue(propertyName);
-    }
-
     function tmpl_setvar(propertyName, value) {
         lookupChain[lookupChain.length - 1][propertyName] = value;
     }
@@ -62,9 +58,9 @@ function render(state, h, userHook) {
 
 return h('div', { 'className': buildAttribute('app') }, [
     '\n    ',
-    h('h2', {}, [tmpl_var('title')]),
+    h('h2', {}, [lookupValue('title')]),
     '\n\n    ',
-    h('p', {}, [tmpl_var('description')]),
+    h('p', {}, [lookupValue('description')]),
     '\n\n    ',
     h('ul', { 'className': buildAttribute('list') }, [
         '\n        ',
@@ -75,12 +71,12 @@ return h('div', { 'className': buildAttribute('app') }, [
                     'className': buildAttribute('item ', lookupValue('active') ? function () {
                         return ['item--active'];
                     }() : null),
-                    'onclick': tmpl_call.bind(state, 'itemClick', tmpl_var('id'))
+                    'onclick': tmpl_call.bind(state, 'itemClick', lookupValue('id'))
                 }, [
                     '\n                ',
-                    tmpl_var('name'),
+                    lookupValue('name'),
                     ' ',
-                    h('a', { 'href': buildAttribute('#/items/', tmpl_var('id')) }, ['some link']),
+                    h('a', { 'href': buildAttribute('#/items/', lookupValue('id')) }, ['some link']),
                     '\n\n                ',
                     h('div', { 'className': buildAttribute('input') }, [h('input', {
                             'type': buildAttribute('text'),
@@ -92,7 +88,7 @@ return h('div', { 'className': buildAttribute('app') }, [
                         tmpl_loop('inner', function () {
                             return [
                                 '\n                        ',
-                                h('li', {}, [tmpl_var('title')]),
+                                h('li', {}, [lookupValue('title')]),
                                 '\n                    '
                             ];
                         }),
@@ -100,8 +96,8 @@ return h('div', { 'className': buildAttribute('app') }, [
                     ]),
                     '\n\n                ',
                     h('div', {}, [
-                        tmpl_var('city_copy'),
-                        tmpl_var('city')
+                        lookupValue('city_copy'),
+                        lookupValue('city')
                     ]),
                     '\n\n                ',
                     lookupValue('active') ? function () {
@@ -112,13 +108,13 @@ return h('div', { 'className': buildAttribute('app') }, [
                     '\n\n                ',
                     h('div', {}, [
                         '\n                    ',
-                        h('button', { 'onclick': tmpl_call.bind(state, 'counterClick', tmpl_var('id')) }, [
+                        h('button', { 'onclick': tmpl_call.bind(state, 'counterClick', lookupValue('id')) }, [
                             '\n                        ',
                             h('span', {}, ['Click me']),
                             '\n                    '
                         ]),
                         '\n                    ',
-                        h('span', {}, [tmpl_var('counter')]),
+                        h('span', {}, [lookupValue('counter')]),
                         '\n                '
                     ]),
                     '\n            '
@@ -131,7 +127,7 @@ return h('div', { 'className': buildAttribute('app') }, [
     '\n\n    ',
     h('div', {}, [
         '\n        ',
-        h('a', { 'href': buildAttribute(tmpl_var('githubLink')) }, [tmpl_var('githubLink')]),
+        h('a', { 'href': buildAttribute(lookupValue('githubLink')) }, [lookupValue('githubLink')]),
         '\n    '
     ]),
     '\n'
