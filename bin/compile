@@ -8,7 +8,7 @@ var h = require('hyperscript');
 
 var colors = require('colors/safe');
 
-var generator = require('../lib/generator/generator');
+var generator = require('../lib/generator/');
 
 var argv = require('yargs')
     .usage('Usage: $0 [options]')
