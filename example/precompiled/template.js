@@ -5,10 +5,6 @@ function render(state, h, userHook) {
         return Array.prototype.slice.call(arguments).join('');
     }
 
-    function tmpl_var(propertyName) {
-        return lookupValue(propertyName);
-    }
-
     function tmpl_setvar(propertyName, value) {
         lookupChain[lookupChain.length - 1][propertyName] = value;
     }
@@ -68,14 +64,14 @@ function block_person(blockParameters) {
             'className': buildAttribute('item ', lookupValue('active') ? function () {
                 return ['item--active'];
             }() : null),
-            'onclick': tmpl_call.bind(state, 'itemClick', tmpl_var('id')),
+            'onclick': tmpl_call.bind(state, 'itemClick', lookupValue('id')),
             'user-hook': userHook
         }, [
             '\n        ',
-            tmpl_var('name'),
+            lookupValue('name'),
             ' ',
             h('a', {
-                'href': buildAttribute('#/items/', tmpl_var('id')),
+                'href': buildAttribute('#/items/', lookupValue('id')),
                 'user-hook': userHook
             }, ['some link']),
             '\n\n        ',
@@ -93,7 +89,7 @@ function block_person(blockParameters) {
                 tmpl_loop('inner', function () {
                     return [
                         '\n                ',
-                        h('li', { 'user-hook': userHook }, [tmpl_var('title')]),
+                        h('li', { 'user-hook': userHook }, [lookupValue('title')]),
                         '\n            '
                     ];
                 }),
@@ -101,8 +97,8 @@ function block_person(blockParameters) {
             ]),
             '\n\n        ',
             h('div', { 'user-hook': userHook }, [
-                tmpl_var('city_copy'),
-                tmpl_var('city')
+                lookupValue('city_copy'),
+                lookupValue('city')
             ]),
             '\n\n        ',
             lookupValue('active') ? function () {
@@ -114,7 +110,7 @@ function block_person(blockParameters) {
             h('div', { 'user-hook': userHook }, [
                 '\n            ',
                 h('button', {
-                    'onclick': tmpl_call.bind(state, 'counterClick', tmpl_var('id')),
+                    'onclick': tmpl_call.bind(state, 'counterClick', lookupValue('id')),
                     'user-hook': userHook
                 }, [
                     '\n                ',
@@ -122,7 +118,7 @@ function block_person(blockParameters) {
                     '\n            '
                 ]),
                 '\n            ',
-                h('span', { 'user-hook': userHook }, [tmpl_var('counter')]),
+                h('span', { 'user-hook': userHook }, [lookupValue('counter')]),
                 '\n        '
             ]),
             '\n    '
@@ -137,9 +133,9 @@ return h('div', {
     'user-hook': userHook
 }, [
     '\n    ',
-    h('h2', { 'user-hook': userHook }, [tmpl_var('title')]),
+    h('h2', { 'user-hook': userHook }, [lookupValue('title')]),
     '\n\n    ',
-    h('p', { 'user-hook': userHook }, [tmpl_var('description')]),
+    h('p', { 'user-hook': userHook }, [lookupValue('description')]),
     '\n\n    ',
     h('ul', {
         'className': buildAttribute('list'),
@@ -157,16 +153,16 @@ return h('div', {
     ]),
     '\n\n    ',
     h('p', { 'user-hook': userHook }, [h('button', {
-            'onclick': tmpl_call.bind(state, 'addClick', tmpl_var('id')),
+            'onclick': tmpl_call.bind(state, 'addClick', lookupValue('id')),
             'user-hook': userHook
         }, ['Add person'])]),
     '\n\n    ',
     h('div', { 'user-hook': userHook }, [
         '\n        ',
         h('a', {
-            'href': buildAttribute(tmpl_var('githubLink')),
+            'href': buildAttribute(lookupValue('githubLink')),
             'user-hook': userHook
-        }, [tmpl_var('githubLink')]),
+        }, [lookupValue('githubLink')]),
         '\n    '
     ]),
     '\n'
