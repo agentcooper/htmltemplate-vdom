@@ -9,6 +9,7 @@ var h = require('hyperscript');
 var colors = require('colors/safe');
 
 var generator = require('../lib/generator/');
+var requireString = require('../lib/require-string');
 
 var argv = require('yargs')
     .usage('Usage: $0 [options]')
@@ -43,10 +44,9 @@ console.log(
 
 if (argv.run) {
     var env = require(path.resolve('./', argv.run));
-
-    var renderFunction = eval('(' + renderFunctionString + ')');
+    var compiled = requireString(renderFunctionString);
 
     console.log(
-        colors.yellow(renderFunction(env, h).outerHTML)
+        colors.yellow(compiled.render(env, h).outerHTML)
     );
 }

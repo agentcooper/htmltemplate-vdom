@@ -1,9 +1,5 @@
-function render(state, h, userHook) {
+exports.render = function(state, h, userHook) {
     var lookupChain = [state];
-
-    function buildAttribute() {
-        return Array.prototype.slice.call(arguments).join('');
-    }
 
     function tmpl_setvar(propertyName, value) {
         lookupChain[lookupChain.length - 1][propertyName] = value;
@@ -16,13 +12,13 @@ function render(state, h, userHook) {
     }
 
     function lookupValue(propertyName) {
-        var value = null;
-
         for (var i = lookupChain.length - 1; i >= 0; i--) {
-            if (lookupChain[i][propertyName]) {
+            if (propertyName in lookupChain[i]) {
                 return lookupChain[i][propertyName];
             }
         }
+
+        return null;
     }
 
     function tmpl_loop(property, body, iterationVariableName) {
@@ -44,26 +40,17 @@ function render(state, h, userHook) {
         });
     }
 
-    function perl_binary_expr(operator, left, right) {
-        if (operator === 'ne') {
-            return String(left) !== String(right);
-        }
-
-        if (operator === 'eq') {
-            return String(left) === String(right);
-        }
-
-        throw new Error(operator + ' is not implemented');
-    }
-
 function block_person(blockParameters) {
     lookupChain.push(blockParameters);
     var blockResult = [
         '\n    ',
         h('li', {
-            'className': buildAttribute('item ', lookupValue('active') ? function () {
-                return ['item--active'];
-            }() : null),
+            'className': [
+                'item ',
+                lookupValue('active') ? function () {
+                    return ['item--active'];
+                }() : null
+            ].join(''),
             'onclick': tmpl_call.bind(state, 'itemClick', lookupValue('id')),
             'user-hook': userHook
         }, [
@@ -71,16 +58,19 @@ function block_person(blockParameters) {
             lookupValue('name'),
             ' ',
             h('a', {
-                'href': buildAttribute('#/items/', lookupValue('id')),
+                'href': [
+                    '#/items/',
+                    lookupValue('id')
+                ].join(''),
                 'user-hook': userHook
             }, ['some link']),
             '\n\n        ',
             h('div', {
-                'className': buildAttribute('input'),
+                'className': 'input',
                 'user-hook': userHook
             }, [h('input', {
-                    'type': buildAttribute('text'),
-                    'placeholder': buildAttribute('Type something here'),
+                    'type': 'text',
+                    'placeholder': 'Type something here',
                     'user-hook': userHook
                 })]),
             '\n\n        ',
@@ -129,7 +119,7 @@ function block_person(blockParameters) {
     return blockResult;
 }
 return h('div', {
-    'className': buildAttribute('app'),
+    'className': 'app',
     'user-hook': userHook
 }, [
     '\n    ',
@@ -138,7 +128,7 @@ return h('div', {
     h('p', { 'user-hook': userHook }, [lookupValue('description')]),
     '\n\n    ',
     h('ul', {
-        'className': buildAttribute('list'),
+        'className': 'list',
         'user-hook': userHook
     }, [
         '\n        ',
@@ -160,12 +150,12 @@ return h('div', {
     h('div', { 'user-hook': userHook }, [
         '\n        ',
         h('a', {
-            'href': buildAttribute(lookupValue('githubLink')),
+            'href': [lookupValue('githubLink')].join(''),
             'user-hook': userHook
         }, [lookupValue('githubLink')]),
         '\n    '
     ]),
     '\n'
 ]);
-}
+};
 

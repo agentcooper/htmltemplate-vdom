@@ -1,4 +1,4 @@
-function render(state, h, userHook) {
+exports.render = function(state, h, userHook) {
     var lookupChain = [state];
 
     function tmpl_setvar(propertyName, value) {
@@ -76,4 +76,4 @@ return h('div', {}, [
     }() : null,
     '\n'
 ]);
-}
+};
