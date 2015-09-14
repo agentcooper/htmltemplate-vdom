@@ -117,6 +117,10 @@ return h('div', { 'className': 'app' }, [
     !!lookupValue('a') ? function () {
         return ['x'];
     }() : null,
+    '\n    ',
+    /a|b|c|d/.test(lookupValue('letter')) || /[0-9]+/g.test(lookupValue('digit')) || !/^null$/.test(lookupValue('text')) ? function () {
+        return [];
+    }() : null,
     '\n'
 ]);
 }

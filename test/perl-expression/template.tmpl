@@ -22,4 +22,5 @@
     <TMPL_IF [% fn($a, $b) >= 0 ? substr($c, fn($c, $b)) : "" %]>x</TMPL_IF>
 
     <TMPL_IF [% !!$a %]>x</TMPL_IF>
+    <TMPL_IF [% $letter =~ m/a|b|c|d/ || $digit =~ /[0-9]+/g || $text !~ /^null$/ %]></TMPL_IF>
 </div>
