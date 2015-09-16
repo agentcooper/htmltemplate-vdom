@@ -21,8 +21,8 @@ function render(state, h, userHook) {
         return null;
     }
 
-    function tmpl_loop(property, body, iterationVariableName) {
-        return lookupValue(property).map(function(item) {
+    function tmpl_loop(arr, body, iterationVariableName) {
+        return arr.map(function(item) {
 
             if (iterationVariableName) {
                 var obj = {};
@@ -59,7 +59,7 @@ return h('div', {}, [
     lookupValue('show') ? function () {
         return [
             '\n        ',
-            tmpl_loop('items', function () {
+            tmpl_loop(lookupValue('items'), function () {
                 return [
                     '\n            ',
                     tmpl_setvar('name', [

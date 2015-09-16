@@ -21,8 +21,8 @@ function render(state, h, userHook) {
         return null;
     }
 
-    function tmpl_loop(property, body, iterationVariableName) {
-        return lookupValue(property).map(function(item) {
+    function tmpl_loop(arr, body, iterationVariableName) {
+        return arr.map(function(item) {
 
             if (iterationVariableName) {
                 var obj = {};
@@ -42,17 +42,21 @@ function render(state, h, userHook) {
 
 return h('div', {}, [
     '\n    ',
-    tmpl_loop('people', function () {
-        return [
-            '\n        ',
-            lookupValue('person')['age'] > 18 ? function () {
-                return ['\n            cool\n        '];
-            }() : function () {
-                return ['\n            not cool\n        '];
-            }(),
-            '\n    '
-        ];
-    }, 'person'),
+    tmpl_loop(lookupValue('basicArray'), function () {
+        return [lookupValue('title')];
+    }),
+    '\n\n    ',
+    tmpl_loop(lookupValue('basicArray'), function () {
+        return [lookupValue('item')['title']];
+    }, 'item'),
+    '\n\n    ',
+    tmpl_loop(lookupValue('nested') && lookupValue('nested')['items'], function () {
+        return ['bla'];
+    }),
+    '\n\n    ',
+    tmpl_loop(lookupValue('nested') && lookupValue('nested')['moreItems'], function () {
+        return [lookupValue('item')];
+    }, 'item'),
     '\n'
 ]);
 }
