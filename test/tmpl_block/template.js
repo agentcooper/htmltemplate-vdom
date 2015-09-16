@@ -43,21 +43,21 @@ function render(state, h, userHook) {
 function block_navbar(blockParameters) {
     lookupChain.push(blockParameters);
     var blockResult = [
-        '\n    ',
+        '\n ',
         h('nav', { 'id': 'navbar' }, [
-            '\n        ',
+            '\n ',
             h('h1', {}, [lookupValue('title')]),
-            '\n        ',
+            '\n ',
             h('ul', {}, [
-                '\n            ',
+                '\n ',
                 h('li', {}, [h('a', { 'href': '#' }, ['Home'])]),
-                '\n            ',
+                '\n ',
                 h('li', {}, [h('a', { 'href': '#' }, ['About'])]),
-                '\n            ',
+                '\n ',
                 h('li', {}, [h('a', { 'href': '#' }, ['Log in'])]),
-                '\n        '
+                '\n '
             ]),
-            '\n    '
+            '\n '
         ]),
         '\n'
     ];
@@ -65,26 +65,26 @@ function block_navbar(blockParameters) {
     return blockResult;
 }
 return h('div', {}, [
-    '\n    ',
+    '\n ',
     h('div', { 'className': 'header' }, [
-        '\n        Header\n        ',
+        '\n Header\n        ',
         tmpl_setvar('logo', ['Logo']),
-        '\n        ',
+        '\n ',
         block_navbar({ 'title': lookupValue('logo') }),
-        '\n    '
+        '\n '
     ]),
-    '\n\n    ',
+    '\n\n ',
     block_footer({}),
     '\n'
 ]);
 function block_footer(blockParameters) {
     lookupChain.push(blockParameters);
     var blockResult = [
-        '\n    ',
+        '\n ',
         h('footer', {}, [
-            '\n        Footer\n        ',
+            '\n Footer\n        ',
             block_navbar({ 'title': 'Bye bye' }),
-            '\n    '
+            '\n '
         ]),
         '\n'
     ];

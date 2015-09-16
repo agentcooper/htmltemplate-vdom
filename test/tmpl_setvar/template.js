@@ -41,37 +41,37 @@ function render(state, h, userHook) {
     }
 
 return h('div', {}, [
-    '\n    ',
+    '\n ',
     tmpl_setvar('number', 1 + 2),
-    '\n    ',
+    '\n ',
     tmpl_setvar('show', lookupValue('loggedIn') && lookupValue('showItems')),
-    '\n\n    ',
+    '\n\n ',
     tmpl_setvar('message', [
         'Nanana ',
         lookupValue('superhero'),
         lookupValue('number')
     ]),
-    '\n\n    ',
+    '\n\n ',
     lookupValue('message'),
     ', ',
     lookupValue('message'),
-    '\n\n    ',
+    '\n\n ',
     lookupValue('show') ? function () {
         return [
-            '\n        ',
+            '\n ',
             tmpl_loop(lookupValue('items'), function () {
                 return [
-                    '\n            ',
+                    '\n ',
                     tmpl_setvar('name', [
                         'Mr. ',
                         lookupValue('name')
                     ]),
-                    '\n            Name: ',
+                    '\n Name: ',
                     lookupValue('name'),
-                    '\n        '
+                    '\n '
                 ];
             }),
-            '\n    '
+            '\n '
         ];
     }() : null,
     '\n'

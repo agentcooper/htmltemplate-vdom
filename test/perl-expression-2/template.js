@@ -41,36 +41,36 @@ function render(state, h, userHook) {
     }
 
 return h('div', { 'className': 'header' }, [
-    '\n    ',
+    '\n ',
     lookupValue('showNotifications') && lookupValue('loggedIn') ? function () {
         return [
-            '\n        ',
+            '\n ',
             h('div', { 'className': 'notifications' }, [
-                '\n            ',
+                '\n ',
                 tmpl_loop(lookupValue('notifications'), function () {
                     return [
-                        '\n                ',
+                        '\n ',
                         h('div', {
                             'className': [
-                                '\n                    notification\n                    ',
+                                '\n notification\n                    ',
                                 String(lookupValue('type')) === 'warning' ? function () {
-                                    return ['\n                        notification--warning\n                    '];
+                                    return ['\n notification--warning\n                    '];
                                 }() : String(lookupValue('type')) === 'urgent' ? function () {
-                                    return ['\n                        notification--urgent\n                    '];
+                                    return ['\n notification--urgent\n                    '];
                                 }() : null,
-                                '\n                '
+                                '\n '
                             ].join('')
                         }, [
-                            '\n                ',
+                            '\n ',
                             lookupValue('text'),
-                            '\n                '
+                            '\n '
                         ]),
-                        '\n            '
+                        '\n '
                     ];
                 }),
-                '\n        '
+                '\n '
             ]),
-            '\n    '
+            '\n '
         ];
     }() : null,
     '\n'

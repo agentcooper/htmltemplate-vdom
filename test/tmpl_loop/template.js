@@ -41,19 +41,19 @@ function render(state, h, userHook) {
     }
 
 return h('div', {}, [
-    '\n    ',
+    '\n ',
     tmpl_loop(lookupValue('basicArray'), function () {
         return [lookupValue('title')];
     }),
-    '\n\n    ',
+    '\n\n ',
     tmpl_loop(lookupValue('basicArray'), function () {
         return [lookupValue('item')['title']];
     }, 'item'),
-    '\n\n    ',
+    '\n\n ',
     tmpl_loop(lookupValue('nested') && lookupValue('nested')['items'], function () {
         return ['bla'];
     }),
-    '\n\n    ',
+    '\n\n ',
     tmpl_loop(lookupValue('nested') && lookupValue('nested')['moreItems'], function () {
         return [lookupValue('item')];
     }, 'item'),

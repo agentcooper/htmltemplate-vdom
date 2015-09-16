@@ -41,16 +41,16 @@ function render(state, h, userHook) {
     }
 
 return h('div', { 'className': 'app' }, [
-    '\n    ',
+    '\n ',
     h('h2', {}, [lookupValue('title')]),
-    '\n\n    ',
+    '\n\n ',
     h('p', {}, [lookupValue('description')]),
-    '\n\n    ',
+    '\n\n ',
     h('ul', { 'className': 'list' }, [
-        '\n        ',
+        '\n ',
         tmpl_loop(lookupValue('people'), function () {
             return [
-                '\n            ',
+                '\n ',
                 h('li', {
                     'className': [
                         'item ',
@@ -60,7 +60,7 @@ return h('div', { 'className': 'app' }, [
                     ].join(''),
                     'onclick': tmpl_call.bind(state, 'itemClick', lookupValue('id'))
                 }, [
-                    '\n                ',
+                    '\n ',
                     lookupValue('name'),
                     ' ',
                     h('a', {
@@ -69,58 +69,58 @@ return h('div', { 'className': 'app' }, [
                             lookupValue('id')
                         ].join('')
                     }, ['some link']),
-                    '\n\n                ',
+                    '\n\n ',
                     h('div', { 'className': 'input' }, [h('input', {
                             'type': 'text',
                             'placeholder': 'Type something here'
                         })]),
-                    '\n\n                ',
+                    '\n\n ',
                     h('ul', {}, [
-                        '\n                    ',
+                        '\n ',
                         tmpl_loop(lookupValue('inner'), function () {
                             return [
-                                '\n                        ',
+                                '\n ',
                                 h('li', {}, [lookupValue('title')]),
-                                '\n                    '
+                                '\n '
                             ];
                         }),
-                        '\n                '
+                        '\n '
                     ]),
-                    '\n\n                ',
+                    '\n\n ',
                     h('div', {}, [
                         lookupValue('city_copy'),
                         lookupValue('city')
                     ]),
-                    '\n\n                ',
+                    '\n\n ',
                     lookupValue('active') ? function () {
                         return ['active'];
                     }() : function () {
                         return ['not active'];
                     }(),
-                    '\n\n                ',
+                    '\n\n ',
                     h('div', {}, [
-                        '\n                    ',
+                        '\n ',
                         h('button', { 'onclick': tmpl_call.bind(state, 'counterClick', lookupValue('id')) }, [
-                            '\n                        ',
+                            '\n ',
                             h('span', {}, ['Click me']),
-                            '\n                    '
+                            '\n '
                         ]),
-                        '\n                    ',
+                        '\n ',
                         h('span', {}, [lookupValue('counter')]),
-                        '\n                '
+                        '\n '
                     ]),
-                    '\n            '
+                    '\n '
                 ]),
-                '\n        '
+                '\n '
             ];
         }),
-        '\n    '
+        '\n '
     ]),
-    '\n\n    ',
+    '\n\n ',
     h('div', {}, [
-        '\n        ',
+        '\n ',
         h('a', { 'href': [lookupValue('githubLink')].join('') }, [lookupValue('githubLink')]),
-        '\n    '
+        '\n '
     ]),
     '\n'
 ]);

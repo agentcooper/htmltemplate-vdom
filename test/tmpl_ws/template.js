@@ -40,5 +40,5 @@ function render(state, h, userHook) {
         });
     }
 
-return h('div', { 'className': '\n\n    item\n    \n    item--active\n\n\n    \n\n    item--green\n\n\n\n    ' }, ['\n    something\n']);
+return h('div', { 'className': '\n\n item\n    \n item--active\n\n\n    \n\n item--green\n\n\n\n    ' }, ['\n something\n']);
 }
