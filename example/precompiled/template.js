@@ -1,10 +1,6 @@
 function render(state, h, userHook) {
     var lookupChain = [state];
 
-    function buildAttribute() {
-        return Array.prototype.slice.call(arguments).join('');
-    }
-
     function tmpl_setvar(propertyName, value) {
         lookupChain[lookupChain.length - 1][propertyName] = value;
     }
@@ -16,17 +12,17 @@ function render(state, h, userHook) {
     }
 
     function lookupValue(propertyName) {
-        var value = null;
-
         for (var i = lookupChain.length - 1; i >= 0; i--) {
-            if (lookupChain[i][propertyName]) {
+            if (propertyName in lookupChain[i]) {
                 return lookupChain[i][propertyName];
             }
         }
+
+        return null;
     }
 
-    function tmpl_loop(property, body, iterationVariableName) {
-        return lookupValue(property).map(function(item) {
+    function tmpl_loop(arr, body, iterationVariableName) {
+        return arr.map(function(item) {
 
             if (iterationVariableName) {
                 var obj = {};
@@ -44,84 +40,78 @@ function render(state, h, userHook) {
         });
     }
 
-    function perl_binary_expr(operator, left, right) {
-        if (operator === 'ne') {
-            return String(left) !== String(right);
-        }
-
-        if (operator === 'eq') {
-            return String(left) === String(right);
-        }
-
-        throw new Error(operator + ' is not implemented');
-    }
-
 function block_person(blockParameters) {
     lookupChain.push(blockParameters);
     var blockResult = [
-        '\n    ',
+        '\n ',
         h('li', {
-            'className': buildAttribute('item ', lookupValue('active') ? function () {
-                return ['item--active'];
-            }() : null),
+            'className': [
+                'item ',
+                lookupValue('active') ? function () {
+                    return ['item--active'];
+                }() : null
+            ].join(''),
             'onclick': tmpl_call.bind(state, 'itemClick', lookupValue('id')),
             'user-hook': userHook
         }, [
-            '\n        ',
+            '\n ',
             lookupValue('name'),
             ' ',
             h('a', {
-                'href': buildAttribute('#/items/', lookupValue('id')),
+                'href': [
+                    '#/items/',
+                    lookupValue('id')
+                ].join(''),
                 'user-hook': userHook
             }, ['some link']),
-            '\n\n        ',
+            '\n\n ',
             h('div', {
-                'className': buildAttribute('input'),
+                'className': 'input',
                 'user-hook': userHook
             }, [h('input', {
-                    'type': buildAttribute('text'),
-                    'placeholder': buildAttribute('Type something here'),
+                    'type': 'text',
+                    'placeholder': 'Type something here',
                     'user-hook': userHook
                 })]),
-            '\n\n        ',
+            '\n\n ',
             h('ul', { 'user-hook': userHook }, [
-                '\n            ',
-                tmpl_loop('inner', function () {
+                '\n ',
+                tmpl_loop(lookupValue('inner'), function () {
                     return [
-                        '\n                ',
+                        '\n ',
                         h('li', { 'user-hook': userHook }, [lookupValue('title')]),
-                        '\n            '
+                        '\n '
                     ];
                 }),
-                '\n        '
+                '\n '
             ]),
-            '\n\n        ',
+            '\n\n ',
             h('div', { 'user-hook': userHook }, [
                 lookupValue('city_copy'),
                 lookupValue('city')
             ]),
-            '\n\n        ',
+            '\n\n ',
             lookupValue('active') ? function () {
                 return ['active'];
             }() : function () {
                 return ['not active'];
             }(),
-            '\n\n        ',
+            '\n\n ',
             h('div', { 'user-hook': userHook }, [
-                '\n            ',
+                '\n ',
                 h('button', {
                     'onclick': tmpl_call.bind(state, 'counterClick', lookupValue('id')),
                     'user-hook': userHook
                 }, [
-                    '\n                ',
+                    '\n ',
                     h('span', { 'user-hook': userHook }, ['Click me']),
-                    '\n            '
+                    '\n '
                 ]),
-                '\n            ',
+                '\n ',
                 h('span', { 'user-hook': userHook }, [lookupValue('counter')]),
-                '\n        '
+                '\n '
             ]),
-            '\n    '
+            '\n '
         ]),
         '\n'
     ];
@@ -129,41 +119,41 @@ function block_person(blockParameters) {
     return blockResult;
 }
 return h('div', {
-    'className': buildAttribute('app'),
+    'className': 'app',
     'user-hook': userHook
 }, [
-    '\n    ',
+    '\n ',
     h('h2', { 'user-hook': userHook }, [lookupValue('title')]),
-    '\n\n    ',
+    '\n\n ',
     h('p', { 'user-hook': userHook }, [lookupValue('description')]),
-    '\n\n    ',
+    '\n\n ',
     h('ul', {
-        'className': buildAttribute('list'),
+        'className': 'list',
         'user-hook': userHook
     }, [
-        '\n        ',
-        tmpl_loop('people', function () {
+        '\n ',
+        tmpl_loop(lookupValue('people'), function () {
             return [
-                '\n            ',
+                '\n ',
                 block_person({}),
-                '\n        '
+                '\n '
             ];
         }),
-        '\n    '
+        '\n '
     ]),
-    '\n\n    ',
+    '\n\n ',
     h('p', { 'user-hook': userHook }, [h('button', {
             'onclick': tmpl_call.bind(state, 'addClick', lookupValue('id')),
             'user-hook': userHook
         }, ['Add person'])]),
-    '\n\n    ',
+    '\n\n ',
     h('div', { 'user-hook': userHook }, [
-        '\n        ',
+        '\n ',
         h('a', {
-            'href': buildAttribute(lookupValue('githubLink')),
+            'href': [lookupValue('githubLink')].join(''),
             'user-hook': userHook
         }, [lookupValue('githubLink')]),
-        '\n    '
+        '\n '
     ]),
     '\n'
 ]);
