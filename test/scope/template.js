@@ -80,23 +80,23 @@ function render(state, h, userHook) {
 
     enterScope(state);
 
-return h('div', {}, [
+return h('div', { 'className': 'container' }, [
     '\n ',
-    tmpl_loop(lookupValue('basicArray'), function () {
-        return [lookupValue('title')];
+    tmpl_loop(lookupValue('items'), function () {
+        return [
+            '\n ',
+            lookupValue('set_flag') ? function () {
+                return [
+                    '\n ',
+                    tmpl_setvar('flag', ['1']),
+                    '\n '
+                ];
+            }() : null,
+            '\n '
+        ];
     }),
     '\n\n ',
-    tmpl_loop(lookupValue('basicArray'), function () {
-        return [lookupValue('item')['title']];
-    }, 'item'),
-    '\n\n ',
-    tmpl_loop(lookupValue('nested') && lookupValue('nested')['items'], function () {
-        return ['bla'];
-    }),
-    '\n\n ',
-    tmpl_loop(lookupValue('nested') && lookupValue('nested')['moreItems'], function () {
-        return [lookupValue('item')];
-    }, 'item'),
+    lookupValue('flag'),
     '\n'
 ]);
 }
