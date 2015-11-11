@@ -52,22 +52,6 @@ function render(state, h, userHook) {
         return null;
     }
 
-    function tmpl_loop(arr, body, iterationVariableName) {
-        return arr.map(function(item) {
-            if (iterationVariableName) {
-                enterScope(keyValue(iterationVariableName, item));
-            } else {
-                enterScope(item);
-            }
-
-            var iteration = body();
-
-            exitScope();
-
-            return iteration;
-        });
-    }
-
     function keyValue(key, value) {
         var p = {};
         p[key] = value;
@@ -88,8 +72,9 @@ return h('div', { 'className': 'app' }, [
     '\n\n ',
     h('ul', { 'className': 'list' }, [
         '\n ',
-        tmpl_loop(lookupValue('people'), function () {
-            return [
+        (lookupValue('people') || []).reduce(function (acc, item) {
+            enterScope(item);
+            acc.push.apply(acc, [
                 '\n ',
                 h('li', {
                     'className': [
@@ -117,13 +102,16 @@ return h('div', { 'className': 'app' }, [
                     '\n\n ',
                     h('ul', {}, [
                         '\n ',
-                        tmpl_loop(lookupValue('inner'), function () {
-                            return [
+                        (lookupValue('inner') || []).reduce(function (acc, item) {
+                            enterScope(item);
+                            acc.push.apply(acc, [
                                 '\n ',
                                 h('li', {}, [lookupValue('title')]),
                                 '\n '
-                            ];
-                        }),
+                            ]);
+                            exitScope();
+                            return acc;
+                        }, []),
                         '\n '
                     ]),
                     '\n\n ',
@@ -152,8 +140,10 @@ return h('div', { 'className': 'app' }, [
                     '\n '
                 ]),
                 '\n '
-            ];
-        }),
+            ]);
+            exitScope();
+            return acc;
+        }, []),
         '\n '
     ]),
     '\n\n ',
