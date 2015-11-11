@@ -52,22 +52,6 @@ function render(state, h, userHook) {
         return null;
     }
 
-    function tmpl_loop(arr, body, iterationVariableName) {
-        return arr.map(function(item) {
-            if (iterationVariableName) {
-                enterScope(keyValue(iterationVariableName, item));
-            } else {
-                enterScope(item);
-            }
-
-            var iteration = body();
-
-            exitScope();
-
-            return iteration;
-        });
-    }
-
     function keyValue(key, value) {
         var p = {};
         p[key] = value;
@@ -82,21 +66,33 @@ function render(state, h, userHook) {
 
 return h('div', {}, [
     '\n ',
-    tmpl_loop(lookupValue('basicArray'), function () {
-        return [lookupValue('title')];
-    }),
+    (lookupValue('basicArray') || []).reduce(function (acc, item) {
+        enterScope(item);
+        acc.push.apply(acc, [lookupValue('title')]);
+        exitScope();
+        return acc;
+    }, []),
     '\n\n ',
-    tmpl_loop(lookupValue('basicArray'), function () {
-        return [lookupValue('item')['title']];
-    }, 'item'),
+    (lookupValue('basicArray') || []).reduce(function (acc, item) {
+        enterScope(keyValue('item', item));
+        acc.push.apply(acc, [lookupValue('item')['title']]);
+        exitScope();
+        return acc;
+    }, []),
     '\n\n ',
-    tmpl_loop(lookupValue('nested') && lookupValue('nested')['items'], function () {
-        return ['bla'];
-    }),
+    (lookupValue('nested') && lookupValue('nested')['items'] || []).reduce(function (acc, item) {
+        enterScope(item);
+        acc.push.apply(acc, ['bla']);
+        exitScope();
+        return acc;
+    }, []),
     '\n\n ',
-    tmpl_loop(lookupValue('nested') && lookupValue('nested')['moreItems'], function () {
-        return [lookupValue('item')];
-    }, 'item'),
+    (lookupValue('nested') && lookupValue('nested')['moreItems'] || []).reduce(function (acc, item) {
+        enterScope(keyValue('item', item));
+        acc.push.apply(acc, [lookupValue('item')]);
+        exitScope();
+        return acc;
+    }, []),
     '\n'
 ]);
 }

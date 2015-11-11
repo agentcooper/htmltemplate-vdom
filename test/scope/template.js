@@ -52,22 +52,6 @@ function render(state, h, userHook) {
         return null;
     }
 
-    function tmpl_loop(arr, body, iterationVariableName) {
-        return arr.map(function(item) {
-            if (iterationVariableName) {
-                enterScope(keyValue(iterationVariableName, item));
-            } else {
-                enterScope(item);
-            }
-
-            var iteration = body();
-
-            exitScope();
-
-            return iteration;
-        });
-    }
-
     function keyValue(key, value) {
         var p = {};
         p[key] = value;
@@ -82,8 +66,9 @@ function render(state, h, userHook) {
 
 return h('div', { 'className': 'container' }, [
     '\n ',
-    tmpl_loop(lookupValue('items'), function () {
-        return [
+    (lookupValue('items') || []).reduce(function (acc, item) {
+        enterScope(item);
+        acc.push.apply(acc, [
             '\n ',
             lookupValue('set_flag') ? function () {
                 return [
@@ -93,8 +78,10 @@ return h('div', { 'className': 'container' }, [
                 ];
             }() : null,
             '\n '
-        ];
-    }),
+        ]);
+        exitScope();
+        return acc;
+    }, []),
     '\n\n ',
     lookupValue('flag'),
     '\n'

@@ -52,22 +52,6 @@ function render(state, h, userHook) {
         return null;
     }
 
-    function tmpl_loop(arr, body, iterationVariableName) {
-        return arr.map(function(item) {
-            if (iterationVariableName) {
-                enterScope(keyValue(iterationVariableName, item));
-            } else {
-                enterScope(item);
-            }
-
-            var iteration = body();
-
-            exitScope();
-
-            return iteration;
-        });
-    }
-
     function keyValue(key, value) {
         var p = {};
         p[key] = value;
