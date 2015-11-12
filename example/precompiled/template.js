@@ -1,8 +1,35 @@
 function render(state, h, userHook) {
-    var lookupChain = [state];
+    var scopeChain = [];
+
+    function enterScope(context) {
+        scopeChain.push({local: null, context: context});
+    }
+
+    function exitScope() {
+        var innerScope = scopeChain.pop();
+        var outerScope = last(scopeChain);
+
+        var localVariables = innerScope.local;
+
+        if (localVariables) {
+            if (!outerScope.local) {
+                outerScope.local = localVariables
+            } else {
+                for (var key in localVariables) {
+                    outerScope.local[key] = localVariables[key];
+                }
+            }
+        }
+    }
 
     function tmpl_setvar(propertyName, value) {
-        lookupChain[lookupChain.length - 1][propertyName] = value;
+        var scope = last(scopeChain);
+
+        if (!scope.local) {
+            scope.local = keyValue(propertyName, value);
+        } else {
+            scope.local[propertyName] = value;
+        }
     }
 
     function tmpl_call(name) {
@@ -12,36 +39,33 @@ function render(state, h, userHook) {
     }
 
     function lookupValue(propertyName) {
-        for (var i = lookupChain.length - 1; i >= 0; i--) {
-            if (propertyName in lookupChain[i]) {
-                return lookupChain[i][propertyName];
+        for (var i = scopeChain.length - 1; i >= 0; i--) {
+            var scope = scopeChain[i];
+
+            if (scope.local && propertyName in scope.local) {
+                return scope.local[propertyName];
+            } else if (propertyName in scope.context) {
+                return scope.context[propertyName];
             }
         }
 
         return null;
     }
 
-    function tmpl_loop(arr, body, iterationVariableName) {
-        return arr.map(function(item) {
-
-            if (iterationVariableName) {
-                var obj = {};
-                obj[iterationVariableName] = item;
-                lookupChain.push(obj);
-            } else {
-                lookupChain.push(item);
-            }
-
-            var iteration = body();
-
-            lookupChain.pop();
-
-            return iteration;
-        });
+    function keyValue(key, value) {
+        var p = {};
+        p[key] = value;
+        return p;
     }
 
+    function last(list) {
+        return list[list.length - 1];
+    }
+
+    enterScope(state);
+
 function block_person(blockParameters) {
-    lookupChain.push(blockParameters);
+    enterScope(blockParameters);
     var blockResult = [
         '\n ',
         h('li', {
@@ -76,13 +100,16 @@ function block_person(blockParameters) {
             '\n\n ',
             h('ul', { 'user-hook': userHook }, [
                 '\n ',
-                tmpl_loop(lookupValue('inner'), function () {
-                    return [
+                (lookupValue('inner') || []).reduce(function (acc, item) {
+                    enterScope(item);
+                    acc.push.apply(acc, [
                         '\n ',
                         h('li', { 'user-hook': userHook }, [lookupValue('title')]),
                         '\n '
-                    ];
-                }),
+                    ]);
+                    exitScope();
+                    return acc;
+                }, []),
                 '\n '
             ]),
             '\n\n ',
@@ -115,7 +142,7 @@ function block_person(blockParameters) {
         ]),
         '\n'
     ];
-    lookupChain.pop(blockParameters);
+    exitScope();
     return blockResult;
 }
 return h('div', {
@@ -132,13 +159,16 @@ return h('div', {
         'user-hook': userHook
     }, [
         '\n ',
-        tmpl_loop(lookupValue('people'), function () {
-            return [
+        (lookupValue('people') || []).reduce(function (acc, item) {
+            enterScope(item);
+            acc.push.apply(acc, [
                 '\n ',
                 block_person({}),
                 '\n '
-            ];
-        }),
+            ]);
+            exitScope();
+            return acc;
+        }, []),
         '\n '
     ]),
     '\n\n ',

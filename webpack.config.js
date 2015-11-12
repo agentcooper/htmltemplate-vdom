@@ -9,6 +9,10 @@ module.exports = {
     'clientRuntime': path.resolve(__dirname, './lib/client/runtime.js')
   },
 
+  node: {
+    fs: 'empty'
+  },
+
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
