@@ -1,0 +1,25 @@
+<div class="container">
+    <TMPL_LOOP items>
+        <div class="common">
+            This part is common for all items.
+        </div>
+
+        <TMPL_IF unskip>
+            <div class="unskipped">
+                This item is unskipped.
+            </div>
+        <TMPL_ELSIF can_skip>
+            <TMPL_IF [% $skippable || $skippaduppable %]>
+                <TMPL_CONTINUE>
+            <TMPL_ELSE>
+                <div class="not-skipped">
+                    Not skipped.
+                </div>
+            </TMPL_IF>
+        </TMPL_IF>
+
+        <div class="can-be-skipped">
+            <TMPL_VAR value>
+        </div>
+    </TMPL_LOOP>
+</div>

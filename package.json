@@ -28,7 +28,7 @@
     "colors": "^1.1.2",
     "escodegen": "^1.6.1",
     "htmltemplate-parser": "0.4.0",
-    "htmltemplate-transform": "1.0.2",
+    "htmltemplate-transform": "1.0.4",
     "hyperscript": "^1.4.6",
     "lodash.flatten": "^3.0.2",
     "main-loop": "^3.1.0",
