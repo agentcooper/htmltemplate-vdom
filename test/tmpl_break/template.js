@@ -68,42 +68,47 @@ return h('div', { 'className': 'container' }, [
     '\n ',
     (lookupValue('items') || []).reduce(function (acc, item) {
         enterScope(item);
-        acc.push.apply(acc, [
-            '\n ',
-            h('div', { 'className': 'common' }, ['\n This part is common for all items.\n        ']),
-            '\n\n ',
-            lookupValue('unskip') ? function () {
+        acc.push.apply(acc, [!lookupValue('b_l___br0') ? function () {
                 return [
                     '\n ',
-                    h('div', { 'className': 'unskipped' }, ['\n This item is unskipped.\n            ']),
-                    '\n '
-                ];
-            }() : lookupValue('can_skip') ? function () {
-                return [
-                    '\n ',
-                    lookupValue('skippable') || lookupValue('skippaduppable') ? function () {
-                        return ['\n '];
-                    }() : function () {
+                    h('div', { 'className': 'common' }, ['\n This part is common for all items.\n        ']),
+                    '\n\n ',
+                    lookupValue('unbreak') ? function () {
                         return [
                             '\n ',
-                            h('div', { 'className': 'not-skipped' }, ['\n Not skipped.\n                ']),
+                            h('div', { 'className': 'unskipped' }, ['\n This item is unskipped.\n            ']),
+                            '\n '
+                        ];
+                    }() : lookupValue('can_break') ? function () {
+                        return [
+                            '\n ',
+                            lookupValue('breakable') || 0 ? function () {
+                                return [
+                                    '\n ',
+                                    tmpl_setvar('b_l___br0', 1)
+                                ];
+                            }() : function () {
+                                return [
+                                    '\n ',
+                                    h('div', { 'className': 'not-skipped' }, ['\n Not skipped.\n                ']),
+                                    '\n '
+                                ];
+                            }()
+                        ];
+                    }() : null,
+                    !lookupValue('unbreak') && lookupValue('can_break') && (lookupValue('breakable') || 0) ? null : function () {
+                        return [
+                            '\n\n ',
+                            h('div', { 'className': 'can-be-skipped' }, [
+                                '\n ',
+                                lookupValue('value'),
+                                '\n '
+                            ]),
                             '\n '
                         ];
                     }()
                 ];
-            }() : null,
-            !lookupValue('unskip') && lookupValue('can_skip') && (lookupValue('skippable') || lookupValue('skippaduppable')) ? null : function () {
-                return [
-                    '\n\n ',
-                    h('div', { 'className': 'can-be-skipped' }, [
-                        '\n ',
-                        lookupValue('value'),
-                        '\n '
-                    ]),
-                    '\n '
-                ];
-            }()
-        ]);
+            }() : null]);
         exitScope();
         return acc;
     }, []),
