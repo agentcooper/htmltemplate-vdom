@@ -101,9 +101,16 @@
             }
         };
 
+        var i18n = {
+            'hello': 'привет'
+        };
+
         var loop = clientRuntime.mainLoop(env, function(state) {
             return render(state, clientRuntime.h, {
-                userHook: userHook
+                userHook: userHook,
+                resolveLookup: function(propertyName) {
+                    return i18n[propertyName];
+                }
             });
         });
 

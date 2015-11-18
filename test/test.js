@@ -62,8 +62,14 @@ describe('template => VDOM => HTML', function() {
                         'utf8'
                     );
 
+                    var options = {};
+
+                    if (existsSync(path.join(__dirname, name, 'options.js'))) {
+                        options = require(path.join(__dirname, name, 'options.js'));
+                    }
+
                     var actual
-                        = htmltemplateVdom.render(template, env, h).outerHTML;
+                        = htmltemplateVdom.render(template, env, h, options).outerHTML;
 
                     assert.equal(trimNewLines(actual), trimNewLines(expected));
                 });

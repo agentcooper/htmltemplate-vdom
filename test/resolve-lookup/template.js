@@ -70,43 +70,9 @@ function render(state, h, options) {
 
     enterScope(state);
 
-return h('div', {}, [
-    '\n ',
-    tmpl_setvar('number', 1 + 2),
-    '\n ',
-    tmpl_setvar('show', lookupValue('loggedIn') && lookupValue('showItems')),
-    '\n\n ',
-    tmpl_setvar('message', [
-        'Nanana ',
-        lookupValue('superhero'),
-        lookupValue('number')
-    ]),
-    '\n\n ',
-    lookupValue('message'),
+return h('p', {}, [
+    lookupValue('hello'),
     ', ',
-    lookupValue('message'),
-    '\n\n ',
-    lookupValue('show') ? function () {
-        return [
-            '\n ',
-            (lookupValue('items') || []).reduce(function (acc, item) {
-                enterScope(item);
-                acc.push.apply(acc, [
-                    '\n ',
-                    tmpl_setvar('name', [
-                        'Mr. ',
-                        lookupValue('name')
-                    ]),
-                    '\n Name: ',
-                    lookupValue('name'),
-                    '\n '
-                ]);
-                exitScope();
-                return acc;
-            }, []),
-            '\n '
-        ];
-    }() : null,
-    '\n'
+    lookupValue('username')
 ]);
 }

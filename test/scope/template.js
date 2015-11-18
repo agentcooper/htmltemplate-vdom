@@ -1,6 +1,8 @@
 function render(state, h, options) {
     var scopeChain = [];
 
+    options = options || {};
+
     function enterScope(context) {
         scopeChain.push({local: null, context: context});
     }
@@ -47,6 +49,10 @@ function render(state, h, options) {
             } else if (propertyName in scope.context) {
                 return scope.context[propertyName];
             }
+        }
+
+        if (options.resolveLookup) {
+            return options.resolveLookup(propertyName);
         }
 
         return null;

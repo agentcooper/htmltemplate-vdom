@@ -1,6 +1,8 @@
 function render(state, h, options) {
     var scopeChain = [];
 
+    options = options || {};
+
     function enterScope(context) {
         scopeChain.push({local: null, context: context});
     }
@@ -47,6 +49,10 @@ function render(state, h, options) {
             } else if (propertyName in scope.context) {
                 return scope.context[propertyName];
             }
+        }
+
+        if (options.resolveLookup) {
+            return options.resolveLookup(propertyName);
         }
 
         return null;
@@ -153,6 +159,12 @@ return h('div', {
     h('h2', { 'user-hook': options.userHook }, [lookupValue('title')]),
     '\n\n ',
     h('p', { 'user-hook': options.userHook }, [lookupValue('description')]),
+    '\n\n ',
+    h('p', { 'user-hook': options.userHook }, [
+        'i18n is also supported: ',
+        lookupValue('hello'),
+        ', %username%!'
+    ]),
     '\n\n ',
     h('ul', {
         'className': 'list',

@@ -27,6 +27,11 @@ var argv = require('yargs')
         'hooks': {
             describe: 'add hooks support',
             type: 'string'
+        },
+
+        'options': {
+            describe: 'options passed to render function',
+            type: 'string'
         }
     })
     .argv;
@@ -46,7 +51,13 @@ if (argv.run) {
 
     var renderFunction = eval('(' + renderFunctionString + ')');
 
+    var options = {};
+
+    if (argv.options) {
+        options = require(path.resolve('./', argv.options));
+    }
+
     console.log(
-        colors.yellow(renderFunction(env, h).outerHTML)
+        colors.yellow(renderFunction(env, h, options).outerHTML)
     );
 }
