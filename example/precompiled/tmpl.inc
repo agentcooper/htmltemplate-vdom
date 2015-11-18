@@ -28,8 +28,6 @@
 
     <p><TMPL_VAR description></p>
 
-    <p>i18n is also supported: <TMPL_VAR hello>, %username%!</p>
-
     <ul class="list">
         <TMPL_LOOP people>
             <TMPL_INLINE person>

@@ -160,12 +160,6 @@ return h('div', {
     '\n\n ',
     h('p', { 'user-hook': options.userHook }, [lookupValue('description')]),
     '\n\n ',
-    h('p', { 'user-hook': options.userHook }, [
-        'i18n is also supported: ',
-        lookupValue('hello'),
-        ', %username%!'
-    ]),
-    '\n\n ',
     h('ul', {
         'className': 'list',
         'user-hook': options.userHook

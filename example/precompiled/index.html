@@ -43,10 +43,6 @@
         var id = 3;
 
         var env = {
-            title: 'HTML::Template powered by virtual-dom',
-
-            city_copy: 'City: ',
-
             people: [
                 {
                     id: 'id1',
@@ -62,7 +58,6 @@
                     city: 'Moscow'
                 }
             ],
-            description: 'Interact with UI and check inspector for DOM changes. Notice how local state (like input text) stays there.',
 
             githubLink: 'https://github.com/agentcooper/htmltemplate-vdom',
 
@@ -102,7 +97,11 @@
         };
 
         var i18n = {
-            'hello': 'привет'
+            title: 'HTML::Template powered by virtual-dom',
+
+            city_copy: 'City: ',
+
+            description: 'Interact with UI and check inspector for DOM changes. Notice how local state (like input text) stays there.'
         };
 
         var loop = clientRuntime.mainLoop(env, function(state) {
