@@ -1,7 +1,9 @@
 function render(state, h, options) {
-    var scopeChain = [];
-
     options = options || {};
+
+    var externals = options.externals;
+    var userHook = options.userHook;
+    var scopeChain = [];
 
     function enterScope(context) {
         scopeChain.push({local: null, context: context});
@@ -132,7 +134,7 @@ return h('div', { 'className': 'app' }, [
         return ['x'];
     }() : null,
     '\n\n ',
-    ht.x.substr(lookupValue('string'), 1, -1) ? function () {
+    externals['substr'](lookupValue('string'), 1, -1) ? function () {
         return ['x'];
     }() : null,
     '\n\n ',
@@ -140,7 +142,7 @@ return h('div', { 'className': 'app' }, [
         return ['x'];
     }() : null,
     '\n\n ',
-    (ht.x.fn(lookupValue('a'), lookupValue('b')) >= 0 ? ht.x.substr(lookupValue('c'), ht.x.fn(lookupValue('c'), lookupValue('b'))) : '') ? function () {
+    (externals['fn'](lookupValue('a'), lookupValue('b')) >= 0 ? externals['substr'](lookupValue('c'), externals['fn'](lookupValue('c'), lookupValue('b'))) : '') ? function () {
         return ['x'];
     }() : null,
     '\n\n ',

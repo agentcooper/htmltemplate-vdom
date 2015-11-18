@@ -1,7 +1,9 @@
 function render(state, h, options) {
-    var scopeChain = [];
-
     options = options || {};
+
+    var externals = options.externals;
+    var userHook = options.userHook;
+    var scopeChain = [];
 
     function enterScope(context) {
         scopeChain.push({local: null, context: context});

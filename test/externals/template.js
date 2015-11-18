@@ -72,42 +72,14 @@ function render(state, h, options) {
 
     enterScope(state);
 
-return h('div', { 'className': 'header' }, [
+return h('div', { 'className': 'container' }, [
     '\n ',
-    lookupValue('showNotifications') && lookupValue('loggedIn') ? function () {
-        return [
-            '\n ',
-            h('div', { 'className': 'notifications' }, [
-                '\n ',
-                (lookupValue('notifications') || []).reduce(function (acc, item) {
-                    enterScope(item);
-                    acc.push.apply(acc, [
-                        '\n ',
-                        h('div', {
-                            'className': [
-                                '\n notification\n                    ',
-                                String(lookupValue('type')) === 'warning' ? function () {
-                                    return ['\n notification--warning\n                    '];
-                                }() : String(lookupValue('type')) === 'urgent' ? function () {
-                                    return ['\n notification--urgent\n                    '];
-                                }() : null,
-                                '\n '
-                            ].join('')
-                        }, [
-                            '\n ',
-                            lookupValue('text'),
-                            '\n '
-                        ]),
-                        '\n '
-                    ]);
-                    exitScope();
-                    return acc;
-                }, []),
-                '\n '
-            ]),
-            '\n '
-        ];
-    }() : null,
+    h('h1', {}, [
+        externals['substr'](lookupValue('title'), 0, 10),
+        '\u2026'
+    ]),
+    '\n ',
+    h('p', {}, [externals['uc'](lookupValue('subtitle'))]),
     '\n'
 ]);
 }
