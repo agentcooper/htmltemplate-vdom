@@ -1,6 +1,8 @@
 module.exports = {
     title: 'HTML::Template powered by virtual-dom',
 
+    hide_subtitle: true,
+
     city_copy: 'City: ',
 
     people: [

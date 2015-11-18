@@ -73,6 +73,10 @@ function render(state, h, options) {
 return h('div', { 'className': 'app' }, [
     '\n ',
     h('h2', {}, [lookupValue('title')]),
+    '\n ',
+    lookupValue('hide_subtitle') ? null : function () {
+        return ['Should be hidden'];
+    }(),
     '\n\n ',
     h('p', {}, [lookupValue('description')]),
     '\n\n ',
