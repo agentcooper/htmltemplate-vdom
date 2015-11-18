@@ -102,7 +102,9 @@
         };
 
         var loop = clientRuntime.mainLoop(env, function(state) {
-            return render(state, clientRuntime.h, userHook);
+            return render(state, clientRuntime.h, {
+                userHook: userHook
+            });
         });
 
         document.body.appendChild(loop.target);

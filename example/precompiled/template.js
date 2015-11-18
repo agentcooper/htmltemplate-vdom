@@ -1,4 +1,4 @@
-function render(state, h, userHook) {
+function render(state, h, options) {
     var scopeChain = [];
 
     function enterScope(context) {
@@ -76,7 +76,7 @@ function block_person(blockParameters) {
                 }() : null
             ].join(''),
             'onclick': tmpl_call.bind(state, 'itemClick', lookupValue('id')),
-            'user-hook': userHook
+            'user-hook': options.userHook
         }, [
             '\n ',
             lookupValue('name'),
@@ -86,25 +86,25 @@ function block_person(blockParameters) {
                     '#/items/',
                     lookupValue('id')
                 ].join(''),
-                'user-hook': userHook
+                'user-hook': options.userHook
             }, ['some link']),
             '\n\n ',
             h('div', {
                 'className': 'input',
-                'user-hook': userHook
+                'user-hook': options.userHook
             }, [h('input', {
                     'type': 'text',
                     'placeholder': 'Type something here',
-                    'user-hook': userHook
+                    'user-hook': options.userHook
                 })]),
             '\n\n ',
-            h('ul', { 'user-hook': userHook }, [
+            h('ul', { 'user-hook': options.userHook }, [
                 '\n ',
                 (lookupValue('inner') || []).reduce(function (acc, item) {
                     enterScope(item);
                     acc.push.apply(acc, [
                         '\n ',
-                        h('li', { 'user-hook': userHook }, [lookupValue('title')]),
+                        h('li', { 'user-hook': options.userHook }, [lookupValue('title')]),
                         '\n '
                     ]);
                     exitScope();
@@ -113,7 +113,7 @@ function block_person(blockParameters) {
                 '\n '
             ]),
             '\n\n ',
-            h('div', { 'user-hook': userHook }, [
+            h('div', { 'user-hook': options.userHook }, [
                 lookupValue('city_copy'),
                 lookupValue('city')
             ]),
@@ -124,18 +124,18 @@ function block_person(blockParameters) {
                 return ['not active'];
             }(),
             '\n\n ',
-            h('div', { 'user-hook': userHook }, [
+            h('div', { 'user-hook': options.userHook }, [
                 '\n ',
                 h('button', {
                     'onclick': tmpl_call.bind(state, 'counterClick', lookupValue('id')),
-                    'user-hook': userHook
+                    'user-hook': options.userHook
                 }, [
                     '\n ',
-                    h('span', { 'user-hook': userHook }, ['Click me']),
+                    h('span', { 'user-hook': options.userHook }, ['Click me']),
                     '\n '
                 ]),
                 '\n ',
-                h('span', { 'user-hook': userHook }, [lookupValue('counter')]),
+                h('span', { 'user-hook': options.userHook }, [lookupValue('counter')]),
                 '\n '
             ]),
             '\n '
@@ -147,16 +147,16 @@ function block_person(blockParameters) {
 }
 return h('div', {
     'className': 'app',
-    'user-hook': userHook
+    'user-hook': options.userHook
 }, [
     '\n ',
-    h('h2', { 'user-hook': userHook }, [lookupValue('title')]),
+    h('h2', { 'user-hook': options.userHook }, [lookupValue('title')]),
     '\n\n ',
-    h('p', { 'user-hook': userHook }, [lookupValue('description')]),
+    h('p', { 'user-hook': options.userHook }, [lookupValue('description')]),
     '\n\n ',
     h('ul', {
         'className': 'list',
-        'user-hook': userHook
+        'user-hook': options.userHook
     }, [
         '\n ',
         (lookupValue('people') || []).reduce(function (acc, item) {
@@ -172,16 +172,16 @@ return h('div', {
         '\n '
     ]),
     '\n\n ',
-    h('p', { 'user-hook': userHook }, [h('button', {
+    h('p', { 'user-hook': options.userHook }, [h('button', {
             'onclick': tmpl_call.bind(state, 'addClick', lookupValue('id')),
-            'user-hook': userHook
+            'user-hook': options.userHook
         }, ['Add person'])]),
     '\n\n ',
-    h('div', { 'user-hook': userHook }, [
+    h('div', { 'user-hook': options.userHook }, [
         '\n ',
         h('a', {
             'href': [lookupValue('githubLink')].join(''),
-            'user-hook': userHook
+            'user-hook': options.userHook
         }, [lookupValue('githubLink')]),
         '\n '
     ]),

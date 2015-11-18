@@ -1,4 +1,4 @@
-function render(state, h, userHook) {
+function render(state, h, options) {
     var scopeChain = [];
 
     function enterScope(context) {
