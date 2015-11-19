@@ -67,7 +67,7 @@ function render(state, h, options) {
      * Creates a thunk that wraps a view block
      * @param {String}   name   Block name, should be passed to top-level
      *                          render function
-     * @param {Function} render Block render function 
+     * @param {Function} render Block render function
      * @param {Object}   props  Properties of the block - attributes that were
      *                          passed to the TMPL_INLINE tag.
      */
@@ -300,8 +300,7 @@ function block_person(blockParameters) {
                     return ['item--active'];
                 }() : null
             ].join(''),
-            'onclick': tmpl_call.bind(state, 'itemClick', lookupValue('id')),
-            'aria-role': 'item'
+            'onclick': tmpl_call.bind(state, 'itemClick', lookupValue('id'))
         }, [
             '\n ',
             lookupValue('name'),

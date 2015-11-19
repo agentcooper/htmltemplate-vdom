@@ -2,7 +2,7 @@ var fs = require('fs');
 
 var path = require('path');
 
-var h = require('hyperscript');
+var h = require('virtual-dom/h');
 
 var htmltemplateVdom = require('../../');
 

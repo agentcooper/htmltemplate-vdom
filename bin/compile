@@ -4,7 +4,8 @@ var path = require('path');
 
 var fs = require('fs');
 
-var h = require('hyperscript');
+var h = require('virtual-dom/h');
+var toHTML = require('vdom-to-html');
 
 var colors = require('colors/safe');
 
@@ -51,6 +52,6 @@ if (argv.run) {
     }
 
     console.log(
-        colors.yellow(renderFunction(env, h, options).outerHTML)
+        colors.yellow(toHTML(renderFunction(env, h, options)))
     );
 }
