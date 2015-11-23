@@ -75,22 +75,16 @@ function render(state, h, options) {
         var Block = blocks[name];
 
         if (!isFunction(Block)) {
-            throw new Error('No block: ' + name);
+            throw new Error('Can\'t find block "' + name + '".');
         }
 
-        var block = new Block(props);
-        block.el = null;
-
-        if (isFunction(block.shouldBlockUpdate)) {
-            this._shouldUpdate = function(previousProps, nextProps) {
-                return block.shouldBlockUpdate(previousProps, nextProps);
-            };
+        // Blocks can define sibling key function that helps with diff.
+        if (isFunction(Block.getBlockKey)) {
+            this.key = Block.getBlockKey(props);
         }
 
         this.name = name;
-        this.block = block;
         this.props = props;
-
         this._render = render;
 
         // Save current scope chain to a special closure to retrieve on
@@ -111,23 +105,57 @@ function render(state, h, options) {
      * @return {VNode}
      */
     ViewBlockThunk.prototype.render = function(previous) {
-        var props = this.props;
         var name = this.name;
+        var props = this.props;
+        var block = this.block
 
-        if (!previous || this._shouldUpdate(previous.props, props)) {
+        if (!block) {
+            // Reusing block instances between thunk renders. This is done
+            // to keep a single stateful block instance throughout all render
+            // passes.
+            var shouldReusePreviousBlock = (
+                previous &&
+                previous.block &&
+                previous.name === name
+            );
+
+            if (shouldReusePreviousBlock) {
+                block = this.block = previous.block;
+            } else {
+                var Block = blocks[name];
+
+                block = this.block = new Block(props);
+
+                // These two fields will be managed by the lifecycle mechanism.
+                block.el = null;
+                block.props = props;
+            }
+
+            if (isFunction(block.shouldBlockUpdate)) {
+                this._shouldUpdate = block.shouldBlockUpdate.bind(block);
+            }
+        }
+
+        if (!previous || this._shouldUpdate(props)) {
             // Replace shared `scopeChain` with the one saved in closure, then
             // restore it once block content is retrieved.
             var oldScopeChain = scopeChain;
             scopeChain = this._closure;
 
-            // TODO: Emit warnings when zero or more than one top-level VNodes
-            // are rendered?
             var topLevelVNodes = this._render(props).filter(isVDOMNode);
+
+            if (topLevelVNodes.length !== 1) {
+                throw new Error('Template provided for "' + name + '" block returns multiple root nodes instead of one.');
+            }
+
             var nextVNode = last(topLevelVNodes);
 
             scopeChain = oldScopeChain;
 
-            var lifeCycleHook = new LifeCycleHook(this.block, props);
+            // Update block instance with the updated props.
+            block.props = props;
+
+            var lifeCycleHook = new LifeCycleHook(block, props);
 
             // Do not override special 'no-properties' object that is shared
             // across all VNode instances.
@@ -155,11 +183,10 @@ function render(state, h, options) {
 
     /**
      * Default `shouldBlockUpdate` implementation, always rerenders.
-     * @param  {Object} previousProps
      * @param  {Object} nextProps
      * @return {Boolean}
      */
-    ViewBlockThunk.prototype._shouldUpdate = function(previousProps, nextProps) {
+    ViewBlockThunk.prototype._shouldUpdate = function(nextProps) {
         return true;
     };
 
