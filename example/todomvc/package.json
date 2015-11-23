@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "dependencies": {
+    "todomvc-app-css": "^2.0.0",
+    "todomvc-common": "^1.0.0",
+    "htmltemplate-vdom": "../.."
+  },
+  "devDependencies": {
+    "browserify": "12.0.1"
+  },
+  "scripts": {
+    "tmpl": "../../bin/compile --path tmpl/index.tmpl > dist/index.tmpl.js",
+    "js": "browserify js/app.js > dist/app.js",
+    "build": "npm run tmpl && npm run js"
+  }
+}
