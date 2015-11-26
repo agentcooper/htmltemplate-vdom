@@ -37,7 +37,8 @@ var ACTIONS = {
     CREATE_NEW_TODO: function(state) {
         if (state.new_todo_label !== '') {
             state.todos.push({
-                label: state.new_todo_label
+                label: state.new_todo_label,
+                id: Date.now()
             });
 
             state.new_todo_label = '';

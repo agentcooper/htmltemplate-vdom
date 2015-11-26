@@ -373,7 +373,7 @@ function block_main_section(blockParameters) {
                         new ViewBlockThunk('TodoItem', block_todo_item, {
                             'todo': lookupValue('todo'),
                             'editing': lookupValue('todo')['editing']
-                        }, lookupValue('todo')['label']),
+                        }, lookupValue('todo')['id']),
                         '\n '
                     ]);
                     exitScope();

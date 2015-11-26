@@ -6,7 +6,7 @@ function TodoItem() {
     this.onDoubleClick = this.onDoubleClick.bind(this);
     this.onEditInputChange = this.onEditInputChange.bind(this);
     this.onEditInputBlur = this.onEditInputBlur.bind(this);
-    this.onEditInputKeyPress = this.onEditInputKeyPress.bind(this);
+    this.onEditInputKeyUp = this.onEditInputKeyUp.bind(this);
 }
 
 TodoItem.prototype.blockDidMount = function() {
@@ -26,7 +26,7 @@ TodoItem.prototype.blockDidMount = function() {
 
     this.edit.addEventListener('input', this.onEditInputChange);
     this.edit.addEventListener('blur', this.onEditInputBlur);
-    this.edit.addEventListener('keypress', this.onEditInputKeyPress);
+    this.edit.addEventListener('keyup', this.onEditInputKeyUp);
 };
 
 TodoItem.prototype.blockWillUnmount = function() {
@@ -44,7 +44,7 @@ TodoItem.prototype.blockWillUnmount = function() {
     
     this.edit.removeEventListener('input', this.onEditInputChange);
     this.edit.removeEventListener('blur', this.onEditInputBlur);
-    this.edit.removeEventListener('keypress', this.onEditInputKeyPress);
+    this.edit.removeEventListener('keyup', this.onEditInputKeyUp);
 };
 
 TodoItem.prototype.blockDidUpdate = function(previousProps) {
@@ -87,7 +87,7 @@ TodoItem.prototype.onEditInputBlur = function() {
     });
 };
 
-TodoItem.prototype.onEditInputKeyPress = function(e) {
+TodoItem.prototype.onEditInputKeyUp = function(e) {
     if (e.keyCode === 13) {
         dispatch('SAVE_UPDATED_TODO', {
             todo: this.props.todo

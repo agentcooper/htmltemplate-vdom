@@ -21,7 +21,7 @@
             <TMPL_FOR todo IN=todos>
                 <TMPL_INLINE todo_item
                     BLOCK_NAME="TodoItem"
-                    BLOCK_KEY=[% $todo->{label} %]
+                    BLOCK_KEY=[% $todo->{id} %]
                     todo=[% $todo %]
                     editing=[% $todo->{editing} %]>
             </TMPL_FOR>

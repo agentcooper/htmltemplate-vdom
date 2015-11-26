@@ -1,10 +1,12 @@
 module.exports = {
     todos: [
         {
+            id: 0,
             label: 'Taste JavaScript',
             completed: true
         },
         {
+            id: 1,
             label: 'Buy a unicorn'
         }
     ],
