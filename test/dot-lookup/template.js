@@ -49,7 +49,7 @@ function render(state, h, options) {
         }
     }
 
-    function lookupValue(propertyName) {
+    function lookupValue(propertyName, params) {
         for (var i = scopeChain.length - 1; i >= 0; i--) {
             var scope = scopeChain[i];
 
@@ -63,7 +63,7 @@ function render(state, h, options) {
         }
 
         if (isFunction(resolveLookup)) {
-            return resolveLookup(propertyName);
+            return resolveLookup(propertyName, params);
         }
 
         return null;
@@ -331,11 +331,11 @@ return h('div', { 'className': 'container' }, [
     '\n ',
     lookupValue('array') && lookupValue('array')[1] && lookupValue('array')[1]['c'] && lookupValue('array')[1]['c'][3] && lookupValue('array')[1]['c'][3]['field'],
     '\n ',
-    lookupValue('label'),
+    lookupValue('label', { 'attribute': lookupValue('nested') && lookupValue('nested')['attribute'] && lookupValue('nested')['attribute']['access'] }),
     '\n ',
-    lookupValue('label'),
+    lookupValue('label', { 'attribute': 'dotted.string' }),
     '\n ',
-    lookupValue('label'),
+    lookupValue('label', { 'attribute': lookupValue('expression') }),
     '\n'
 ]);
 }
