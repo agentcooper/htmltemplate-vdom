@@ -11,6 +11,7 @@
   "scripts": {
     "tmpl": "../../bin/compile --path tmpl/index.tmpl > dist/index.tmpl.js",
     "js": "browserify js/app.js > dist/app.js",
-    "build": "npm run tmpl && npm run js"
+    "css": "cat node_modules/todomvc-common/base.css node_modules/todomvc-app-css/index.css > dist/app.css",
+    "build": "npm run tmpl && npm run js && npm run css"
   }
 }
