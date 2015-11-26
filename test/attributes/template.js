@@ -325,26 +325,68 @@ function render(state, h, options) {
 
     enterScope(state);
 
+function block_title(blockParameters) {
+    enterScope(blockParameters);
+    var blockResult = [
+        '\n ',
+        h('h1', { 'className': 'title' }, [
+            '\n ',
+            lookupValue('text'),
+            '\n '
+        ]),
+        '\n'
+    ];
+    exitScope();
+    return blockResult;
+}
 return h('div', { 'className': 'container' }, [
     '\n ',
+    assignLocalVariable('page_title', 'Attributes test'),
+    '\n\n ',
+    block_title({}),
+    '\n ',
+    block_title({
+        'text': 'Welcome',
+        'spellcheck': 1
+    }),
+    '\n ',
+    block_title({ 'text': lookupValue('page_title') }),
+    '\n ',
+    block_title({ 'text': lookupValue('page_title') }),
+    '\n ',
+    block_title({ 'text': lookupValue('page_title') + '!' }),
+    '\n\n ',
+    lookupValue('title_copy'),
+    '\n ',
+    lookupValue('title_copy', { 'text': 'Welcome' }),
+    '\n ',
+    lookupValue('title_copy', { 'text': lookupValue('page_title') }),
+    '\n ',
+    lookupValue('title_copy', { 'text': lookupValue('page_title') }),
+    '\n ',
+    lookupValue('title_copy', { 'text': lookupValue('page_title') + '!' }),
+    '\n\n ',
     (lookupValue('items') || []).reduce(function (acc, item, index, arr) {
         enterScope(item, deriveSpecialLoopVariables(arr, index));
         acc.push.apply(acc, [
             '\n ',
-            lookupValue('set_flag') ? function () {
-                return [
-                    '\n ',
-                    assignLocalVariable('flag', ['1']),
-                    '\n '
-                ];
-            }() : null,
+            lookupValue('title'),
             '\n '
         ]);
         exitScope();
         return acc;
     }, []),
     '\n\n ',
-    lookupValue('flag'),
+    (lookupValue('items') || []).reduce(function (acc, item, index, arr) {
+        enterScope(keyValue('item', item), deriveSpecialLoopVariables(arr, index));
+        acc.push.apply(acc, [
+            '\n ',
+            lookupValue('item') && lookupValue('item')['title'],
+            '\n '
+        ]);
+        exitScope();
+        return acc;
+    }, []),
     '\n'
 ]);
 }

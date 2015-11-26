@@ -1,9 +1,18 @@
 var i18n = {
-    'username': 'юзернейм'
+    'username': 'юзернейм',
+    'greeting': function(params) {
+        return 'Hello, ' + params.name;
+    }
 };
 
 module.exports = {
-    resolveLookup: function(propertyName) {
-        return i18n[propertyName];
+    resolveLookup: function(propertyName, params) {
+        var translation = i18n[propertyName];
+
+        if (typeof translation === 'function') {
+            return translation(params);
+        }
+
+        return translation;
     }
 };

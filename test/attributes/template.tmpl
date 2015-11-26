@@ -1,0 +1,29 @@
+<TMPL_BLOCK title>
+    <h1 class="title">
+        <TMPL_VAR text>
+    </h1>
+</TMPL_BLOCK>
+
+<div class="container">
+    <TMPL_ASSIGN page_title [% 'Attributes test' %]>
+
+    <TMPL_INLINE title>
+    <TMPL_INLINE title text="Welcome" spellcheck=1 autofocus>
+    <TMPL_INLINE title text=page_title>
+    <TMPL_INLINE title text=[% $page_title %]>
+    <TMPL_INLINE title text=[% $page_title . '!' %]>
+
+    <TMPL_VAR title_copy>
+    <TMPL_VAR title_copy text="Welcome" spellcheck>
+    <TMPL_VAR title_copy text=page_title>
+    <TMPL_VAR title_copy text=[% $page_title %]>
+    <TMPL_VAR title_copy text=[% $page_title . '!' %]>
+
+    <TMPL_LOOP items>
+        <TMPL_VAR title>
+    </TMPL_LOOP>
+
+    <TMPL_FOR item IN=items>
+        <TMPL_VAR item.title>
+    </TMPL_FOR>
+</div>

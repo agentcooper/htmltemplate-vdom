@@ -49,7 +49,7 @@ function render(state, h, options) {
         }
     }
 
-    function lookupValue(propertyName) {
+    function lookupValue(propertyName, params) {
         for (var i = scopeChain.length - 1; i >= 0; i--) {
             var scope = scopeChain[i];
 
@@ -63,7 +63,7 @@ function render(state, h, options) {
         }
 
         if (isFunction(resolveLookup)) {
-            return resolveLookup(propertyName);
+            return resolveLookup(propertyName, params);
         }
 
         return null;
@@ -325,9 +325,15 @@ function render(state, h, options) {
 
     enterScope(state);
 
-return h('p', {}, [
-    lookupValue('hello'),
-    ', ',
-    lookupValue('username')
+return h('div', { 'className': 'container' }, [
+    '\n ',
+    h('p', {}, [
+        lookupValue('hello'),
+        ', ',
+        lookupValue('username')
+    ]),
+    '\n ',
+    h('p', {}, [lookupValue('greeting', { 'name': lookupValue('username') })]),
+    '\n'
 ]);
 }
