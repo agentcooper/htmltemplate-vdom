@@ -529,6 +529,8 @@ return h('div', { 'className': 'app' }, [
         '\n ',
         h('p', {}, ['Double-click to edit a todo']),
         '\n ',
+        h('p', {}, [h('a', { 'href': 'https://github.com/agentcooper/htmltemplate-vdom/tree/master/example/todomvc' }, ['Source code'])]),
+        '\n ',
         h('p', {}, [
             'Created by ',
             h('a', { 'href': 'https://github.com/agentcooper' }, ['Artem Tyurin']),
