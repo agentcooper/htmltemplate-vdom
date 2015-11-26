@@ -8,11 +8,20 @@ function render(state, h, options) {
     // Scope manipulation.
     var scopeChain = [];
 
-    function enterScope(context) {
+    function enterScope(context, special) {
         scopeChain.push({
             local: null,
-            context: context
+            context: context,
+            special: special || null
         });
+    }
+
+    function deriveSpecialLoopVariables(arr, currentIndex) {
+        return {
+            __counter__: currentIndex + 1,
+            __first__: currentIndex === 0,
+            __last__: currentIndex === (arr.length - 1)
+        };
     }
 
     function exitScope() {
@@ -23,7 +32,7 @@ function render(state, h, options) {
 
         if (localVariables) {
             if (!outerScope.local) {
-                outerScope.local = localVariables
+                outerScope.local = localVariables;
             } else {
                 merge(outerScope.local, localVariables);
             }
@@ -46,6 +55,8 @@ function render(state, h, options) {
 
             if (scope.local && propertyName in scope.local) {
                 return scope.local[propertyName];
+            } else if (scope.special && propertyName in scope.special) {
+                return scope.special[propertyName];
             } else if (propertyName in scope.context) {
                 return scope.context[propertyName];
             }
@@ -326,8 +337,8 @@ return h('div', { 'className': 'app' }, [
     '\n\n ',
     h('ul', { 'className': 'list' }, [
         '\n ',
-        (lookupValue('people') || []).reduce(function (acc, item) {
-            enterScope(item);
+        (lookupValue('people') || []).reduce(function (acc, item, index, arr) {
+            enterScope(item, deriveSpecialLoopVariables(arr, index));
             acc.push.apply(acc, [
                 '\n ',
                 h('li', {
@@ -356,8 +367,8 @@ return h('div', { 'className': 'app' }, [
                     '\n\n ',
                     h('ul', {}, [
                         '\n ',
-                        (lookupValue('inner') || []).reduce(function (acc, item) {
-                            enterScope(item);
+                        (lookupValue('inner') || []).reduce(function (acc, item, index, arr) {
+                            enterScope(item, deriveSpecialLoopVariables(arr, index));
                             acc.push.apply(acc, [
                                 '\n ',
                                 h('li', {}, [lookupValue('title')]),

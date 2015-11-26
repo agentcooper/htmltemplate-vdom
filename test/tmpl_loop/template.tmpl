@@ -6,4 +6,10 @@
     <TMPL_LOOP [% $nested && $nested->{items} %]>bla</TMPL_LOOP>
 
     <TMPL_FOR item in=[% $nested && $nested->{moreItems} %]><TMPL_VAR item></TMPL_FOR>
+
+    <TMPL_VAR __counter__>
+    <TMPL_LOOP basicArray>
+        <TMPL_VAR __counter__>
+    </TMPL_LOOP>
+    <TMPL_VAR __counter__>
 </div>
