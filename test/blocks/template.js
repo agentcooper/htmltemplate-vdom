@@ -314,26 +314,56 @@ function render(state, h, options) {
 
     enterScope(state);
 
+function block_button(blockParameters) {
+    enterScope(blockParameters);
+    var blockResult = [
+        '\n ',
+        h('button', { 'type': [lookupValue('type')].join('') }, [
+            '\n ',
+            lookupValue('label'),
+            '\n '
+        ]),
+        '\n'
+    ];
+    exitScope();
+    return blockResult;
+}
+function block_form(blockParameters) {
+    enterScope(blockParameters);
+    var blockResult = [
+        '\n ',
+        h('form', { 'className': 'form' }, [
+            '\n ',
+            h('input', {
+                'type': 'hidden',
+                'name': [lookupValue('name')].join(''),
+                'value': [lookupValue('value')].join('')
+            }),
+            '\n ',
+            new ViewBlockThunk('Button', block_button, {
+                'type': 'button',
+                'label': 'Click'
+            }),
+            '\n '
+        ]),
+        '\n'
+    ];
+    exitScope();
+    return blockResult;
+}
 return h('div', { 'className': 'container' }, [
     '\n ',
-    (lookupValue('items') || []).reduce(function (acc, item) {
-        enterScope(item);
-        acc.push.apply(acc, [
-            '\n ',
-            lookupValue('set_flag') ? function () {
-                return [
-                    '\n ',
-                    assignLocalVariable('flag', ['1']),
-                    '\n '
-                ];
-            }() : null,
-            '\n '
-        ]);
-        exitScope();
-        return acc;
-    }, []),
-    '\n\n ',
-    lookupValue('flag'),
+    new ViewBlockThunk('Form', block_form, {
+        'name': 'a',
+        'value': '1'
+    }, 'a'),
+    '\n ',
+    h('hr', {}),
+    '\n ',
+    new ViewBlockThunk('Form', block_form, {
+        'name': 'b',
+        'value': '2'
+    }),
     '\n'
 ]);
 }

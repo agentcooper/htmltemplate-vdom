@@ -93,6 +93,11 @@
                 id++;
 
                 loop.update(this);
+            },
+
+            popClick: function() {
+                this.people.pop();
+                loop.update(this);
             }
         };
 
@@ -104,30 +109,50 @@
             description: 'Interact with UI and check inspector for DOM changes. Notice how local state (like input text) stays there.'
         };
 
+        var PersonBlock = function(props) {
+            this.props = props;
+        };
+
+        PersonBlock.prototype.blockWillMount = function() {
+            this.el.style.display = 'none';
+
+            console.log('will mount', this.props.p, this.el);
+        };
+
+        PersonBlock.prototype.blockDidMount = function() {
+            var $el = $(this.el);
+
+            setTimeout(function() {
+                $el.slideDown();
+            }, 0);
+
+            console.log('did mount', this.props.p, this.el);
+        };
+
+        PersonBlock.prototype.blockWillUpdate = function(nextProps) {
+            console.log('going to update from', this.props, 'to', nextProps);
+        };
+
+        PersonBlock.prototype.blockDidUpdate = function(previousProps) {
+            console.log('updated from', previousProps, 'to', this.props);
+        };
+
+        PersonBlock.prototype.blockWillUnmount = function() {
+            console.log('will unmount', this.props.p, this.el);
+        };
+
         var loop = clientRuntime.mainLoop(env, function(state) {
             return render(state, clientRuntime.h, {
-                userHook: userHook,
                 resolveLookup: function(propertyName) {
                     return i18n[propertyName];
+                },
+                blocks: {
+                    Person: PersonBlock
                 }
             });
         });
 
         document.body.appendChild(loop.target);
-
-        var Hook = function() {};
-
-        Hook.prototype.hook = function(node, propertyName, previousValue) {
-            if (!document.body.contains(node) && node.classList.contains('item')) {
-                $(node).hide();
-
-                setTimeout(function() {
-                    $(node).slideDown();
-                }, 0);
-            }
-        }
-
-        var userHook = new Hook();
     </script>
 </body>
 </html>

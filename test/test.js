@@ -1,8 +1,8 @@
+var fs = require('fs');
+var path = require('path');
 var assert = require('assert');
 
-var fs = require('fs');
-
-var path = require('path');
+var toHTML = require('vdom-to-html');
 
 var htmltemplateVdom = require('../');
 
@@ -53,7 +53,7 @@ describe('template => VDOM => HTML', function() {
 
             if (existsSync(path.join(__dirname, name, 'output.html'))) {
                 it('html', function() {
-                    var h = require('hyperscript');
+                    var h = require('virtual-dom/h');
 
                     var env = require(path.join(__dirname, name, 'env.js'));
 
@@ -69,7 +69,7 @@ describe('template => VDOM => HTML', function() {
                     }
 
                     var actual
-                        = htmltemplateVdom.render(template, env, h, options).outerHTML;
+                        = toHTML(htmltemplateVdom.render(template, env, h, options));
 
                     assert.equal(trimNewLines(actual), trimNewLines(expected));
                 });

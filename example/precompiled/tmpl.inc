@@ -30,11 +30,14 @@
 
     <ul class="list">
         <TMPL_LOOP people>
-            <TMPL_INLINE person>
+            <TMPL_INLINE BLOCK_NAME="Person" person
+                p=[% $name %]
+                active=[% $active %]>
         </TMPL_LOOP>
     </ul>
 
     <p><button onclick="addClick(<TMPL_VAR id>)">Add person</button></p>
+    <p><button onclick="popClick(<TMPL_VAR id>)">Pop person</button></p>
 
     <div>
         <a href="<TMPL_VAR githubLink>"><TMPL_VAR githubLink></a>

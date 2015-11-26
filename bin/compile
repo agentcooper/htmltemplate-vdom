@@ -4,7 +4,8 @@ var path = require('path');
 
 var fs = require('fs');
 
-var h = require('hyperscript');
+var h = require('virtual-dom/h');
+var toHTML = require('vdom-to-html');
 
 var colors = require('colors/safe');
 
@@ -24,11 +25,6 @@ var argv = require('yargs')
             type: 'string'
         },
 
-        'hooks': {
-            describe: 'add hooks support',
-            type: 'string'
-        },
-
         'options': {
             describe: 'options passed to render function',
             type: 'string'
@@ -38,9 +34,7 @@ var argv = require('yargs')
 
 var template = fs.readFileSync(argv.path).toString().trim();
 
-var renderFunctionString = generator.fromString(template, {
-    hooks: argv.hooks
-});
+var renderFunctionString = generator.fromString(template);
 
 console.log(
     colors.green(renderFunctionString)
@@ -58,6 +52,6 @@ if (argv.run) {
     }
 
     console.log(
-        colors.yellow(renderFunction(env, h, options).outerHTML)
+        colors.yellow(toHTML(renderFunction(env, h, options)))
     );
 }

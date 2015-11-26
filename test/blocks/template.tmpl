@@ -1,0 +1,24 @@
+<TMPL_BLOCK button>
+    <button type="<TMPL_VAR type>">
+        <TMPL_VAR label>
+    </button>
+</TMPL_BLOCK>
+
+<TMPL_BLOCK form>
+    <form class="form">
+        <input type="hidden" name="<TMPL_VAR name>" value="<TMPL_VAR value>" />
+        <TMPL_INLINE BLOCK_NAME="Button" button
+            type="button"
+            label="Click">
+    </form>
+</TMPL_BLOCK>
+
+<div class="container">
+    <TMPL_INLINE BLOCK_NAME="Form" BLOCK_KEY="a" form
+        name="a"
+        value="1">
+    <hr />
+    <TMPL_INLINE BLOCK_NAME="Form" form
+        name="b"
+        value="2">
+</div>
