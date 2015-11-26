@@ -362,6 +362,7 @@ return h('div', { 'className': 'container' }, [
         exitScope();
         return acc;
     }, []),
+    assignLocalVariable('b_l___br0', 0),
     '\n'
 ]);
 }

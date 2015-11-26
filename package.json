@@ -28,7 +28,7 @@
     "colors": "^1.1.2",
     "escodegen": "^1.6.1",
     "htmltemplate-parser": "0.4.1",
-    "htmltemplate-transform": "1.0.7",
+    "htmltemplate-transform": "1.0.8",
     "main-loop": "^3.1.0",
     "traverse": "^0.6.6",
     "vdom-to-html": "2.2.0",
