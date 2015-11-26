@@ -19,7 +19,9 @@
         <label for="toggle-all">Mark all as complete</label>
         <ul class="todo-list">
             <TMPL_FOR todo IN=todos>
-                <TMPL_INLINE BLOCK_NAME="todoItem" todo_item
+                <TMPL_INLINE todo_item
+                    BLOCK_NAME="TodoItem"
+                    BLOCK_KEY=[% $todo->{label} %]
                     todo=[% $todo %]
                     editing=[% $todo->{editing} %]>
             </TMPL_FOR>
@@ -82,16 +84,16 @@
 
 <div class="app">
     <section class="todoapp">
-        <TMPL_INLINE BLOCK_NAME="header" header>
+        <TMPL_INLINE BLOCK_NAME="Header" header>
 
         ## This section should be hidden by default and shown when there are todos
         <TMPL_IF [% count($todos) > 0 %]>
-            <TMPL_INLINE BLOCK_NAME="todos" main_section>
+            <TMPL_INLINE BLOCK_NAME="Todos" main_section>
         </TMPL_IF>
 
         ## This footer should hidden by default and shown when there are todos
         <TMPL_IF [% count($todos) > 0 %]>
-            <TMPL_INLINE BLOCK_NAME="footer" footer
+            <TMPL_INLINE BLOCK_NAME="Footer" footer
                 left_count=[% $left_count %]
                 completed_count=[% $completed_count %]>
         </TMPL_IF>

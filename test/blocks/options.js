@@ -4,7 +4,7 @@ function ButtonBlock() {}
 
 module.exports = {
     blocks: {
-        form: FormBlock,
-        button: ButtonBlock
+        Form: FormBlock,
+        Button: ButtonBlock
     }
 };

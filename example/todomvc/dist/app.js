@@ -132,10 +132,10 @@ function isComplete(todo) {
 })(window, render);
 
 },{"./actions":1,"./blocks":3,"./externals":8,"./state":9,"htmltemplate-vdom/lib/client/runtime":12}],3:[function(require,module,exports){
-exports.todos = require('./blocks/todos');
-exports.todoItem = require('./blocks/todo-item');
-exports.header = require('./blocks/header');
-exports.footer = require('./blocks/footer');
+exports.Todos = require('./blocks/todos');
+exports.TodoItem = require('./blocks/todo-item');
+exports.Header = require('./blocks/header');
+exports.Footer = require('./blocks/footer');
 
 },{"./blocks/footer":4,"./blocks/header":5,"./blocks/todo-item":6,"./blocks/todos":7}],4:[function(require,module,exports){
 var dispatch = require('../actions').dispatch;
@@ -220,10 +220,6 @@ function TodoItem() {
     this.onEditInputBlur = this.onEditInputBlur.bind(this);
     this.onEditInputKeyPress = this.onEditInputKeyPress.bind(this);
 }
-
-TodoItem.getBlockKey = function(props) {
-    return props.todo.label;
-};
 
 TodoItem.prototype.blockDidMount = function() {
     this.edit = this.el.querySelector('.edit');

@@ -30,7 +30,7 @@
 
     <ul class="list">
         <TMPL_LOOP people>
-            <TMPL_INLINE BLOCK_NAME="person" person
+            <TMPL_INLINE BLOCK_NAME="Person" person
                 p=[% $name %]
                 active=[% $active %]>
         </TMPL_LOOP>

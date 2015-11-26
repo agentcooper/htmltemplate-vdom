@@ -70,19 +70,17 @@ function render(state, h, options) {
      * @param {Function} render Block render function
      * @param {Object}   props  Properties of the block - attributes that were
      *                          passed to the TMPL_INLINE tag.
+     * @param {String}   key    Optional block key, necessary for optimal
+     *                          collection rendering.
      */
-    function ViewBlockThunk(name, render, props) {
+    function ViewBlockThunk(name, render, props, key) {
         var Block = blocks[name];
 
         if (!isFunction(Block)) {
             throw new Error('Can\'t find block "' + name + '".');
         }
 
-        // Blocks can define sibling key function that helps with diff.
-        if (isFunction(Block.getBlockKey)) {
-            this.key = Block.getBlockKey(props);
-        }
-
+        this.key = key || null;
         this.name = name;
         this.props = props;
         this._render = render;
@@ -372,10 +370,10 @@ function block_main_section(blockParameters) {
                     enterScope(keyValue('todo', item));
                     acc.push.apply(acc, [
                         '\n ',
-                        new ViewBlockThunk('todoItem', block_todo_item, {
+                        new ViewBlockThunk('TodoItem', block_todo_item, {
                             'todo': lookupValue('todo'),
                             'editing': lookupValue('todo')['editing']
-                        }),
+                        }, lookupValue('todo')['label']),
                         '\n '
                     ]);
                     exitScope();
@@ -500,14 +498,14 @@ return h('div', { 'className': 'app' }, [
     '\n ',
     h('section', { 'className': 'todoapp' }, [
         '\n ',
-        new ViewBlockThunk('header', block_header, {}),
+        new ViewBlockThunk('Header', block_header, {}),
         '\n\n ',
         null,
         '\n ',
         externals['count'](lookupValue('todos')) > 0 ? function () {
             return [
                 '\n ',
-                new ViewBlockThunk('todos', block_main_section, {}),
+                new ViewBlockThunk('Todos', block_main_section, {}),
                 '\n '
             ];
         }() : null,
@@ -517,7 +515,7 @@ return h('div', { 'className': 'app' }, [
         externals['count'](lookupValue('todos')) > 0 ? function () {
             return [
                 '\n ',
-                new ViewBlockThunk('footer', block_footer, {
+                new ViewBlockThunk('Footer', block_footer, {
                     'left_count': lookupValue('left_count'),
                     'completed_count': lookupValue('completed_count')
                 }),

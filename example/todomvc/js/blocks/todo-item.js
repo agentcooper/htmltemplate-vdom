@@ -9,10 +9,6 @@ function TodoItem() {
     this.onEditInputKeyPress = this.onEditInputKeyPress.bind(this);
 }
 
-TodoItem.getBlockKey = function(props) {
-    return props.todo.label;
-};
-
 TodoItem.prototype.blockDidMount = function() {
     this.edit = this.el.querySelector('.edit');
 

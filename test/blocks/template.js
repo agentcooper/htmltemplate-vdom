@@ -70,19 +70,17 @@ function render(state, h, options) {
      * @param {Function} render Block render function
      * @param {Object}   props  Properties of the block - attributes that were
      *                          passed to the TMPL_INLINE tag.
+     * @param {String}   key    Optional block key, necessary for optimal
+     *                          collection rendering.
      */
-    function ViewBlockThunk(name, render, props) {
+    function ViewBlockThunk(name, render, props, key) {
         var Block = blocks[name];
 
         if (!isFunction(Block)) {
             throw new Error('Can\'t find block "' + name + '".');
         }
 
-        // Blocks can define sibling key function that helps with diff.
-        if (isFunction(Block.getBlockKey)) {
-            this.key = Block.getBlockKey(props);
-        }
-
+        this.key = key || null;
         this.name = name;
         this.props = props;
         this._render = render;
@@ -342,7 +340,7 @@ function block_form(blockParameters) {
                 'value': [lookupValue('value')].join('')
             }),
             '\n ',
-            new ViewBlockThunk('button', block_button, {
+            new ViewBlockThunk('Button', block_button, {
                 'type': 'button',
                 'label': 'Click'
             }),
@@ -355,14 +353,14 @@ function block_form(blockParameters) {
 }
 return h('div', { 'className': 'container' }, [
     '\n ',
-    new ViewBlockThunk('form', block_form, {
+    new ViewBlockThunk('Form', block_form, {
         'name': 'a',
         'value': '1'
-    }),
+    }, 'a'),
     '\n ',
     h('hr', {}),
     '\n ',
-    new ViewBlockThunk('form', block_form, {
+    new ViewBlockThunk('Form', block_form, {
         'name': 'b',
         'value': '2'
     }),
