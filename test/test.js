@@ -34,10 +34,9 @@ describe('template => VDOM => HTML', function() {
     })
     .forEach(function(name) {
         describe(name, function() {
-            var template = fs.readFileSync(
-                path.join(__dirname, name, 'template.tmpl'),
-                'utf8'
-            );
+            var filepath = path.join(__dirname, name, 'template.tmpl');
+
+            var template = fs.readFileSync(filepath, 'utf8');
 
             it('vdom', function() {
                 var expected = fs.readFileSync(
@@ -46,7 +45,9 @@ describe('template => VDOM => HTML', function() {
                 );
 
                 var renderFunctionString
-                    = htmltemplateVdom.compile.fromString(template);
+                    = htmltemplateVdom.compile.fromString(template, {
+                        path: filepath
+                    });
 
                 assert.equal(renderFunctionString, expected);
             });
@@ -62,7 +63,9 @@ describe('template => VDOM => HTML', function() {
                         'utf8'
                     );
 
-                    var options = {};
+                    var options = {
+                        path: filepath
+                    };
 
                     if (existsSync(path.join(__dirname, name, 'options.js'))) {
                         options = require(path.join(__dirname, name, 'options.js'));

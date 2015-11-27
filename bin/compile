@@ -34,7 +34,9 @@ var argv = require('yargs')
 
 var template = fs.readFileSync(argv.path).toString().trim();
 
-var renderFunctionString = generator.fromString(template);
+var renderFunctionString = generator.fromString(template, {
+    path: argv.path
+});
 
 console.log(
     colors.green(renderFunctionString)
