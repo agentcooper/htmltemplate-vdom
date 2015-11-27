@@ -49,7 +49,7 @@ function render(state, h, options) {
         }
     }
 
-    function lookupValue(propertyName) {
+    function lookupValue(propertyName, params) {
         for (var i = scopeChain.length - 1; i >= 0; i--) {
             var scope = scopeChain[i];
 
@@ -63,7 +63,7 @@ function render(state, h, options) {
         }
 
         if (isFunction(resolveLookup)) {
-            return resolveLookup(propertyName);
+            return resolveLookup(propertyName, params);
         }
 
         return null;
