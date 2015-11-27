@@ -8,11 +8,20 @@ function render(state, h, options) {
     // Scope manipulation.
     var scopeChain = [];
 
-    function enterScope(context) {
+    function enterScope(context, special) {
         scopeChain.push({
             local: null,
-            context: context
+            context: context,
+            special: special || null
         });
+    }
+
+    function deriveSpecialLoopVariables(arr, currentIndex) {
+        return {
+            __counter__: currentIndex + 1,
+            __first__: currentIndex === 0,
+            __last__: currentIndex === (arr.length - 1)
+        };
     }
 
     function exitScope() {
@@ -23,7 +32,7 @@ function render(state, h, options) {
 
         if (localVariables) {
             if (!outerScope.local) {
-                outerScope.local = localVariables
+                outerScope.local = localVariables;
             } else {
                 merge(outerScope.local, localVariables);
             }
@@ -46,6 +55,8 @@ function render(state, h, options) {
 
             if (scope.local && propertyName in scope.local) {
                 return scope.local[propertyName];
+            } else if (scope.special && propertyName in scope.special) {
+                return scope.special[propertyName];
             } else if (propertyName in scope.context) {
                 return scope.context[propertyName];
             }
@@ -314,10 +325,9 @@ function render(state, h, options) {
 
     enterScope(state);
 
-function block_header(blockParameters) {
+function block_header_inc(blockParameters) {
     enterScope(blockParameters);
     var blockResult = [
-        '\n ',
         h('header', { 'className': 'header' }, [
             '\n ',
             h('h1', {}, ['todos']),
@@ -328,118 +338,20 @@ function block_header(blockParameters) {
                 'placeholder': 'What needs to be done?',
                 'autofocus': true
             }),
-            '\n '
+            '\n'
         ]),
         '\n'
     ];
     exitScope();
     return blockResult;
 }
-function block_main_section(blockParameters) {
+function block_todo_item_inc(blockParameters) {
     enterScope(blockParameters);
     var blockResult = [
-        '\n ',
-        h('section', { 'className': 'main' }, [
-            '\n ',
-            +lookupValue('left_count') === 0 ? function () {
-                return [
-                    '\n ',
-                    h('input', {
-                        'className': 'toggle-all',
-                        'type': 'checkbox',
-                        'checked': true
-                    }),
-                    '\n '
-                ];
-            }() : function () {
-                return [
-                    '\n ',
-                    h('input', {
-                        'className': 'toggle-all',
-                        'type': 'checkbox'
-                    }),
-                    '\n '
-                ];
-            }(),
-            '\n ',
-            h('label', { 'attributes': { 'for': 'toggle-all' } }, ['Mark all as complete']),
-            '\n ',
-            h('ul', { 'className': 'todo-list' }, [
-                '\n ',
-                (lookupValue('todos') || []).reduce(function (acc, item) {
-                    enterScope(keyValue('todo', item));
-                    acc.push.apply(acc, [
-                        '\n ',
-                        new ViewBlockThunk('TodoItem', block_todo_item, {
-                            'todo': lookupValue('todo'),
-                            'editing': lookupValue('todo')['editing']
-                        }, lookupValue('todo')['id']),
-                        '\n '
-                    ]);
-                    exitScope();
-                    return acc;
-                }, []),
-                '\n '
-            ]),
-            '\n '
-        ]),
-        '\n'
-    ];
-    exitScope();
-    return blockResult;
-}
-function block_footer(blockParameters) {
-    enterScope(blockParameters);
-    var blockResult = [
-        '\n ',
-        h('footer', { 'className': 'footer' }, [
-            '\n ',
-            h('span', { 'className': 'todo-count' }, [
-                '\n ',
-                +lookupValue('left_count') === 1 ? function () {
-                    return [
-                        '\n ',
-                        h('strong', {}, ['1']),
-                        ' item left\n            '
-                    ];
-                }() : function () {
-                    return [
-                        '\n ',
-                        h('strong', {}, [lookupValue('left_count')]),
-                        ' items left\n            '
-                    ];
-                }(),
-                '\n '
-            ]),
-            '\n\n ',
-            null,
-            '\n ',
-            null,
-            '\n\n ',
-            null,
-            '\n ',
-            lookupValue('completed_count') > 0 ? function () {
-                return [
-                    '\n ',
-                    h('button', { 'className': 'clear-completed' }, ['Clear completed']),
-                    '\n '
-                ];
-            }() : null,
-            '\n '
-        ]),
-        '\n'
-    ];
-    exitScope();
-    return blockResult;
-}
-function block_todo_item(blockParameters) {
-    enterScope(blockParameters);
-    var blockResult = [
-        '\n ',
         null,
-        '\n ',
+        '\n',
         null,
-        '\n ',
+        '\n',
         h('li', {
             'className': [
                 '\n ',
@@ -487,7 +399,102 @@ function block_todo_item(blockParameters) {
                 'className': 'edit',
                 'value': [lookupValue('todo') && lookupValue('todo')['label_draft']].join('')
             }),
-            '\n '
+            '\n'
+        ]),
+        '\n'
+    ];
+    exitScope();
+    return blockResult;
+}
+function block_main_section_inc(blockParameters) {
+    enterScope(blockParameters);
+    var blockResult = [
+        h('section', { 'className': 'main' }, [
+            '\n ',
+            +lookupValue('left_count') === 0 ? function () {
+                return [
+                    '\n ',
+                    h('input', {
+                        'className': 'toggle-all',
+                        'type': 'checkbox',
+                        'checked': true
+                    }),
+                    '\n '
+                ];
+            }() : function () {
+                return [
+                    '\n ',
+                    h('input', {
+                        'className': 'toggle-all',
+                        'type': 'checkbox'
+                    }),
+                    '\n '
+                ];
+            }(),
+            '\n ',
+            h('label', { 'attributes': { 'for': 'toggle-all' } }, ['Mark all as complete']),
+            '\n ',
+            h('ul', { 'className': 'todo-list' }, [
+                '\n ',
+                (lookupValue('todos') || []).reduce(function (acc, item, index, arr) {
+                    enterScope(keyValue('todo', item), deriveSpecialLoopVariables(arr, index));
+                    acc.push.apply(acc, [
+                        '\n ',
+                        new ViewBlockThunk('TodoItem', block_todo_item_inc, {
+                            'todo': lookupValue('todo'),
+                            'editing': lookupValue('todo')['editing']
+                        }, lookupValue('todo')['id']),
+                        '\n '
+                    ]);
+                    exitScope();
+                    return acc;
+                }, []),
+                '\n '
+            ]),
+            '\n'
+        ]),
+        '\n'
+    ];
+    exitScope();
+    return blockResult;
+}
+function block_footer_inc(blockParameters) {
+    enterScope(blockParameters);
+    var blockResult = [
+        h('footer', { 'className': 'footer' }, [
+            '\n ',
+            h('span', { 'className': 'todo-count' }, [
+                '\n ',
+                +lookupValue('left_count') === 1 ? function () {
+                    return [
+                        '\n ',
+                        h('strong', {}, ['1']),
+                        ' item left\n        '
+                    ];
+                }() : function () {
+                    return [
+                        '\n ',
+                        h('strong', {}, [lookupValue('left_count')]),
+                        ' items left\n        '
+                    ];
+                }(),
+                '\n '
+            ]),
+            '\n\n ',
+            null,
+            '\n ',
+            null,
+            '\n\n ',
+            null,
+            '\n ',
+            lookupValue('completed_count') > 0 ? function () {
+                return [
+                    '\n ',
+                    h('button', { 'className': 'clear-completed' }, ['Clear completed']),
+                    '\n '
+                ];
+            }() : null,
+            '\n'
         ]),
         '\n'
     ];
@@ -498,14 +505,14 @@ return h('div', { 'className': 'app' }, [
     '\n ',
     h('section', { 'className': 'todoapp' }, [
         '\n ',
-        new ViewBlockThunk('Header', block_header, {}),
+        new ViewBlockThunk('Header', block_header_inc, {}),
         '\n\n ',
         null,
         '\n ',
         externals['count'](lookupValue('todos')) > 0 ? function () {
             return [
                 '\n ',
-                new ViewBlockThunk('Todos', block_main_section, {}),
+                new ViewBlockThunk('Todos', block_main_section_inc, {}),
                 '\n '
             ];
         }() : null,
@@ -515,7 +522,7 @@ return h('div', { 'className': 'app' }, [
         externals['count'](lookupValue('todos')) > 0 ? function () {
             return [
                 '\n ',
-                new ViewBlockThunk('Footer', block_footer, {
+                new ViewBlockThunk('Footer', block_footer_inc, {
                     'left_count': lookupValue('left_count'),
                     'completed_count': lookupValue('completed_count')
                 }),
