@@ -414,7 +414,7 @@ return h('div', { 'className': 'app' }, [
     '\n\n ',
     h('div', {}, [
         '\n ',
-        h('a', { 'href': [lookupValue('githubLink')].join('') }, [lookupValue('githubLink')]),
+        h('a', { 'href': lookupValue('githubLink') }, [lookupValue('githubLink')]),
         '\n '
     ]),
     '\n'

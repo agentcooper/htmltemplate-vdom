@@ -387,6 +387,40 @@ return h('div', { 'className': 'container' }, [
         exitScope();
         return acc;
     }, []),
+    '\n\n ',
+    h('input', {
+        'type': 'checkbox',
+        'checked': lookupValue('check_checkbox') ? true : null
+    }),
+    '\n ',
+    h('button', {
+        'type': 'checkbox',
+        'disabled': lookupValue('disable_button') ? true : null
+    }, ['\n Button\n    ']),
+    '\n ',
+    h('input', {
+        'type': 'text',
+        'className': lookupValue('class_name') ? lookupValue('class_name') : null
+    }),
+    '\n ',
+    (lookupValue('divs') || []).reduce(function (acc, item, index, arr) {
+        enterScope(keyValue('div', item), deriveSpecialLoopVariables(arr, index));
+        acc.push.apply(acc, [
+            '\n ',
+            h('div', {
+                'className': lookupValue('div') && lookupValue('div')['add_only_class'] ? lookupValue('div') && lookupValue('div')['class_name'] ? function () {
+                    return [lookupValue('div') && lookupValue('div')['class_name']];
+                }() : function () {
+                    return ['b-default'];
+                }() : !(lookupValue('div') && lookupValue('div')['add_only_class']) && (lookupValue('div') && lookupValue('div')['add_both_class_and_id']) ? lookupValue('div')['class_name'] || lookupValue('div')['id'] : null,
+                'id': !(lookupValue('div') && lookupValue('div')['add_only_class']) && (lookupValue('div') && lookupValue('div')['add_both_class_and_id']) ? lookupValue('div') && lookupValue('div')['id'] : null,
+                'attributes': { 'data-default': !(lookupValue('div') && lookupValue('div')['add_both_class_and_id']) && !(lookupValue('div') && lookupValue('div')['add_only_class']) ? 'true' : null }
+            }, [lookupValue('div') && lookupValue('div')['content']]),
+            '\n '
+        ]);
+        exitScope();
+        return acc;
+    }, []),
     '\n'
 ]);
 }

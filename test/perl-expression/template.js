@@ -383,7 +383,7 @@ return h('div', { 'className': 'app' }, [
         return ['x'];
     }() : null,
     '\n ',
-    lookupValue('a')[lookupValue('b') - 1] && lookupValue('a')[lookupValue('@b') % 3] && lookupValue('a')[0] ? function () {
+    lookupValue('a')[lookupValue('b') - 1] && lookupValue('a')[lookupValue('b') % 3] && lookupValue('a')[0] ? function () {
         return ['x'];
     }() : null,
     '\n\n ',

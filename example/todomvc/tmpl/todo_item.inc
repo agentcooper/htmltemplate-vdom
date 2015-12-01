@@ -6,11 +6,7 @@
         <TMPL_IF todo.editing> editing</TMPL_IF>
     ">
     <div class="view">
-        <TMPL_IF todo.completed>
-            <input class="toggle" type="checkbox" checked>
-        <TMPL_ELSE>
-            <input class="toggle" type="checkbox">
-        </TMPL_IF>
+        <input class="toggle" type="checkbox" <TMPL_IF todo.completed>checked</TMPL_IF>>
         <label><TMPL_VAR todo.label></label>
         <button class="destroy"></button>
     </div>

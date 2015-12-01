@@ -1,9 +1,5 @@
 <section class="main">
-    <TMPL_IF [% $left_count == 0 %]>
-        <input class="toggle-all" type="checkbox" checked>
-    <TMPL_ELSE>
-        <input class="toggle-all" type="checkbox">
-    </TMPL_IF>
+    <input class="toggle-all" type="checkbox" <TMPL_IF [% $left_count == 0 %]>checked</TMPL_IF>>
     <label for="toggle-all">Mark all as complete</label>
     <ul class="todo-list">
         <TMPL_FOR todo IN=todos>
