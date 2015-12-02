@@ -49,7 +49,7 @@ function render(state, h, options) {
         }
     }
 
-    function lookupValue(propertyName) {
+    function lookupValue(propertyName, params) {
         for (var i = scopeChain.length - 1; i >= 0; i--) {
             var scope = scopeChain[i];
 
@@ -63,7 +63,7 @@ function render(state, h, options) {
         }
 
         if (isFunction(resolveLookup)) {
-            return resolveLookup(propertyName);
+            return resolveLookup(propertyName, params);
         }
 
         return null;
@@ -333,7 +333,7 @@ function block_header_inc(blockParameters) {
             h('h1', {}, ['todos']),
             '\n ',
             h('input', {
-                'value': [lookupValue('new_todo_label')].join(''),
+                'value': lookupValue('new_todo_label'),
                 'className': 'new-todo',
                 'placeholder': 'What needs to be done?',
                 'autofocus': true
@@ -368,26 +368,11 @@ function block_todo_item_inc(blockParameters) {
             '\n ',
             h('div', { 'className': 'view' }, [
                 '\n ',
-                lookupValue('todo') && lookupValue('todo')['completed'] ? function () {
-                    return [
-                        '\n ',
-                        h('input', {
-                            'className': 'toggle',
-                            'type': 'checkbox',
-                            'checked': true
-                        }),
-                        '\n '
-                    ];
-                }() : function () {
-                    return [
-                        '\n ',
-                        h('input', {
-                            'className': 'toggle',
-                            'type': 'checkbox'
-                        }),
-                        '\n '
-                    ];
-                }(),
+                h('input', {
+                    'className': 'toggle',
+                    'type': 'checkbox',
+                    'checked': lookupValue('todo') && lookupValue('todo')['completed'] ? true : null
+                }),
                 '\n ',
                 h('label', {}, [lookupValue('todo') && lookupValue('todo')['label']]),
                 '\n ',
@@ -397,7 +382,7 @@ function block_todo_item_inc(blockParameters) {
             '\n ',
             h('input', {
                 'className': 'edit',
-                'value': [lookupValue('todo') && lookupValue('todo')['label_draft']].join('')
+                'value': lookupValue('todo') && lookupValue('todo')['label_draft']
             }),
             '\n'
         ]),
@@ -411,26 +396,11 @@ function block_main_section_inc(blockParameters) {
     var blockResult = [
         h('section', { 'className': 'main' }, [
             '\n ',
-            +lookupValue('left_count') === 0 ? function () {
-                return [
-                    '\n ',
-                    h('input', {
-                        'className': 'toggle-all',
-                        'type': 'checkbox',
-                        'checked': true
-                    }),
-                    '\n '
-                ];
-            }() : function () {
-                return [
-                    '\n ',
-                    h('input', {
-                        'className': 'toggle-all',
-                        'type': 'checkbox'
-                    }),
-                    '\n '
-                ];
-            }(),
+            h('input', {
+                'className': 'toggle-all',
+                'type': 'checkbox',
+                'checked': +lookupValue('left_count') === 0 ? true : null
+            }),
             '\n ',
             h('label', { 'attributes': { 'for': 'toggle-all' } }, ['Mark all as complete']),
             '\n ',

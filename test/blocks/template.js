@@ -329,7 +329,7 @@ function block_button(blockParameters) {
     enterScope(blockParameters);
     var blockResult = [
         '\n ',
-        h('button', { 'type': [lookupValue('type')].join('') }, [
+        h('button', { 'type': lookupValue('type') }, [
             '\n ',
             lookupValue('label'),
             '\n '
@@ -347,8 +347,8 @@ function block_form(blockParameters) {
             '\n ',
             h('input', {
                 'type': 'hidden',
-                'name': [lookupValue('name')].join(''),
-                'value': [lookupValue('value')].join('')
+                'name': lookupValue('name'),
+                'value': lookupValue('value')
             }),
             '\n ',
             new ViewBlockThunk('Button', block_button, {

@@ -26,4 +26,22 @@
     <TMPL_FOR item IN=items>
         <TMPL_VAR item.title>
     </TMPL_FOR>
+
+    <input type="checkbox" <TMPL_IF check_checkbox>checked</TMPL_IF> />
+    <button type="checkbox" <TMPL_IF disable_button>disabled</TMPL_IF>>
+        Button
+    </button>
+    <input type="text" <TMPL_IF class_name>class="<TMPL_VAR class_name>"</TMPL_IF>>
+    <TMPL_FOR div IN=divs>
+        <div
+            <TMPL_IF div.add_only_class>
+                class="<TMPL_IF div.class_name><TMPL_VAR div.class_name><TMPL_ELSE>b-default</TMPL_IF>"
+            <TMPL_ELSIF div.add_both_class_and_id>
+                class="<TMPL_VAR [% $div->class_name || $div->{id} %]>"
+                id="<TMPL_VAR div.id>"
+            <TMPL_ELSE>
+                data-default="true"
+            </TMPL_IF>
+            ><TMPL_VAR div.content></div>
+    </TMPL_FOR>
 </div>
