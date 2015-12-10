@@ -62,28 +62,28 @@
             githubLink: 'https://github.com/agentcooper/htmltemplate-vdom',
 
             itemClick: function(id) {
-                this.people.forEach(function(person) {
+                env.people.forEach(function(person) {
                     person.active = String(person.id) === String(id);
                 });
 
-                loop.update(this);
+                loop.update(env);
             },
 
             counterClick: function(id) {
-                this.people.forEach(function(person) {
+                env.people.forEach(function(person) {
                     if (String(person.id) === String(id)) {
                         person.counter = person.counter || 0;
                         person.counter += 1;
                     }
                 });
 
-                loop.update(this);
+                loop.update(env);
             },
 
             addClick: function() {
                 var names = ['Jack', 'Kirk', 'Liza', 'Matthew', 'Joe', 'Jennifer'];
 
-                this.people.push({
+                env.people.push({
                     id: 'id' + id,
                     name: names[id % names.length],
                     inner: [],
@@ -92,12 +92,12 @@
 
                 id++;
 
-                loop.update(this);
+                loop.update(env);
             },
 
             popClick: function() {
-                this.people.pop();
-                loop.update(this);
+                env.people.pop();
+                loop.update(env);
             }
         };
 
@@ -141,16 +141,17 @@
             console.log('will unmount', this.props.p, this.el);
         };
 
-        var loop = clientRuntime.mainLoop(env, function(state) {
-            return render(state, clientRuntime.h, {
+        var loop = clientRuntime.mainLoop(
+            env,
+            render(clientRuntime.h, {
                 resolveLookup: function(propertyName) {
                     return i18n[propertyName];
                 },
                 blocks: {
                     Person: PersonBlock
                 }
-            });
-        });
+            })
+        );
 
         document.body.appendChild(loop.target);
     </script>

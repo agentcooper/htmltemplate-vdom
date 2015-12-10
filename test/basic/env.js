@@ -5,6 +5,9 @@ module.exports = {
 
     city_copy: 'City: ',
 
+    itemClick: function(id) {},
+    counterClick: function(id) {},
+
     people: [
         {
             id: 'id1',

@@ -261,12 +261,6 @@
         }
     };
 
-    function tmpl_call(name) {
-        var args = Array.prototype.slice.call(arguments, 1);
-
-        return lookupValue(name).apply(this, args);
-    }
-
     // Pure utility functions.
     function deriveSpecialLoopVariables(arr, currentIndex) {
         return {
@@ -356,7 +350,7 @@ return function (h, options) {
                                     return ['item--active'];
                                 }() : null
                             ].join(''),
-                            'onclick': tmpl_call.bind(state, 'itemClick', lookupValueWithFallback('id'))
+                            'onclick': lookupValueWithFallback('itemClick').bind(null, lookupValueWithFallback('id'))
                         }, [
                             '\n ',
                             lookupValueWithFallback('name'),
@@ -401,7 +395,7 @@ return function (h, options) {
                             '\n\n ',
                             h('div', {}, [
                                 '\n ',
-                                h('button', { 'onclick': tmpl_call.bind(state, 'counterClick', lookupValueWithFallback('id')) }, [
+                                h('button', { 'onclick': lookupValueWithFallback('counterClick').bind(null, lookupValueWithFallback('id')) }, [
                                     '\n ',
                                     h('span', {}, ['Click me']),
                                     '\n '

@@ -261,12 +261,6 @@
         }
     };
 
-    function tmpl_call(name) {
-        var args = Array.prototype.slice.call(arguments, 1);
-
-        return lookupValue(name).apply(this, args);
-    }
-
     // Pure utility functions.
     function deriveSpecialLoopVariables(arr, currentIndex) {
         return {
