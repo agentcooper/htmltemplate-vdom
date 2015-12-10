@@ -26,6 +26,7 @@
   "license": "MIT",
   "dependencies": {
     "colors": "^1.1.2",
+    "ent": "2.2.0",
     "escodegen": "^1.6.1",
     "htmltemplate-parser": "0.4.4",
     "htmltemplate-transform": "1.0.11",
