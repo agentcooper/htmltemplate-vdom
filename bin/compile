@@ -10,6 +10,7 @@ var toHTML = require('vdom-to-html');
 var colors = require('colors/safe');
 
 var generator = require('../lib/generator/');
+var requireFromString = require('../lib/require-from-string');
 
 var argv = require('yargs')
     .usage('Usage: $0 [options]')
@@ -44,8 +45,7 @@ console.log(
 
 if (argv.run) {
     var env = require(path.resolve('./', argv.run));
-
-    var renderFunction = eval('(' + renderFunctionString + ')');
+    var renderer = requireFromString(renderFunctionString);
 
     var options = {};
 
@@ -54,6 +54,10 @@ if (argv.run) {
     }
 
     console.log(
-        colors.yellow(toHTML(renderFunction(env, h, options)))
+        colors.yellow(
+            toHTML(
+                renderer(h, options)(env)
+            )
+        )
     );
 }

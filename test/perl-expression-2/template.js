@@ -1,9 +1,12 @@
-function render(state, h, options) {
-    options = options || {};
-
-    var blocks = options.blocks || {};
-    var externals = options.externals || {};
-    var resolveLookup = options.resolveLookup;
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define([], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = factory();
+    } else {
+        root.render = factory();
+    }
+}(this, function () {
 
     // Scope manipulation.
     var scopeChain = [];
@@ -16,21 +19,13 @@ function render(state, h, options) {
         });
     }
 
-    function deriveSpecialLoopVariables(arr, currentIndex) {
-        return {
-            __counter__: currentIndex + 1,
-            __first__: currentIndex === 0,
-            __last__: currentIndex === (arr.length - 1)
-        };
-    }
-
     function exitScope() {
         var innerScope = scopeChain.pop();
         var outerScope = last(scopeChain);
 
         var localVariables = innerScope.local;
 
-        if (localVariables) {
+        if (localVariables && outerScope) {
             if (!outerScope.local) {
                 outerScope.local = localVariables;
             } else {
@@ -49,7 +44,7 @@ function render(state, h, options) {
         }
     }
 
-    function lookupValue(propertyName, params) {
+    function lookupValue(resolveLookup, propertyName, params) {
         for (var i = scopeChain.length - 1; i >= 0; i--) {
             var scope = scopeChain[i];
 
@@ -76,17 +71,16 @@ function render(state, h, options) {
 
     /**
      * Creates a thunk that wraps a view block
-     * @param {String}   name   Block name, should be passed to top-level
-     *                          render function
+     * @param {Block}    Block  Block constructor
      * @param {Function} render Block render function
      * @param {Object}   props  Properties of the block - attributes that were
      *                          passed to the TMPL_INLINE tag.
+     * @param {String}   name   Block name, should be passed to top-level
+     *                          render function
      * @param {String}   key    Optional block key, necessary for optimal
      *                          collection rendering.
      */
-    function ViewBlockThunk(name, render, props, key) {
-        var Block = blocks[name];
-
+    function ViewBlockThunk(Block, render, props, name, key) {
         if (!isFunction(Block)) {
             throw new Error('Can\'t find block "' + name + '".');
         }
@@ -94,7 +88,9 @@ function render(state, h, options) {
         this.key = key || null;
         this.name = name;
         this.props = props;
+
         this._render = render;
+        this._Block = Block;
 
         // Save current scope chain to a special closure to retrieve on
         // `render` call.
@@ -125,15 +121,13 @@ function render(state, h, options) {
             var shouldReusePreviousBlock = (
                 previous &&
                 previous.block &&
-                previous.name === name
+                previous._Block === this._Block
             );
 
             if (shouldReusePreviousBlock) {
                 block = this.block = previous.block;
             } else {
-                var Block = blocks[name];
-
-                block = this.block = new Block(props);
+                block = this.block = new this._Block(props);
 
                 // These two fields will be managed by the lifecycle mechanism.
                 block.el = null;
@@ -273,6 +267,15 @@ function render(state, h, options) {
         return lookupValue(name).apply(this, args);
     }
 
+    // Pure utility functions.
+    function deriveSpecialLoopVariables(arr, currentIndex) {
+        return {
+            __counter__: currentIndex + 1,
+            __first__: currentIndex === 0,
+            __last__: currentIndex === (arr.length - 1)
+        };
+    }
+
     function isVDOMNode(node) {
         return node && node.type === 'VirtualNode';
     }
@@ -323,44 +326,53 @@ function render(state, h, options) {
         return list[list.length - 1];
     }
 
-    enterScope(state);
-
-return h('div', { 'className': 'header' }, [
-    '\n ',
-    lookupValue('showNotifications') && lookupValue('loggedIn') ? function () {
-        return [
+return function (h, options) {
+    options = options || {};
+    var blocks = options.blocks || {};
+    var externals = options.externals || {};
+    var lookupValueWithFallback = lookupValue.bind(null, options.resolveLookup);
+    return function (state) {
+        enterScope(state);
+        var returnValue = h('div', { 'className': 'header' }, [
             '\n ',
-            h('div', { 'className': 'notifications' }, [
-                '\n ',
-                (lookupValue('notifications') || []).reduce(function (acc, item, index, arr) {
-                    enterScope(item, deriveSpecialLoopVariables(arr, index));
-                    acc.push.apply(acc, [
+            lookupValueWithFallback('showNotifications') && lookupValueWithFallback('loggedIn') ? function () {
+                return [
+                    '\n ',
+                    h('div', { 'className': 'notifications' }, [
                         '\n ',
-                        h('div', {
-                            'className': [
-                                '\n notification\n                    ',
-                                String(lookupValue('type')) === 'warning' ? function () {
-                                    return ['\n notification--warning\n                    '];
-                                }() : String(lookupValue('type')) === 'urgent' ? function () {
-                                    return ['\n notification--urgent\n                    '];
-                                }() : null,
+                        (lookupValueWithFallback('notifications') || []).reduce(function (acc, item, index, arr) {
+                            enterScope(item, deriveSpecialLoopVariables(arr, index));
+                            acc.push.apply(acc, [
+                                '\n ',
+                                h('div', {
+                                    'className': [
+                                        '\n notification\n                    ',
+                                        String(lookupValueWithFallback('type')) === 'warning' ? function () {
+                                            return ['\n notification--warning\n                    '];
+                                        }() : String(lookupValueWithFallback('type')) === 'urgent' ? function () {
+                                            return ['\n notification--urgent\n                    '];
+                                        }() : null,
+                                        '\n '
+                                    ].join('')
+                                }, [
+                                    '\n ',
+                                    lookupValueWithFallback('text'),
+                                    '\n '
+                                ]),
                                 '\n '
-                            ].join('')
-                        }, [
-                            '\n ',
-                            lookupValue('text'),
-                            '\n '
-                        ]),
+                            ]);
+                            exitScope();
+                            return acc;
+                        }, []),
                         '\n '
-                    ]);
-                    exitScope();
-                    return acc;
-                }, []),
-                '\n '
-            ]),
-            '\n '
-        ];
-    }() : null,
-    '\n'
-]);
-}
+                    ]),
+                    '\n '
+                ];
+            }() : null,
+            '\n'
+        ]);
+        exitScope();
+        return returnValue;
+    };
+};
+}));
