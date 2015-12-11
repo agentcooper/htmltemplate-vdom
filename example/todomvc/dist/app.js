@@ -1,4 +1,545 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define([], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = factory();
+    } else {
+        root.render = factory();
+    }
+}(this, function () {
+
+    // Scope manipulation.
+    var scopeChain = [];
+
+    function enterScope(context, special) {
+        scopeChain.push({
+            local: null,
+            context: context,
+            special: special || null
+        });
+    }
+
+    function exitScope() {
+        var innerScope = scopeChain.pop();
+        var outerScope = last(scopeChain);
+
+        var localVariables = innerScope.local;
+
+        if (localVariables && outerScope) {
+            if (!outerScope.local) {
+                outerScope.local = localVariables;
+            } else {
+                merge(outerScope.local, localVariables);
+            }
+        }
+    }
+
+    function assignLocalVariable(name, value) {
+        var scope = last(scopeChain);
+
+        if (!scope.local) {
+            scope.local = keyValue(name, value);
+        } else {
+            scope.local[name] = value;
+        }
+    }
+
+    function lookupValue(resolveLookup, propertyName, params) {
+        for (var i = scopeChain.length - 1; i >= 0; i--) {
+            var scope = scopeChain[i];
+
+            if (scope.local && propertyName in scope.local) {
+                return scope.local[propertyName];
+            } else if (scope.special && propertyName in scope.special) {
+                return scope.special[propertyName];
+            } else if (propertyName in scope.context) {
+                return scope.context[propertyName];
+            }
+        }
+
+        if (isFunction(resolveLookup)) {
+            return resolveLookup(propertyName, params);
+        }
+
+        return null;
+    }
+
+    // View blocks.
+    //
+    // Each view block is wrapped by a thunk that optionally calls
+    // `block.shouldBlockUpdate` before each render.
+
+    /**
+     * Creates a thunk that wraps a view block
+     * @param {Block}    Block  Block constructor
+     * @param {Function} render Block render function
+     * @param {Object}   props  Properties of the block - attributes that were
+     *                          passed to the TMPL_INLINE tag.
+     * @param {String}   name   Block name, should be passed to top-level
+     *                          render function
+     * @param {String}   key    Optional block key, necessary for optimal
+     *                          collection rendering.
+     */
+    function ViewBlockThunk(Block, render, props, name, key) {
+        if (!isFunction(Block)) {
+            throw new Error('Can\'t find block "' + name + '".');
+        }
+
+        this.key = key || null;
+        this.name = name;
+        this.props = props;
+
+        this._render = render;
+        this._Block = Block;
+
+        // Save current scope chain to a special closure to retrieve on
+        // `render` call.
+        this._closure = scopeChain.slice();
+    }
+
+    /**
+     * This property is used by `virtual-dom` to detect thunks.
+     * @type {String}
+     */
+    ViewBlockThunk.prototype.type = 'Thunk';
+
+    /**
+     * Renders the view block content, this function is called by `virtual-dom`s
+     * diff process.
+     * @param  {ViewBlockThunk} previous Previously rendered thunk
+     * @return {VNode}
+     */
+    ViewBlockThunk.prototype.render = function(previous) {
+        var name = this.name;
+        var props = this.props;
+        var block = this.block
+
+        if (!block) {
+            // Reusing block instances between thunk renders. This is done
+            // to keep a single stateful block instance throughout all render
+            // passes.
+            var shouldReusePreviousBlock = (
+                previous &&
+                previous.block &&
+                previous._Block === this._Block
+            );
+
+            if (shouldReusePreviousBlock) {
+                block = this.block = previous.block;
+            } else {
+                block = this.block = new this._Block(props);
+
+                // These two fields will be managed by the lifecycle mechanism.
+                block.el = null;
+                block.props = props;
+            }
+
+            if (isFunction(block.shouldBlockUpdate)) {
+                this._shouldUpdate = block.shouldBlockUpdate.bind(block);
+            }
+        }
+
+        if (!previous || this._shouldUpdate(props)) {
+            // Replace shared `scopeChain` with the one saved in closure, then
+            // restore it once block content is retrieved.
+            var oldScopeChain = scopeChain;
+            scopeChain = this._closure;
+
+            var topLevelVNodes = this._render(props).filter(isVDOMNode);
+
+            if (topLevelVNodes.length !== 1) {
+                throw new Error('Template provided for "' + name + '" block returns multiple root nodes instead of one.');
+            }
+
+            var nextVNode = last(topLevelVNodes);
+
+            scopeChain = oldScopeChain;
+
+            // Update block instance with the updated props.
+            block.props = props;
+
+            var lifeCycleHook = new LifeCycleHook(block, props);
+
+            // Do not override special 'no-properties' object that is shared
+            // across all VNode instances.
+            var nextVNodeProperties = nextVNode.properties;
+
+            nextVNode.properties = merge(clone(nextVNodeProperties), {
+                lc: lifeCycleHook,
+                attributes: merge(clone(nextVNodeProperties.attributes), {
+                    // This attribute is added for easier debugging, maybe
+                    // it should only be added in a special *debug* mode.
+                    'data-block-name': name
+                })
+            });
+
+            // Lifecycle hook has to be also installed into special `hooks`
+            // hash. Since there are certainly no hooks installed already,
+            // this property is overwritten.
+            nextVNode.hooks = { lc: lifeCycleHook };
+
+            return nextVNode;
+        } else {
+            return previous.vnode;
+        }
+    };
+
+    /**
+     * Default `shouldBlockUpdate` implementation, always rerenders.
+     * @param  {Object} nextProps
+     * @return {Boolean}
+     */
+    ViewBlockThunk.prototype._shouldUpdate = function(nextProps) {
+        return true;
+    };
+
+    /**
+     * Hook that implements view block lifecycle mechanism.
+     * @param {Block} block
+     * @param {Object} props
+     */
+    function LifeCycleHook(block, props) {
+        this.block = block;
+        this.props = props;
+    }
+
+    /**
+     * Called whenever its target VNode is updated, for now the block callback
+     * is executed on initial VNode update, i.e. insertion.
+     * @param  {DOMNode}       node
+     * @param  {String}        propertyName  property name that hook is attached
+     *                                       to, meaningless in current use
+     * @param  {LifeCycleHook} previousValue
+     */
+    LifeCycleHook.prototype.hook = function(node, propertyName, previousValue) {
+        var block = this.block;
+
+        if (!previousValue) {
+            block.el = node;
+
+            if (isFunction(block.blockWillMount)) {
+                block.blockWillMount();
+            }
+
+            if (isFunction(block.blockDidMount)) {
+                defer(function() {
+                    block.blockDidMount();
+                });
+            }
+        } else {
+            var previousProps = previousValue.props;
+
+            if (isFunction(block.blockDidUpdate) && !areShallowEqual(this.props, previousProps)) {
+                defer(function() {
+                    block.blockDidUpdate(previousProps);
+                });
+            }
+        }
+    };
+
+    /**
+     * Called whenever its target VNode is updated or removed, for now block
+     * callback is executed in latter case.
+     * @param  {DOMNode}       node
+     * @param  {String}        propertyName property name that hook is attached
+     *                                      to, meaningless in current use
+     * @param  {LifeCycleHook} nextValue
+     */
+    LifeCycleHook.prototype.unhook = function(node, propertyName, nextValue) {
+        var block = this.block;
+
+        if (!nextValue) {
+            if (isFunction(block.blockWillUnmount)) {
+                block.blockWillUnmount();
+            }
+        } else {
+            var nextProps = nextValue.props;
+
+            if (isFunction(block.blockWillUpdate) && !areShallowEqual(this.props, nextProps)) {
+                block.blockWillUpdate(nextProps);
+            }
+        }
+    };
+
+    function tmpl_call(name) {
+        var args = Array.prototype.slice.call(arguments, 1);
+
+        return lookupValue(name).apply(this, args);
+    }
+
+    // Pure utility functions.
+    function deriveSpecialLoopVariables(arr, currentIndex) {
+        return {
+            __counter__: currentIndex + 1,
+            __first__: currentIndex === 0,
+            __last__: currentIndex === (arr.length - 1)
+        };
+    }
+
+    function isVDOMNode(node) {
+        return node && node.type === 'VirtualNode';
+    }
+
+    function isFunction(fn) {
+        return typeof fn === 'function';
+    }
+
+    function merge(target, source) {
+        if (source) {
+            for (var key in source) {
+                target[key] = source[key];
+            }
+        }
+
+        return target;
+    }
+
+    function clone(object) {
+        return merge({}, object);
+    }
+
+    function areShallowEqual(a, b, finish) {
+        for (var key in a) {
+            if (a[key] !== b[key]) {
+                return false;
+            }
+        }
+
+        if (finish) {
+            return true;
+        } else {
+            return areShallowEqual(b, a, true);
+        }
+    }
+
+    function defer(fn) {
+        setTimeout(fn, 0);
+    }
+
+    function keyValue(key, value) {
+        var p = {};
+        p[key] = value;
+        return p;
+    }
+
+    function last(list) {
+        return list[list.length - 1];
+    }
+
+return function (h, options) {
+    options = options || {};
+    var blocks = options.blocks || {};
+    var externals = options.externals || {};
+    var lookupValueWithFallback = lookupValue.bind(null, options.resolveLookup);
+    function block_header_inc(blockParameters) {
+        enterScope(blockParameters);
+        var blockResult = [
+            h('header', { 'className': 'header' }, [
+                '\n ',
+                h('h1', {}, ['todos']),
+                '\n ',
+                h('input', {
+                    'value': lookupValueWithFallback('new_todo_label'),
+                    'className': 'new-todo',
+                    'placeholder': 'What needs to be done?',
+                    'autofocus': true
+                }),
+                '\n'
+            ]),
+            '\n'
+        ];
+        exitScope();
+        return blockResult;
+    }
+    function block_todo_item_inc(blockParameters) {
+        enterScope(blockParameters);
+        var blockResult = [
+            null,
+            '\n',
+            null,
+            '\n',
+            h('li', {
+                'className': [
+                    '\n ',
+                    lookupValueWithFallback('todo') && lookupValueWithFallback('todo')['completed'] ? function () {
+                        return [' completed'];
+                    }() : null,
+                    '\n ',
+                    lookupValueWithFallback('todo') && lookupValueWithFallback('todo')['editing'] ? function () {
+                        return [' editing'];
+                    }() : null,
+                    '\n '
+                ].join('')
+            }, [
+                '\n ',
+                h('div', { 'className': 'view' }, [
+                    '\n ',
+                    h('input', {
+                        'className': 'toggle',
+                        'type': 'checkbox',
+                        'checked': lookupValueWithFallback('todo') && lookupValueWithFallback('todo')['completed'] ? true : null
+                    }),
+                    '\n ',
+                    h('label', {}, [lookupValueWithFallback('todo') && lookupValueWithFallback('todo')['label']]),
+                    '\n ',
+                    h('button', { 'className': 'destroy' }, []),
+                    '\n '
+                ]),
+                '\n ',
+                h('input', {
+                    'className': 'edit',
+                    'value': lookupValueWithFallback('todo') && lookupValueWithFallback('todo')['label_draft']
+                }),
+                '\n'
+            ]),
+            '\n'
+        ];
+        exitScope();
+        return blockResult;
+    }
+    function block_main_section_inc(blockParameters) {
+        enterScope(blockParameters);
+        var blockResult = [
+            h('section', { 'className': 'main' }, [
+                '\n ',
+                h('input', {
+                    'className': 'toggle-all',
+                    'type': 'checkbox',
+                    'checked': +lookupValueWithFallback('left_count') === 0 ? true : null
+                }),
+                '\n ',
+                h('label', { 'attributes': { 'for': 'toggle-all' } }, ['Mark all as complete']),
+                '\n ',
+                h('ul', { 'className': 'todo-list' }, [
+                    '\n ',
+                    (lookupValueWithFallback('todos') || []).reduce(function (acc, item, index, arr) {
+                        enterScope(keyValue('todo', item), deriveSpecialLoopVariables(arr, index));
+                        acc.push.apply(acc, [
+                            '\n ',
+                            new ViewBlockThunk(blocks['TodoItem'], block_todo_item_inc, {
+                                'todo': lookupValueWithFallback('todo'),
+                                'editing': lookupValueWithFallback('todo')['editing']
+                            }, 'TodoItem', lookupValueWithFallback('todo')['id']),
+                            '\n '
+                        ]);
+                        exitScope();
+                        return acc;
+                    }, []),
+                    '\n '
+                ]),
+                '\n'
+            ]),
+            '\n'
+        ];
+        exitScope();
+        return blockResult;
+    }
+    function block_footer_inc(blockParameters) {
+        enterScope(blockParameters);
+        var blockResult = [
+            h('footer', { 'className': 'footer' }, [
+                '\n ',
+                h('span', { 'className': 'todo-count' }, [
+                    '\n ',
+                    +lookupValueWithFallback('left_count') === 1 ? function () {
+                        return [
+                            '\n ',
+                            h('strong', {}, ['1']),
+                            ' item left\n        '
+                        ];
+                    }() : function () {
+                        return [
+                            '\n ',
+                            h('strong', {}, [lookupValueWithFallback('left_count')]),
+                            ' items left\n        '
+                        ];
+                    }(),
+                    '\n '
+                ]),
+                '\n\n ',
+                null,
+                '\n ',
+                null,
+                '\n\n ',
+                null,
+                '\n ',
+                lookupValueWithFallback('completed_count') > 0 ? function () {
+                    return [
+                        '\n ',
+                        h('button', { 'className': 'clear-completed' }, ['Clear completed']),
+                        '\n '
+                    ];
+                }() : null,
+                '\n'
+            ]),
+            '\n'
+        ];
+        exitScope();
+        return blockResult;
+    }
+    return function (state) {
+        enterScope(state);
+        var returnValue = h('div', { 'className': 'app' }, [
+            '\n ',
+            h('section', { 'className': 'todoapp' }, [
+                '\n ',
+                new ViewBlockThunk(blocks['Header'], block_header_inc, {}, 'Header'),
+                '\n\n ',
+                null,
+                '\n ',
+                externals['count'](lookupValueWithFallback('todos')) > 0 ? function () {
+                    return [
+                        '\n ',
+                        new ViewBlockThunk(blocks['Todos'], block_main_section_inc, {}, 'Todos'),
+                        '\n '
+                    ];
+                }() : null,
+                '\n\n ',
+                null,
+                '\n ',
+                externals['count'](lookupValueWithFallback('todos')) > 0 ? function () {
+                    return [
+                        '\n ',
+                        new ViewBlockThunk(blocks['Footer'], block_footer_inc, {
+                            'left_count': lookupValueWithFallback('left_count'),
+                            'completed_count': lookupValueWithFallback('completed_count')
+                        }, 'Footer'),
+                        '\n '
+                    ];
+                }() : null,
+                '\n '
+            ]),
+            '\n ',
+            h('footer', { 'className': 'info' }, [
+                '\n ',
+                h('p', {}, ['Double-click to edit a todo']),
+                '\n ',
+                h('p', {}, [h('a', { 'href': 'https://github.com/agentcooper/htmltemplate-vdom/tree/master/example/todomvc' }, ['Source code'])]),
+                '\n ',
+                h('p', {}, [
+                    'Created by ',
+                    h('a', { 'href': 'https://github.com/agentcooper' }, ['Artem Tyurin']),
+                    ' and ',
+                    h('a', { 'href': 'https://github.com/Lapple' }, ['Aziz Yuldoshev'])
+                ]),
+                '\n ',
+                h('p', {}, [
+                    'Part of ',
+                    h('a', { 'href': 'http://todomvc.com' }, ['TodoMVC'])
+                ]),
+                '\n '
+            ]),
+            '\n'
+        ]);
+        exitScope();
+        return returnValue;
+    };
+};
+}));
+
+
+},{}],2:[function(require,module,exports){
 var state = require('./state');
 
 var ACTIONS = {
@@ -108,37 +649,35 @@ function isComplete(todo) {
     return todo.completed;
 }
 
-},{"./state":9}],2:[function(require,module,exports){
-(function (window, render) {
-	'use strict';
+},{"./state":10}],3:[function(require,module,exports){
+'use strict';
 
-	var runtime = require('htmltemplate-vdom/lib/client/runtime');
+var runtime = require('htmltemplate-vdom/lib/client/runtime');
+var renderer = require('../dist/index.tmpl.js');
 
-	var externals = require('./externals');
-	var blocks = require('./blocks');
+var externals = require('./externals');
+var blocks = require('./blocks');
 
-	var actions = require('./actions');
-	var state = require('./state');
+var actions = require('./actions');
+var state = require('./state');
 
-	var loop = runtime.mainLoop(state, function(appState) {
-		return render(appState, runtime.h, {
-			externals: externals,
-			blocks: blocks
-		});
-	});
+var render = renderer(runtime.h, {
+	externals: externals,
+	blocks: blocks
+});
 
-	actions.subscribe(loop.update);
-	document.body.appendChild(loop.target);
+var loop = runtime.mainLoop(state, render);
 
-})(window, render);
+actions.subscribe(loop.update);
+document.body.appendChild(loop.target);
 
-},{"./actions":1,"./blocks":3,"./externals":8,"./state":9,"htmltemplate-vdom/lib/client/runtime":12}],3:[function(require,module,exports){
+},{"../dist/index.tmpl.js":1,"./actions":2,"./blocks":4,"./externals":9,"./state":10,"htmltemplate-vdom/lib/client/runtime":13}],4:[function(require,module,exports){
 exports.Todos = require('./blocks/todos');
 exports.TodoItem = require('./blocks/todo-item');
 exports.Header = require('./blocks/header');
 exports.Footer = require('./blocks/footer');
 
-},{"./blocks/footer":4,"./blocks/header":5,"./blocks/todo-item":6,"./blocks/todos":7}],4:[function(require,module,exports){
+},{"./blocks/footer":5,"./blocks/header":6,"./blocks/todo-item":7,"./blocks/todos":8}],5:[function(require,module,exports){
 var dispatch = require('../actions').dispatch;
 
 function Footer() {
@@ -168,7 +707,7 @@ Footer.prototype.onClearCompletedClick = function(e) {
 
 module.exports = Footer;
 
-},{"../actions":1}],5:[function(require,module,exports){
+},{"../actions":2}],6:[function(require,module,exports){
 var dispatch = require('../actions').dispatch;
 
 function Header() {
@@ -210,7 +749,7 @@ Header.prototype.onTodoInputKeypress = function(e) {
 
 module.exports = Header;
 
-},{"../actions":1}],6:[function(require,module,exports){
+},{"../actions":2}],7:[function(require,module,exports){
 var dispatch = require('../actions').dispatch;
 
 function TodoItem() {
@@ -314,7 +853,7 @@ TodoItem.prototype.onEditInputKeyUp = function(e) {
 
 module.exports = TodoItem;
 
-},{"../actions":1}],7:[function(require,module,exports){
+},{"../actions":2}],8:[function(require,module,exports){
 var dispatch = require('../actions').dispatch;
 
 function Todos() {
@@ -341,7 +880,7 @@ Todos.prototype.onToggleAllChange = function(e) {
 
 module.exports = Todos;
 
-},{"../actions":1}],8:[function(require,module,exports){
+},{"../actions":2}],9:[function(require,module,exports){
 exports.count = function(array) {
     if (Array.isArray(array)) {
         return array.length;
@@ -350,7 +889,7 @@ exports.count = function(array) {
     return 0;
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 module.exports = {
     todos: [
         {
@@ -368,9 +907,9 @@ module.exports = {
     new_todo_label: ''
 };
 
-},{}],10:[function(require,module,exports){
-
 },{}],11:[function(require,module,exports){
+
+},{}],12:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -463,7 +1002,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var mainLoop = require('main-loop');
 
 module.exports = {
@@ -480,7 +1019,7 @@ module.exports = {
     }
 };
 
-},{"main-loop":13,"virtual-dom/create-element":20,"virtual-dom/diff":21,"virtual-dom/h":22,"virtual-dom/patch":30}],13:[function(require,module,exports){
+},{"main-loop":14,"virtual-dom/create-element":21,"virtual-dom/diff":22,"virtual-dom/h":23,"virtual-dom/patch":31}],14:[function(require,module,exports){
 var raf = require("raf")
 var TypedError = require("error/typed")
 
@@ -561,7 +1100,7 @@ function main(initialState, view, opts) {
     }
 }
 
-},{"error/typed":17,"raf":18}],14:[function(require,module,exports){
+},{"error/typed":18,"raf":19}],15:[function(require,module,exports){
 module.exports = function(obj) {
     if (typeof obj === 'string') return camelCase(obj);
     return walk(obj);
@@ -622,7 +1161,7 @@ function reduce (xs, f, acc) {
     return acc;
 }
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var nargs = /\{([0-9a-zA-Z]+)\}/g
 var slice = Array.prototype.slice
 
@@ -658,7 +1197,7 @@ function template(string) {
     })
 }
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -677,7 +1216,7 @@ function extend(target) {
     return target
 }
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var camelize = require("camelize")
 var template = require("string-template")
 var extend = require("xtend/mutable")
@@ -727,7 +1266,7 @@ function TypedError(args) {
 }
 
 
-},{"camelize":14,"string-template":15,"xtend/mutable":16}],18:[function(require,module,exports){
+},{"camelize":15,"string-template":16,"xtend/mutable":17}],19:[function(require,module,exports){
 var now = require('performance-now')
   , global = typeof window === 'undefined' ? {} : window
   , vendors = ['moz', 'webkit']
@@ -809,7 +1348,7 @@ module.exports.cancel = function() {
   caf.apply(global, arguments)
 }
 
-},{"performance-now":19}],19:[function(require,module,exports){
+},{"performance-now":20}],20:[function(require,module,exports){
 (function (process){
 // Generated by CoffeeScript 1.6.3
 (function() {
@@ -849,22 +1388,22 @@ module.exports.cancel = function() {
 */
 
 }).call(this,require('_process'))
-},{"_process":11}],20:[function(require,module,exports){
+},{"_process":12}],21:[function(require,module,exports){
 var createElement = require("./vdom/create-element.js")
 
 module.exports = createElement
 
-},{"./vdom/create-element.js":32}],21:[function(require,module,exports){
+},{"./vdom/create-element.js":33}],22:[function(require,module,exports){
 var diff = require("./vtree/diff.js")
 
 module.exports = diff
 
-},{"./vtree/diff.js":52}],22:[function(require,module,exports){
+},{"./vtree/diff.js":53}],23:[function(require,module,exports){
 var h = require("./virtual-hyperscript/index.js")
 
 module.exports = h
 
-},{"./virtual-hyperscript/index.js":39}],23:[function(require,module,exports){
+},{"./virtual-hyperscript/index.js":40}],24:[function(require,module,exports){
 /*!
  * Cross-Browser Split 1.1.1
  * Copyright 2007-2012 Steven Levithan <stevenlevithan.com>
@@ -972,7 +1511,7 @@ module.exports = (function split(undef) {
   return self;
 })();
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 'use strict';
 
 var OneVersionConstraint = require('individual/one-version');
@@ -994,7 +1533,7 @@ function EvStore(elem) {
     return hash;
 }
 
-},{"individual/one-version":26}],25:[function(require,module,exports){
+},{"individual/one-version":27}],26:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -1017,7 +1556,7 @@ function Individual(key, value) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 'use strict';
 
 var Individual = require('./index.js');
@@ -1041,7 +1580,7 @@ function OneVersion(moduleName, version, defaultValue) {
     return Individual(key, defaultValue);
 }
 
-},{"./index.js":25}],27:[function(require,module,exports){
+},{"./index.js":26}],28:[function(require,module,exports){
 (function (global){
 var topLevel = typeof global !== 'undefined' ? global :
     typeof window !== 'undefined' ? window : {}
@@ -1060,14 +1599,14 @@ if (typeof document !== 'undefined') {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"min-document":10}],28:[function(require,module,exports){
+},{"min-document":11}],29:[function(require,module,exports){
 "use strict";
 
 module.exports = function isObject(x) {
 	return typeof x === "object" && x !== null;
 };
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var nativeIsArray = Array.isArray
 var toString = Object.prototype.toString
 
@@ -1077,12 +1616,12 @@ function isArray(obj) {
     return toString.call(obj) === "[object Array]"
 }
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 var patch = require("./vdom/patch.js")
 
 module.exports = patch
 
-},{"./vdom/patch.js":35}],31:[function(require,module,exports){
+},{"./vdom/patch.js":36}],32:[function(require,module,exports){
 var isObject = require("is-object")
 var isHook = require("../vnode/is-vhook.js")
 
@@ -1181,7 +1720,7 @@ function getPrototype(value) {
     }
 }
 
-},{"../vnode/is-vhook.js":43,"is-object":28}],32:[function(require,module,exports){
+},{"../vnode/is-vhook.js":44,"is-object":29}],33:[function(require,module,exports){
 var document = require("global/document")
 
 var applyProperties = require("./apply-properties")
@@ -1229,7 +1768,7 @@ function createElement(vnode, opts) {
     return node
 }
 
-},{"../vnode/handle-thunk.js":41,"../vnode/is-vnode.js":44,"../vnode/is-vtext.js":45,"../vnode/is-widget.js":46,"./apply-properties":31,"global/document":27}],33:[function(require,module,exports){
+},{"../vnode/handle-thunk.js":42,"../vnode/is-vnode.js":45,"../vnode/is-vtext.js":46,"../vnode/is-widget.js":47,"./apply-properties":32,"global/document":28}],34:[function(require,module,exports){
 // Maps a virtual DOM tree onto a real DOM tree in an efficient manner.
 // We don't want to read all of the DOM nodes in the tree so we use
 // the in-order tree indexing to eliminate recursion down certain branches.
@@ -1316,7 +1855,7 @@ function ascending(a, b) {
     return a > b ? 1 : -1
 }
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 var applyProperties = require("./apply-properties")
 
 var isWidget = require("../vnode/is-widget.js")
@@ -1469,7 +2008,7 @@ function replaceRoot(oldRoot, newRoot) {
     return newRoot;
 }
 
-},{"../vnode/is-widget.js":46,"../vnode/vpatch.js":49,"./apply-properties":31,"./update-widget":36}],35:[function(require,module,exports){
+},{"../vnode/is-widget.js":47,"../vnode/vpatch.js":50,"./apply-properties":32,"./update-widget":37}],36:[function(require,module,exports){
 var document = require("global/document")
 var isArray = require("x-is-array")
 
@@ -1551,7 +2090,7 @@ function patchIndices(patches) {
     return indices
 }
 
-},{"./create-element":32,"./dom-index":33,"./patch-op":34,"global/document":27,"x-is-array":29}],36:[function(require,module,exports){
+},{"./create-element":33,"./dom-index":34,"./patch-op":35,"global/document":28,"x-is-array":30}],37:[function(require,module,exports){
 var isWidget = require("../vnode/is-widget.js")
 
 module.exports = updateWidget
@@ -1568,7 +2107,7 @@ function updateWidget(a, b) {
     return false
 }
 
-},{"../vnode/is-widget.js":46}],37:[function(require,module,exports){
+},{"../vnode/is-widget.js":47}],38:[function(require,module,exports){
 'use strict';
 
 var EvStore = require('ev-store');
@@ -1597,7 +2136,7 @@ EvHook.prototype.unhook = function(node, propertyName) {
     es[propName] = undefined;
 };
 
-},{"ev-store":24}],38:[function(require,module,exports){
+},{"ev-store":25}],39:[function(require,module,exports){
 'use strict';
 
 module.exports = SoftSetHook;
@@ -1616,7 +2155,7 @@ SoftSetHook.prototype.hook = function (node, propertyName) {
     }
 };
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 'use strict';
 
 var isArray = require('x-is-array');
@@ -1755,7 +2294,7 @@ function errorString(obj) {
     }
 }
 
-},{"../vnode/is-thunk":42,"../vnode/is-vhook":43,"../vnode/is-vnode":44,"../vnode/is-vtext":45,"../vnode/is-widget":46,"../vnode/vnode.js":48,"../vnode/vtext.js":50,"./hooks/ev-hook.js":37,"./hooks/soft-set-hook.js":38,"./parse-tag.js":40,"x-is-array":29}],40:[function(require,module,exports){
+},{"../vnode/is-thunk":43,"../vnode/is-vhook":44,"../vnode/is-vnode":45,"../vnode/is-vtext":46,"../vnode/is-widget":47,"../vnode/vnode.js":49,"../vnode/vtext.js":51,"./hooks/ev-hook.js":38,"./hooks/soft-set-hook.js":39,"./parse-tag.js":41,"x-is-array":30}],41:[function(require,module,exports){
 'use strict';
 
 var split = require('browser-split');
@@ -1811,7 +2350,7 @@ function parseTag(tag, props) {
     return props.namespace ? tagName : tagName.toUpperCase();
 }
 
-},{"browser-split":23}],41:[function(require,module,exports){
+},{"browser-split":24}],42:[function(require,module,exports){
 var isVNode = require("./is-vnode")
 var isVText = require("./is-vtext")
 var isWidget = require("./is-widget")
@@ -1853,14 +2392,14 @@ function renderThunk(thunk, previous) {
     return renderedThunk
 }
 
-},{"./is-thunk":42,"./is-vnode":44,"./is-vtext":45,"./is-widget":46}],42:[function(require,module,exports){
+},{"./is-thunk":43,"./is-vnode":45,"./is-vtext":46,"./is-widget":47}],43:[function(require,module,exports){
 module.exports = isThunk
 
 function isThunk(t) {
     return t && t.type === "Thunk"
 }
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 module.exports = isHook
 
 function isHook(hook) {
@@ -1869,7 +2408,7 @@ function isHook(hook) {
        typeof hook.unhook === "function" && !hook.hasOwnProperty("unhook"))
 }
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 var version = require("./version")
 
 module.exports = isVirtualNode
@@ -1878,7 +2417,7 @@ function isVirtualNode(x) {
     return x && x.type === "VirtualNode" && x.version === version
 }
 
-},{"./version":47}],45:[function(require,module,exports){
+},{"./version":48}],46:[function(require,module,exports){
 var version = require("./version")
 
 module.exports = isVirtualText
@@ -1887,17 +2426,17 @@ function isVirtualText(x) {
     return x && x.type === "VirtualText" && x.version === version
 }
 
-},{"./version":47}],46:[function(require,module,exports){
+},{"./version":48}],47:[function(require,module,exports){
 module.exports = isWidget
 
 function isWidget(w) {
     return w && w.type === "Widget"
 }
 
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 module.exports = "2"
 
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 var version = require("./version")
 var isVNode = require("./is-vnode")
 var isWidget = require("./is-widget")
@@ -1971,7 +2510,7 @@ function VirtualNode(tagName, properties, children, key, namespace) {
 VirtualNode.prototype.version = version
 VirtualNode.prototype.type = "VirtualNode"
 
-},{"./is-thunk":42,"./is-vhook":43,"./is-vnode":44,"./is-widget":46,"./version":47}],49:[function(require,module,exports){
+},{"./is-thunk":43,"./is-vhook":44,"./is-vnode":45,"./is-widget":47,"./version":48}],50:[function(require,module,exports){
 var version = require("./version")
 
 VirtualPatch.NONE = 0
@@ -1995,7 +2534,7 @@ function VirtualPatch(type, vNode, patch) {
 VirtualPatch.prototype.version = version
 VirtualPatch.prototype.type = "VirtualPatch"
 
-},{"./version":47}],50:[function(require,module,exports){
+},{"./version":48}],51:[function(require,module,exports){
 var version = require("./version")
 
 module.exports = VirtualText
@@ -2007,7 +2546,7 @@ function VirtualText(text) {
 VirtualText.prototype.version = version
 VirtualText.prototype.type = "VirtualText"
 
-},{"./version":47}],51:[function(require,module,exports){
+},{"./version":48}],52:[function(require,module,exports){
 var isObject = require("is-object")
 var isHook = require("../vnode/is-vhook")
 
@@ -2067,7 +2606,7 @@ function getPrototype(value) {
   }
 }
 
-},{"../vnode/is-vhook":43,"is-object":28}],52:[function(require,module,exports){
+},{"../vnode/is-vhook":44,"is-object":29}],53:[function(require,module,exports){
 var isArray = require("x-is-array")
 
 var VPatch = require("../vnode/vpatch")
@@ -2496,4 +3035,4 @@ function appendPatch(apply, patch) {
     }
 }
 
-},{"../vnode/handle-thunk":41,"../vnode/is-thunk":42,"../vnode/is-vnode":44,"../vnode/is-vtext":45,"../vnode/is-widget":46,"../vnode/vpatch":49,"./diff-props":51,"x-is-array":29}]},{},[2]);
+},{"../vnode/handle-thunk":42,"../vnode/is-thunk":43,"../vnode/is-vnode":45,"../vnode/is-vtext":46,"../vnode/is-widget":47,"../vnode/vpatch":50,"./diff-props":52,"x-is-array":30}]},{},[3]);

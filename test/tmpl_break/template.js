@@ -1,9 +1,12 @@
-function render(state, h, options) {
-    options = options || {};
-
-    var blocks = options.blocks || {};
-    var externals = options.externals || {};
-    var resolveLookup = options.resolveLookup;
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define([], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = factory();
+    } else {
+        root.render = factory();
+    }
+}(this, function () {
 
     // Scope manipulation.
     var scopeChain = [];
@@ -16,21 +19,13 @@ function render(state, h, options) {
         });
     }
 
-    function deriveSpecialLoopVariables(arr, currentIndex) {
-        return {
-            __counter__: currentIndex + 1,
-            __first__: currentIndex === 0,
-            __last__: currentIndex === (arr.length - 1)
-        };
-    }
-
     function exitScope() {
         var innerScope = scopeChain.pop();
         var outerScope = last(scopeChain);
 
         var localVariables = innerScope.local;
 
-        if (localVariables) {
+        if (localVariables && outerScope) {
             if (!outerScope.local) {
                 outerScope.local = localVariables;
             } else {
@@ -49,7 +44,7 @@ function render(state, h, options) {
         }
     }
 
-    function lookupValue(propertyName, params) {
+    function lookupValue(resolveLookup, propertyName, params) {
         for (var i = scopeChain.length - 1; i >= 0; i--) {
             var scope = scopeChain[i];
 
@@ -76,17 +71,16 @@ function render(state, h, options) {
 
     /**
      * Creates a thunk that wraps a view block
-     * @param {String}   name   Block name, should be passed to top-level
-     *                          render function
+     * @param {Block}    Block  Block constructor
      * @param {Function} render Block render function
      * @param {Object}   props  Properties of the block - attributes that were
      *                          passed to the TMPL_INLINE tag.
+     * @param {String}   name   Block name, should be passed to top-level
+     *                          render function
      * @param {String}   key    Optional block key, necessary for optimal
      *                          collection rendering.
      */
-    function ViewBlockThunk(name, render, props, key) {
-        var Block = blocks[name];
-
+    function ViewBlockThunk(Block, render, props, name, key) {
         if (!isFunction(Block)) {
             throw new Error('Can\'t find block "' + name + '".');
         }
@@ -94,7 +88,9 @@ function render(state, h, options) {
         this.key = key || null;
         this.name = name;
         this.props = props;
+
         this._render = render;
+        this._Block = Block;
 
         // Save current scope chain to a special closure to retrieve on
         // `render` call.
@@ -125,15 +121,13 @@ function render(state, h, options) {
             var shouldReusePreviousBlock = (
                 previous &&
                 previous.block &&
-                previous.name === name
+                previous._Block === this._Block
             );
 
             if (shouldReusePreviousBlock) {
                 block = this.block = previous.block;
             } else {
-                var Block = blocks[name];
-
-                block = this.block = new Block(props);
+                block = this.block = new this._Block(props);
 
                 // These two fields will be managed by the lifecycle mechanism.
                 block.el = null;
@@ -267,10 +261,13 @@ function render(state, h, options) {
         }
     };
 
-    function tmpl_call(name) {
-        var args = Array.prototype.slice.call(arguments, 1);
-
-        return lookupValue(name).apply(this, args);
+    // Pure utility functions.
+    function deriveSpecialLoopVariables(arr, currentIndex) {
+        return {
+            __counter__: currentIndex + 1,
+            __first__: currentIndex === 0,
+            __last__: currentIndex === (arr.length - 1)
+        };
     }
 
     function isVDOMNode(node) {
@@ -323,57 +320,66 @@ function render(state, h, options) {
         return list[list.length - 1];
     }
 
-    enterScope(state);
-
-return h('div', { 'className': 'container' }, [
-    '\n ',
-    (lookupValue('items') || []).reduce(function (acc, item, index, arr) {
-        enterScope(item, deriveSpecialLoopVariables(arr, index));
-        acc.push.apply(acc, [!lookupValue('b_l___br0') ? function () {
-                return [
-                    '\n ',
-                    h('div', { 'className': 'common' }, ['\n This part is common for all items.\n        ']),
-                    '\n\n ',
-                    lookupValue('unbreak') ? function () {
+return function (h, options) {
+    options = options || {};
+    var blocks = options.blocks || {};
+    var externals = options.externals || {};
+    var lookupValueWithFallback = lookupValue.bind(null, options.resolveLookup);
+    return function (state) {
+        enterScope(state);
+        var returnValue = h('div', { 'className': 'container' }, [
+            '\n ',
+            (lookupValueWithFallback('items') || []).reduce(function (acc, item, index, arr) {
+                enterScope(item, deriveSpecialLoopVariables(arr, index));
+                acc.push.apply(acc, [!lookupValueWithFallback('b_l___br0') ? function () {
                         return [
                             '\n ',
-                            h('div', { 'className': 'unskipped' }, ['\n This item is unskipped.\n            ']),
-                            '\n '
-                        ];
-                    }() : lookupValue('can_break') ? function () {
-                        return [
-                            '\n ',
-                            lookupValue('breakable') || 0 ? function () {
+                            h('div', { 'className': 'common' }, ['\n This part is common for all items.\n        ']),
+                            '\n\n ',
+                            lookupValueWithFallback('unbreak') ? function () {
                                 return [
                                     '\n ',
-                                    assignLocalVariable('b_l___br0', 1)
+                                    h('div', { 'className': 'unskipped' }, ['\n This item is unskipped.\n            ']),
+                                    '\n '
                                 ];
-                            }() : function () {
+                            }() : lookupValueWithFallback('can_break') ? function () {
                                 return [
                                     '\n ',
-                                    h('div', { 'className': 'not-skipped' }, ['\n Not skipped.\n                ']),
+                                    lookupValueWithFallback('breakable') || 0 ? function () {
+                                        return [
+                                            '\n ',
+                                            assignLocalVariable('b_l___br0', 1)
+                                        ];
+                                    }() : function () {
+                                        return [
+                                            '\n ',
+                                            h('div', { 'className': 'not-skipped' }, ['\n Not skipped.\n                ']),
+                                            '\n '
+                                        ];
+                                    }()
+                                ];
+                            }() : null,
+                            !lookupValueWithFallback('unbreak') && lookupValueWithFallback('can_break') && (lookupValueWithFallback('breakable') || 0) ? null : function () {
+                                return [
+                                    '\n\n ',
+                                    h('div', { 'className': 'can-be-skipped' }, [
+                                        '\n ',
+                                        lookupValueWithFallback('value'),
+                                        '\n '
+                                    ]),
                                     '\n '
                                 ];
                             }()
                         ];
-                    }() : null,
-                    !lookupValue('unbreak') && lookupValue('can_break') && (lookupValue('breakable') || 0) ? null : function () {
-                        return [
-                            '\n\n ',
-                            h('div', { 'className': 'can-be-skipped' }, [
-                                '\n ',
-                                lookupValue('value'),
-                                '\n '
-                            ]),
-                            '\n '
-                        ];
-                    }()
-                ];
-            }() : null]);
+                    }() : null]);
+                exitScope();
+                return acc;
+            }, []),
+            assignLocalVariable('b_l___br0', 0),
+            '\n'
+        ]);
         exitScope();
-        return acc;
-    }, []),
-    assignLocalVariable('b_l___br0', 0),
-    '\n'
-]);
-}
+        return returnValue;
+    };
+};
+}));

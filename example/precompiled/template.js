@@ -1,17 +1,21 @@
-function render(state, h, options) {
-    options = options || {};
-
-    var blocks = options.blocks || {};
-    var externals = options.externals || {};
-    var resolveLookup = options.resolveLookup;
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define([], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = factory();
+    } else {
+        root.render = factory();
+    }
+}(this, function () {
 
     // Scope manipulation.
     var scopeChain = [];
 
-    function enterScope(context) {
+    function enterScope(context, special) {
         scopeChain.push({
             local: null,
-            context: context
+            context: context,
+            special: special || null
         });
     }
 
@@ -21,9 +25,9 @@ function render(state, h, options) {
 
         var localVariables = innerScope.local;
 
-        if (localVariables) {
+        if (localVariables && outerScope) {
             if (!outerScope.local) {
-                outerScope.local = localVariables
+                outerScope.local = localVariables;
             } else {
                 merge(outerScope.local, localVariables);
             }
@@ -40,19 +44,21 @@ function render(state, h, options) {
         }
     }
 
-    function lookupValue(propertyName) {
+    function lookupValue(resolveLookup, propertyName, params) {
         for (var i = scopeChain.length - 1; i >= 0; i--) {
             var scope = scopeChain[i];
 
             if (scope.local && propertyName in scope.local) {
                 return scope.local[propertyName];
+            } else if (scope.special && propertyName in scope.special) {
+                return scope.special[propertyName];
             } else if (propertyName in scope.context) {
                 return scope.context[propertyName];
             }
         }
 
         if (isFunction(resolveLookup)) {
-            return resolveLookup(propertyName);
+            return resolveLookup(propertyName, params);
         }
 
         return null;
@@ -65,17 +71,16 @@ function render(state, h, options) {
 
     /**
      * Creates a thunk that wraps a view block
-     * @param {String}   name   Block name, should be passed to top-level
-     *                          render function
+     * @param {Block}    Block  Block constructor
      * @param {Function} render Block render function
      * @param {Object}   props  Properties of the block - attributes that were
      *                          passed to the TMPL_INLINE tag.
+     * @param {String}   name   Block name, should be passed to top-level
+     *                          render function
      * @param {String}   key    Optional block key, necessary for optimal
      *                          collection rendering.
      */
-    function ViewBlockThunk(name, render, props, key) {
-        var Block = blocks[name];
-
+    function ViewBlockThunk(Block, render, props, name, key) {
         if (!isFunction(Block)) {
             throw new Error('Can\'t find block "' + name + '".');
         }
@@ -83,7 +88,9 @@ function render(state, h, options) {
         this.key = key || null;
         this.name = name;
         this.props = props;
+
         this._render = render;
+        this._Block = Block;
 
         // Save current scope chain to a special closure to retrieve on
         // `render` call.
@@ -114,15 +121,13 @@ function render(state, h, options) {
             var shouldReusePreviousBlock = (
                 previous &&
                 previous.block &&
-                previous.name === name
+                previous._Block === this._Block
             );
 
             if (shouldReusePreviousBlock) {
                 block = this.block = previous.block;
             } else {
-                var Block = blocks[name];
-
-                block = this.block = new Block(props);
+                block = this.block = new this._Block(props);
 
                 // These two fields will be managed by the lifecycle mechanism.
                 block.el = null;
@@ -256,10 +261,13 @@ function render(state, h, options) {
         }
     };
 
-    function tmpl_call(name) {
-        var args = Array.prototype.slice.call(arguments, 1);
-
-        return lookupValue(name).apply(this, args);
+    // Pure utility functions.
+    function deriveSpecialLoopVariables(arr, currentIndex) {
+        return {
+            __counter__: currentIndex + 1,
+            __first__: currentIndex === 0,
+            __last__: currentIndex === (arr.length - 1)
+        };
     }
 
     function isVDOMNode(node) {
@@ -312,43 +320,101 @@ function render(state, h, options) {
         return list[list.length - 1];
     }
 
-    enterScope(state);
-
-function block_person(blockParameters) {
-    enterScope(blockParameters);
-    var blockResult = [
-        '\n ',
-        h('li', {
-            'className': [
-                'item ',
-                lookupValue('active') ? function () {
-                    return ['item--active'];
-                }() : null
-            ].join(''),
-            'onclick': tmpl_call.bind(state, 'itemClick', lookupValue('id'))
-        }, [
+return function (h, options) {
+    options = options || {};
+    var blocks = options.blocks || {};
+    var externals = options.externals || {};
+    var lookupValueWithFallback = lookupValue.bind(null, options.resolveLookup);
+    function block_person(blockParameters) {
+        enterScope(blockParameters);
+        var blockResult = [
             '\n ',
-            lookupValue('name'),
-            ' ',
-            h('a', {
-                'href': [
-                    '#/items/',
-                    lookupValue('id')
-                ].join('')
-            }, ['some link']),
-            '\n\n ',
-            h('div', { 'className': 'input' }, [h('input', {
-                    'type': 'text',
-                    'placeholder': 'Type something here'
-                })]),
-            '\n\n ',
-            h('ul', {}, [
+            h('li', {
+                'className': [
+                    'item ',
+                    lookupValueWithFallback('active') ? function () {
+                        return ['item--active'];
+                    }() : null
+                ].join(''),
+                'onclick': lookupValueWithFallback('itemClick').bind(null, lookupValueWithFallback('id'))
+            }, [
                 '\n ',
-                (lookupValue('inner') || []).reduce(function (acc, item) {
-                    enterScope(item);
+                lookupValueWithFallback('name'),
+                ' ',
+                h('a', {
+                    'href': [
+                        '#/items/',
+                        lookupValueWithFallback('id')
+                    ].join('')
+                }, ['some link']),
+                '\n\n ',
+                h('div', { 'className': 'input' }, [h('input', {
+                        'type': 'text',
+                        'placeholder': 'Type something here'
+                    })]),
+                '\n\n ',
+                h('ul', {}, [
+                    '\n ',
+                    (lookupValueWithFallback('inner') || []).reduce(function (acc, item, index, arr) {
+                        enterScope(item, deriveSpecialLoopVariables(arr, index));
+                        acc.push.apply(acc, [
+                            '\n ',
+                            h('li', {}, [lookupValueWithFallback('title')]),
+                            '\n '
+                        ]);
+                        exitScope();
+                        return acc;
+                    }, []),
+                    '\n '
+                ]),
+                '\n\n ',
+                h('div', {}, [
+                    lookupValueWithFallback('city_copy'),
+                    lookupValueWithFallback('city')
+                ]),
+                '\n\n ',
+                lookupValueWithFallback('active') ? function () {
+                    return ['active'];
+                }() : function () {
+                    return ['not active'];
+                }(),
+                '\n\n ',
+                h('div', {}, [
+                    '\n ',
+                    h('button', { 'onclick': lookupValueWithFallback('counterClick').bind(null, lookupValueWithFallback('id')) }, [
+                        '\n ',
+                        h('span', {}, ['Click me']),
+                        '\n '
+                    ]),
+                    '\n ',
+                    h('span', {}, [lookupValueWithFallback('counter')]),
+                    '\n '
+                ]),
+                '\n '
+            ]),
+            '\n'
+        ];
+        exitScope();
+        return blockResult;
+    }
+    return function (state) {
+        enterScope(state);
+        var returnValue = h('div', { 'className': 'app' }, [
+            '\n ',
+            h('h2', {}, [lookupValueWithFallback('title')]),
+            '\n\n ',
+            h('p', {}, [lookupValueWithFallback('description')]),
+            '\n\n ',
+            h('ul', { 'className': 'list' }, [
+                '\n ',
+                (lookupValueWithFallback('people') || []).reduce(function (acc, item, index, arr) {
+                    enterScope(item, deriveSpecialLoopVariables(arr, index));
                     acc.push.apply(acc, [
                         '\n ',
-                        h('li', {}, [lookupValue('title')]),
+                        new ViewBlockThunk(blocks['Person'], block_person, {
+                            'p': lookupValueWithFallback('name'),
+                            'active': lookupValueWithFallback('active')
+                        }, 'Person'),
                         '\n '
                     ]);
                     exitScope();
@@ -357,69 +423,20 @@ function block_person(blockParameters) {
                 '\n '
             ]),
             '\n\n ',
-            h('div', {}, [
-                lookupValue('city_copy'),
-                lookupValue('city')
-            ]),
-            '\n\n ',
-            lookupValue('active') ? function () {
-                return ['active'];
-            }() : function () {
-                return ['not active'];
-            }(),
+            h('p', {}, [h('button', { 'onclick': lookupValueWithFallback('addClick').bind(null, lookupValueWithFallback('id')) }, ['Add person'])]),
+            '\n ',
+            h('p', {}, [h('button', { 'onclick': lookupValueWithFallback('popClick').bind(null, lookupValueWithFallback('id')) }, ['Pop person'])]),
             '\n\n ',
             h('div', {}, [
                 '\n ',
-                h('button', { 'onclick': tmpl_call.bind(state, 'counterClick', lookupValue('id')) }, [
-                    '\n ',
-                    h('span', {}, ['Click me']),
-                    '\n '
-                ]),
-                '\n ',
-                h('span', {}, [lookupValue('counter')]),
+                h('a', { 'href': lookupValueWithFallback('githubLink') }, [lookupValueWithFallback('githubLink')]),
                 '\n '
             ]),
-            '\n '
-        ]),
-        '\n'
-    ];
-    exitScope();
-    return blockResult;
-}
-return h('div', { 'className': 'app' }, [
-    '\n ',
-    h('h2', {}, [lookupValue('title')]),
-    '\n\n ',
-    h('p', {}, [lookupValue('description')]),
-    '\n\n ',
-    h('ul', { 'className': 'list' }, [
-        '\n ',
-        (lookupValue('people') || []).reduce(function (acc, item) {
-            enterScope(item);
-            acc.push.apply(acc, [
-                '\n ',
-                new ViewBlockThunk('Person', block_person, {
-                    'p': lookupValue('name'),
-                    'active': lookupValue('active')
-                }),
-                '\n '
-            ]);
-            exitScope();
-            return acc;
-        }, []),
-        '\n '
-    ]),
-    '\n\n ',
-    h('p', {}, [h('button', { 'onclick': tmpl_call.bind(state, 'addClick', lookupValue('id')) }, ['Add person'])]),
-    '\n ',
-    h('p', {}, [h('button', { 'onclick': tmpl_call.bind(state, 'popClick', lookupValue('id')) }, ['Pop person'])]),
-    '\n\n ',
-    h('div', {}, [
-        '\n ',
-        h('a', { 'href': [lookupValue('githubLink')].join('') }, [lookupValue('githubLink')]),
-        '\n '
-    ]),
-    '\n'
-]);
-}
+            '\n'
+        ]);
+        exitScope();
+        return returnValue;
+    };
+};
+}));
 
