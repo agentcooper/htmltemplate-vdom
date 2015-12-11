@@ -1,9 +1,12 @@
-function render(state, h, options) {
-    options = options || {};
-
-    var blocks = options.blocks || {};
-    var externals = options.externals || {};
-    var resolveLookup = options.resolveLookup;
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define([], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = factory();
+    } else {
+        root.render = factory();
+    }
+}(this, function () {
 
     // Scope manipulation.
     var scopeChain = [];
@@ -16,21 +19,13 @@ function render(state, h, options) {
         });
     }
 
-    function deriveSpecialLoopVariables(arr, currentIndex) {
-        return {
-            __counter__: currentIndex + 1,
-            __first__: currentIndex === 0,
-            __last__: currentIndex === (arr.length - 1)
-        };
-    }
-
     function exitScope() {
         var innerScope = scopeChain.pop();
         var outerScope = last(scopeChain);
 
         var localVariables = innerScope.local;
 
-        if (localVariables) {
+        if (localVariables && outerScope) {
             if (!outerScope.local) {
                 outerScope.local = localVariables;
             } else {
@@ -49,7 +44,7 @@ function render(state, h, options) {
         }
     }
 
-    function lookupValue(propertyName, params) {
+    function lookupValue(resolveLookup, propertyName, params) {
         for (var i = scopeChain.length - 1; i >= 0; i--) {
             var scope = scopeChain[i];
 
@@ -76,17 +71,16 @@ function render(state, h, options) {
 
     /**
      * Creates a thunk that wraps a view block
-     * @param {String}   name   Block name, should be passed to top-level
-     *                          render function
+     * @param {Block}    Block  Block constructor
      * @param {Function} render Block render function
      * @param {Object}   props  Properties of the block - attributes that were
      *                          passed to the TMPL_INLINE tag.
+     * @param {String}   name   Block name, should be passed to top-level
+     *                          render function
      * @param {String}   key    Optional block key, necessary for optimal
      *                          collection rendering.
      */
-    function ViewBlockThunk(name, render, props, key) {
-        var Block = blocks[name];
-
+    function ViewBlockThunk(Block, render, props, name, key) {
         if (!isFunction(Block)) {
             throw new Error('Can\'t find block "' + name + '".');
         }
@@ -94,7 +88,9 @@ function render(state, h, options) {
         this.key = key || null;
         this.name = name;
         this.props = props;
+
         this._render = render;
+        this._Block = Block;
 
         // Save current scope chain to a special closure to retrieve on
         // `render` call.
@@ -125,15 +121,13 @@ function render(state, h, options) {
             var shouldReusePreviousBlock = (
                 previous &&
                 previous.block &&
-                previous.name === name
+                previous._Block === this._Block
             );
 
             if (shouldReusePreviousBlock) {
                 block = this.block = previous.block;
             } else {
-                var Block = blocks[name];
-
-                block = this.block = new Block(props);
+                block = this.block = new this._Block(props);
 
                 // These two fields will be managed by the lifecycle mechanism.
                 block.el = null;
@@ -267,10 +261,13 @@ function render(state, h, options) {
         }
     };
 
-    function tmpl_call(name) {
-        var args = Array.prototype.slice.call(arguments, 1);
-
-        return lookupValue(name).apply(this, args);
+    // Pure utility functions.
+    function deriveSpecialLoopVariables(arr, currentIndex) {
+        return {
+            __counter__: currentIndex + 1,
+            __first__: currentIndex === 0,
+            __last__: currentIndex === (arr.length - 1)
+        };
     }
 
     function isVDOMNode(node) {
@@ -323,89 +320,98 @@ function render(state, h, options) {
         return list[list.length - 1];
     }
 
-    enterScope(state);
-
-return h('div', { 'className': 'app' }, [
-    '\n ',
-    lookupValue('a') || lookupValue('b') || lookupValue('c') ? function () {
-        return ['x'];
-    }() : null,
-    '\n ',
-    (lookupValue('a') || lookupValue('b')) && lookupValue('c') ? function () {
-        return ['x'];
-    }() : null,
-    '\n ',
-    lookupValue('a') || (lookupValue('b') || lookupValue('c')) ? function () {
-        return ['x'];
-    }() : null,
-    '\n ',
-    !lookupValue('a') && lookupValue('b') || lookupValue('c') && !lookupValue('c') ? function () {
-        return ['x'];
-    }() : null,
-    '\n ',
-    lookupValue('a') < lookupValue('c') && lookupValue('b') >= lookupValue('c') ? function () {
-        return ['x'];
-    }() : null,
-    '\n ',
-    lookupValue('a') / lookupValue('b') * lookupValue('c') % lookupValue('d') ? function () {
-        return ['x'];
-    }() : null,
-    '\n ',
-    !lookupValue('a') && lookupValue('b') || +lookupValue('c') ? function () {
-        return ['x'];
-    }() : null,
-    '\n ',
-    lookupValue('a') + lookupValue('b') - lookupValue('c') ? function () {
-        return ['x'];
-    }() : null,
-    '\n ',
-    (lookupValue('a') ? lookupValue('a') + lookupValue('b') : lookupValue('c')) ? function () {
-        return ['x'];
-    }() : null,
-    '\n ',
-    lookupValue('a') > 3 ? function () {
-        return ['x'];
-    }() : null,
-    '\n ',
-    5.5 * lookupValue('a') >= 0.3 ? function () {
-        return ['x'];
-    }() : null,
-    '\n ',
-    String(lookupValue('a')) !== 'ok' ? function () {
-        return ['x'];
-    }() : null,
-    '\n ',
-    lookupValue('a')['prop'] && lookupValue('b')[lookupValue('prop')] && lookupValue('a')['b']['c'] && lookupValue('a')['b'][0][1] && lookupValue('a')[1] && lookupValue('a')['b'][9] && lookupValue('a')[3] ? function () {
-        return ['x'];
-    }() : null,
-    '\n ',
-    lookupValue('a')[lookupValue('b')] && lookupValue('a')[1][lookupValue('b')] && lookupValue('a')['b'][lookupValue('c')] && lookupValue('a')['b'] && lookupValue('a')['1x1'] ? function () {
-        return ['x'];
-    }() : null,
-    '\n ',
-    lookupValue('a')[lookupValue('b') - 1] && lookupValue('a')[lookupValue('b') % 3] && lookupValue('a')[0] ? function () {
-        return ['x'];
-    }() : null,
-    '\n\n ',
-    externals['substr'](lookupValue('string'), 1, -1) ? function () {
-        return ['x'];
-    }() : null,
-    '\n\n ',
-    lookupValue('a1') && lookupValue('b2') && !(lookupValue('c3') || lookupValue('d4')) && lookupValue('e5') ? function () {
-        return ['x'];
-    }() : null,
-    '\n\n ',
-    (externals['fn'](lookupValue('a'), lookupValue('b')) >= 0 ? externals['substr'](lookupValue('c'), externals['fn'](lookupValue('c'), lookupValue('b'))) : '') ? function () {
-        return ['x'];
-    }() : null,
-    '\n\n ',
-    !!lookupValue('a') ? function () {
-        return ['x'];
-    }() : null,
-    '\n ',
-    /a|b|c|d/.test(lookupValue('letter')) || /[0-9]+/g.test(lookupValue('digit')) || !/^null$/.test(lookupValue('text')) ? function () {
-        return [];
-    }() : null,
-    '\n'
-]);
-}
+return function (h, options) {
+    options = options || {};
+    var blocks = options.blocks || {};
+    var externals = options.externals || {};
+    var lookupValueWithFallback = lookupValue.bind(null, options.resolveLookup);
+    return function (state) {
+        enterScope(state);
+        var returnValue = h('div', { 'className': 'app' }, [
+            '\n ',
+            lookupValueWithFallback('a') || lookupValueWithFallback('b') || lookupValueWithFallback('c') ? function () {
+                return ['x'];
+            }() : null,
+            '\n ',
+            (lookupValueWithFallback('a') || lookupValueWithFallback('b')) && lookupValueWithFallback('c') ? function () {
+                return ['x'];
+            }() : null,
+            '\n ',
+            lookupValueWithFallback('a') || (lookupValueWithFallback('b') || lookupValueWithFallback('c')) ? function () {
+                return ['x'];
+            }() : null,
+            '\n ',
+            !lookupValueWithFallback('a') && lookupValueWithFallback('b') || lookupValueWithFallback('c') && !lookupValueWithFallback('c') ? function () {
+                return ['x'];
+            }() : null,
+            '\n ',
+            lookupValueWithFallback('a') < lookupValueWithFallback('c') && lookupValueWithFallback('b') >= lookupValueWithFallback('c') ? function () {
+                return ['x'];
+            }() : null,
+            '\n ',
+            lookupValueWithFallback('a') / lookupValueWithFallback('b') * lookupValueWithFallback('c') % lookupValueWithFallback('d') ? function () {
+                return ['x'];
+            }() : null,
+            '\n ',
+            !lookupValueWithFallback('a') && lookupValueWithFallback('b') || +lookupValueWithFallback('c') ? function () {
+                return ['x'];
+            }() : null,
+            '\n ',
+            lookupValueWithFallback('a') + lookupValueWithFallback('b') - lookupValueWithFallback('c') ? function () {
+                return ['x'];
+            }() : null,
+            '\n ',
+            (lookupValueWithFallback('a') ? lookupValueWithFallback('a') + lookupValueWithFallback('b') : lookupValueWithFallback('c')) ? function () {
+                return ['x'];
+            }() : null,
+            '\n ',
+            lookupValueWithFallback('a') > 3 ? function () {
+                return ['x'];
+            }() : null,
+            '\n ',
+            5.5 * lookupValueWithFallback('a') >= 0.3 ? function () {
+                return ['x'];
+            }() : null,
+            '\n ',
+            String(lookupValueWithFallback('a')) !== 'ok' ? function () {
+                return ['x'];
+            }() : null,
+            '\n ',
+            lookupValueWithFallback('a')['prop'] && lookupValueWithFallback('b')[lookupValueWithFallback('prop')] && lookupValueWithFallback('a')['b']['c'] && lookupValueWithFallback('a')['b'][0][1] && lookupValueWithFallback('a')[1] && lookupValueWithFallback('a')['b'][9] && lookupValueWithFallback('a')[3] ? function () {
+                return ['x'];
+            }() : null,
+            '\n ',
+            lookupValueWithFallback('a')[lookupValueWithFallback('b')] && lookupValueWithFallback('a')[1][lookupValueWithFallback('b')] && lookupValueWithFallback('a')['b'][lookupValueWithFallback('c')] && lookupValueWithFallback('a')['b'] && lookupValueWithFallback('a')['1x1'] ? function () {
+                return ['x'];
+            }() : null,
+            '\n ',
+            lookupValueWithFallback('a')[lookupValueWithFallback('b') - 1] && lookupValueWithFallback('a')[lookupValueWithFallback('b') % 3] && lookupValueWithFallback('a')[0] ? function () {
+                return ['x'];
+            }() : null,
+            '\n\n ',
+            externals['substr'](lookupValueWithFallback('string'), 1, -1) ? function () {
+                return ['x'];
+            }() : null,
+            '\n\n ',
+            lookupValueWithFallback('a1') && lookupValueWithFallback('b2') && !(lookupValueWithFallback('c3') || lookupValueWithFallback('d4')) && lookupValueWithFallback('e5') ? function () {
+                return ['x'];
+            }() : null,
+            '\n\n ',
+            (externals['fn'](lookupValueWithFallback('a'), lookupValueWithFallback('b')) >= 0 ? externals['substr'](lookupValueWithFallback('c'), externals['fn'](lookupValueWithFallback('c'), lookupValueWithFallback('b'))) : '') ? function () {
+                return ['x'];
+            }() : null,
+            '\n\n ',
+            !!lookupValueWithFallback('a') ? function () {
+                return ['x'];
+            }() : null,
+            '\n ',
+            /a|b|c|d/.test(lookupValueWithFallback('letter')) || /[0-9]+/g.test(lookupValueWithFallback('digit')) || !/^null$/.test(lookupValueWithFallback('text')) ? function () {
+                return [];
+            }() : null,
+            '\n'
+        ]);
+        exitScope();
+        return returnValue;
+    };
+};
+}));
