@@ -44,7 +44,7 @@
         }
     }
 
-    function lookupValue(resolveLookup, propertyName, params) {
+    function lookupValue(propertyName, params, lookupFallback) {
         for (var i = scopeChain.length - 1; i >= 0; i--) {
             var scope = scopeChain[i];
 
@@ -57,8 +57,8 @@
             }
         }
 
-        if (isFunction(resolveLookup)) {
-            return resolveLookup(propertyName, params);
+        if (isFunction(lookupFallback)) {
+            return lookupFallback(propertyName, params);
         }
 
         return null;
@@ -324,7 +324,12 @@ return function (h, options) {
     options = options || {};
     var blocks = options.blocks || {};
     var externals = options.externals || {};
-    var lookupValueWithFallback = lookupValue.bind(null, options.resolveLookup);
+    var lookupValueWithFallback = function (propertyName, params) {
+        return lookupValue(propertyName, params, options.resolveLookup);
+    };
+    var resolveLookup = options.resolveLookup || function () {
+        return null;
+    };
     return function (state) {
         enterScope(state);
         var returnValue = h('div', { 'className': 'container' }, [
@@ -336,6 +341,27 @@ return function (h, options) {
             ]),
             '\n ',
             h('p', {}, [lookupValueWithFallback('greeting', { 'name': lookupValueWithFallback('username') })]),
+            '\n ',
+            resolveLookup('greeting', { 'name': 'N/A' }),
+            '\n ',
+            lookupValue('greeting'),
+            '\n ',
+            (lookupValueWithFallback('items') || []).reduce(function (acc, item, index, arr) {
+                enterScope(item, deriveSpecialLoopVariables(arr, index));
+                acc.push.apply(acc, [
+                    '\n ',
+                    lookupValue('__counter__'),
+                    '\n ',
+                    lookupValue('label'),
+                    '\n ',
+                    lookupValueWithFallback('label'),
+                    '\n ',
+                    resolveLookup('label'),
+                    '\n '
+                ]);
+                exitScope();
+                return acc;
+            }, []),
             '\n'
         ]);
         exitScope();

@@ -1,4 +1,12 @@
 <div class="container">
     <p><TMPL_VAR hello>, <TMPL_VAR username></p>
     <p><TMPL_VAR greeting name=username></p>
+    <TMPL_TRANS greeting name=[% 'N/A' %]>
+    <TMPL_V greeting>
+    <TMPL_LOOP items>
+        <TMPL_V __counter__>
+        <TMPL_V label>
+        <TMPL_VAR label>
+        <TMPL_TRANS label>
+    </TMPL_LOOP>
 </div>
