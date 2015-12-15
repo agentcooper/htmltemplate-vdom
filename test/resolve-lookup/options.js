@@ -2,7 +2,8 @@ var i18n = {
     'username': 'юзернейм',
     'greeting': function(params) {
         return 'Hello, ' + params.name;
-    }
+    },
+    'label': '[unread]'
 };
 
 module.exports = {

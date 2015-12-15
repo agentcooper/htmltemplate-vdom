@@ -44,7 +44,7 @@
         }
     }
 
-    function lookupValue(resolveLookup, propertyName, params) {
+    function lookupValue(propertyName, params, lookupFallback) {
         for (var i = scopeChain.length - 1; i >= 0; i--) {
             var scope = scopeChain[i];
 
@@ -57,8 +57,8 @@
             }
         }
 
-        if (isFunction(resolveLookup)) {
-            return resolveLookup(propertyName, params);
+        if (isFunction(lookupFallback)) {
+            return lookupFallback(propertyName, params);
         }
 
         return null;
@@ -324,7 +324,12 @@ return function (h, options) {
     options = options || {};
     var blocks = options.blocks || {};
     var externals = options.externals || {};
-    var lookupValueWithFallback = lookupValue.bind(null, options.resolveLookup);
+    var lookupValueWithFallback = function (propertyName, params) {
+        return lookupValue(propertyName, params, options.resolveLookup);
+    };
+    var resolveLookup = options.resolveLookup || function () {
+        return null;
+    };
     function block_button(blockParameters) {
         enterScope(blockParameters);
         var blockResult = [
