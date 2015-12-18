@@ -336,15 +336,15 @@ return function (h, options) {
             '\n ',
             h('nav', { 'id': 'navbar' }, [
                 '\n ',
-                h('h1', {}, [lookupValueWithFallback('title')]),
+                h('h1', null, [lookupValueWithFallback('title')]),
                 '\n ',
-                h('ul', {}, [
+                h('ul', null, [
                     '\n ',
-                    h('li', {}, [h('a', { 'href': '#' }, ['Home'])]),
+                    h('li', null, [h('a', { 'href': '#' }, ['Home'])]),
                     '\n ',
-                    h('li', {}, [h('a', { 'href': '#' }, ['About'])]),
+                    h('li', null, [h('a', { 'href': '#' }, ['About'])]),
                     '\n ',
-                    h('li', {}, [h('a', { 'href': '#' }, ['Log in'])]),
+                    h('li', null, [h('a', { 'href': '#' }, ['Log in'])]),
                     '\n '
                 ]),
                 '\n '
@@ -356,7 +356,7 @@ return function (h, options) {
     }
     return function (state) {
         enterScope(state);
-        var returnValue = h('div', {}, [
+        var returnValue = h('div', null, [
             '\n ',
             h('div', { 'className': 'header' }, [
                 '\n Header\n        ',
@@ -376,7 +376,7 @@ return function (h, options) {
         enterScope(blockParameters);
         var blockResult = [
             '\n ',
-            h('footer', {}, [
+            h('footer', null, [
                 '\n Footer\n        ',
                 block_navbar({ 'title': 'Bye bye' }),
                 '\n '

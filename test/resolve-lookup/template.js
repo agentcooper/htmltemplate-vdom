@@ -334,13 +334,13 @@ return function (h, options) {
         enterScope(state);
         var returnValue = h('div', { 'className': 'container' }, [
             '\n ',
-            h('p', {}, [
+            h('p', null, [
                 lookupValueWithFallback('hello'),
                 ', ',
                 lookupValueWithFallback('username')
             ]),
             '\n ',
-            h('p', {}, [lookupValueWithFallback('greeting', { 'name': lookupValueWithFallback('username') })]),
+            h('p', null, [lookupValueWithFallback('greeting', { 'name': lookupValueWithFallback('username') })]),
             '\n ',
             resolveLookup('greeting', { 'name': 'N/A' }),
             '\n ',

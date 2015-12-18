@@ -333,7 +333,7 @@ return function (h, options) {
     function block_inlines_inline2_inc(blockParameters) {
         enterScope(blockParameters);
         var blockResult = [
-            h('p', {}, ['inline2.inc']),
+            h('p', null, ['inline2.inc']),
             '\n'
         ];
         exitScope();
@@ -342,8 +342,8 @@ return function (h, options) {
     function block_inlines_inline1_inc(blockParameters) {
         enterScope(blockParameters);
         var blockResult = [
-            h('div', {}, [
-                h('p', {}, ['inline1.inc']),
+            h('div', null, [
+                h('p', null, ['inline1.inc']),
                 block_inlines_inline2_inc({})
             ]),
             '\n'
@@ -353,9 +353,9 @@ return function (h, options) {
     }
     return function (state) {
         enterScope(state);
-        var returnValue = h('div', {}, [
+        var returnValue = h('div', null, [
             '\n ',
-            h('p', {}, ['hi']),
+            h('p', null, ['hi']),
             '\n\n ',
             block_inlines_inline1_inc({}),
             '\n'

@@ -43,16 +43,32 @@
  </button>
  <input type="text" class="b-class">
 
- <div class="b-class" >Only class</div>
+ <div class="b-class"  >Only class</div>
 
- <div class="b-default" >Only class, fallback to default class name</div>
+ <div class="b-default"  >Only class, fallback to default class name</div>
 
- <div class="b-default" >Attempt to add both class and id, but fallback to default class name</div>
+ <div class="b-default"  >Attempt to add both class and id, but fallback to default class name</div>
 
  <div class="b-class" id="id1" >Add provided class name and id</div>
 
  <div class="id2" id="id2" >Fallback to assigning id to both id and class name</div>
 
- <div data-default="true">Default content</div>
+ <div   data-default="true">Default content</div>
 
+
+ <div style="background: red">
+ <form action="/login" method="POST">
+ <label for="login" data-for="login">
+ <span class="icon-user" role="presentation"></span>
+ <b>Login</b>
+ </label>
+ <input type="text" id="login">
+
+ <div style="visibility:hidden;display:none;" aria-hidden="true">
+ <a href="/forgot_password.html">
+ Forgot password<span></span>
+ </a>
+ </div>
+ </form>
+ </div>
 </div>

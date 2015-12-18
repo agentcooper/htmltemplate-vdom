@@ -376,7 +376,7 @@ return function (h, options) {
                 'value': '1'
             }, 'Form', 'a'),
             '\n ',
-            h('hr', {}),
+            h('hr'),
             '\n ',
             new ViewBlockThunk(blocks['Form'], block_form, {
                 'name': 'b',

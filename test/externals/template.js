@@ -334,12 +334,12 @@ return function (h, options) {
         enterScope(state);
         var returnValue = h('div', { 'className': 'container' }, [
             '\n ',
-            h('h1', {}, [
+            h('h1', null, [
                 externals['substr'](lookupValueWithFallback('title'), 0, 10),
                 '\u2026'
             ]),
             '\n ',
-            h('p', {}, [externals['uc'](lookupValueWithFallback('subtitle'))]),
+            h('p', null, [externals['uc'](lookupValueWithFallback('subtitle'))]),
             '\n'
         ]);
         exitScope();

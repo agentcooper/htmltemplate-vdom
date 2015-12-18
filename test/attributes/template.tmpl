@@ -44,4 +44,20 @@
             </TMPL_IF>
             ><TMPL_VAR div.content></div>
     </TMPL_FOR>
+
+    <div style="background: red">
+        <form action="/login" method="POST">
+            <label for="login" data-for="login">
+                <span class="icon-user" role="presentation"></span>
+                <b>Login</b>
+            </label>
+            <input type="text" id="login">
+
+            <div style="visibility:hidden;display:none;" aria-hidden="true">
+                <a href="/forgot_password.html">
+                    Forgot password<span></span>
+                </a>
+            </div>
+        </form>
+    </div>
 </div>

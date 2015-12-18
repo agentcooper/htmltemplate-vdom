@@ -332,7 +332,7 @@ return function (h, options) {
     };
     return function (state) {
         enterScope(state);
-        var returnValue = h('div', {}, [
+        var returnValue = h('div', null, [
             '\n ',
             assignLocalVariable('number', 1 + 2),
             '\n ',
