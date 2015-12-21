@@ -3,6 +3,6 @@ module.exports = {
 
 	items: [{ name: 'John' }],
 
-	loggedIn: true,
-	showItems: true
+	logged_in: true,
+	show_items: true
 };

@@ -336,7 +336,9 @@ return function (h, options) {
             '\n ',
             assignLocalVariable('number', 1 + 2),
             '\n ',
-            assignLocalVariable('show', lookupValueWithFallback('loggedIn') && lookupValueWithFallback('showItems')),
+            assignLocalVariable('show', lookupValueWithFallback('logged_in') && lookupValueWithFallback('show_items')),
+            '\n ',
+            assignLocalVariable('superhero_alias', lookupValueWithFallback('superhero')),
             '\n\n ',
             assignLocalVariable('message', [
                 'Nanana ',
@@ -347,6 +349,8 @@ return function (h, options) {
             lookupValueWithFallback('message'),
             ', ',
             lookupValueWithFallback('message'),
+            '\n ',
+            lookupValueWithFallback('superhero_alias'),
             '\n\n ',
             lookupValueWithFallback('show') ? function () {
                 return [
