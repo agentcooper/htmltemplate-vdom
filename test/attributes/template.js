@@ -415,19 +415,72 @@ return function (h, options) {
                 acc.push.apply(acc, [
                     '\n ',
                     h('div', {
-                        'className': lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class'] ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['class_name'] ? function () {
-                            return [lookupValueWithFallback('div') && lookupValueWithFallback('div')['class_name']];
-                        }() : function () {
-                            return ['b-default'];
-                        }() : !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) && (lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) ? lookupValueWithFallback('div')['class_name'] || lookupValueWithFallback('div')['id'] : null,
-                        'id': !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) && (lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['id'] : null,
-                        'attributes': { 'data-default': !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) && !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) ? 'true' : null }
+                        'attributes': {
+                            'class': lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class'] ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['class_name'] ? function () {
+                                return [lookupValueWithFallback('div') && lookupValueWithFallback('div')['class_name']];
+                            }() : function () {
+                                return ['b-default'];
+                            }() : !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) && (lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) ? lookupValueWithFallback('div')['class_name'] || lookupValueWithFallback('div')['id'] : null,
+                            'id': !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) && (lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['id'] : null,
+                            'data-default': !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) && !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) ? 'true' : null
+                        }
                     }, [lookupValueWithFallback('div') && lookupValueWithFallback('div')['content']]),
                     '\n '
                 ]);
                 exitScope();
                 return acc;
             }, []),
+            '\n\n ',
+            h('div', { 'attributes': { 'style': 'background: red' } }, [
+                '\n ',
+                h('form', {
+                    'attributes': {
+                        'action': '/login',
+                        'method': 'POST'
+                    }
+                }, [
+                    '\n ',
+                    h('label', {
+                        'attributes': {
+                            'for': 'login',
+                            'data-for': 'login'
+                        }
+                    }, [
+                        '\n ',
+                        h('span', {
+                            'attributes': {
+                                'class': 'icon-user',
+                                'role': 'presentation'
+                            }
+                        }),
+                        '\n ',
+                        h('b', null, ['Login']),
+                        '\n '
+                    ]),
+                    '\n ',
+                    h('input', {
+                        'type': 'text',
+                        'id': 'login'
+                    }),
+                    '\n\n ',
+                    h('div', {
+                        'attributes': {
+                            'style': 'visibility:hidden;display:none;',
+                            'aria-hidden': 'true'
+                        }
+                    }, [
+                        '\n ',
+                        h('a', { 'href': '/forgot_password.html' }, [
+                            '\n Forgot password',
+                            h('span'),
+                            '\n '
+                        ]),
+                        '\n '
+                    ]),
+                    '\n '
+                ]),
+                '\n '
+            ]),
             '\n'
         ]);
         exitScope();

@@ -334,13 +334,13 @@ return function (h, options) {
         enterScope(state);
         var returnValue = h('div', { 'className': 'app' }, [
             '\n ',
-            h('h2', {}, [lookupValueWithFallback('title')]),
+            h('h2', null, [lookupValueWithFallback('title')]),
             '\n ',
             lookupValueWithFallback('hide_subtitle') ? null : function () {
                 return ['Should be hidden'];
             }(),
             '\n\n ',
-            h('p', {}, [lookupValueWithFallback('description')]),
+            h('p', null, [lookupValueWithFallback('description')]),
             '\n\n ',
             h('ul', { 'className': 'list' }, [
                 '\n ',
@@ -349,13 +349,15 @@ return function (h, options) {
                     acc.push.apply(acc, [
                         '\n ',
                         h('li', {
-                            'className': [
-                                'item ',
-                                lookupValueWithFallback('active') ? function () {
-                                    return ['item--active'];
-                                }() : null
-                            ].join(''),
-                            'onclick': lookupValueWithFallback('itemClick').bind(null, lookupValueWithFallback('id'))
+                            'onclick': lookupValueWithFallback('itemClick').bind(null, lookupValueWithFallback('id')),
+                            'attributes': {
+                                'class': [
+                                    'item ',
+                                    lookupValueWithFallback('active') ? function () {
+                                        return ['item--active'];
+                                    }() : null
+                                ].join('')
+                            }
                         }, [
                             '\n ',
                             lookupValueWithFallback('name'),
@@ -372,13 +374,13 @@ return function (h, options) {
                                     'placeholder': 'Type something here'
                                 })]),
                             '\n\n ',
-                            h('ul', {}, [
+                            h('ul', null, [
                                 '\n ',
                                 (lookupValueWithFallback('inner') || []).reduce(function (acc, item, index, arr) {
                                     enterScope(item, deriveSpecialLoopVariables(arr, index));
                                     acc.push.apply(acc, [
                                         '\n ',
-                                        h('li', {}, [lookupValueWithFallback('title')]),
+                                        h('li', null, [lookupValueWithFallback('title')]),
                                         '\n '
                                     ]);
                                     exitScope();
@@ -387,7 +389,7 @@ return function (h, options) {
                                 '\n '
                             ]),
                             '\n\n ',
-                            h('div', {}, [
+                            h('div', null, [
                                 lookupValueWithFallback('city_copy'),
                                 lookupValueWithFallback('city')
                             ]),
@@ -398,15 +400,15 @@ return function (h, options) {
                                 return ['not active'];
                             }(),
                             '\n\n ',
-                            h('div', {}, [
+                            h('div', null, [
                                 '\n ',
                                 h('button', { 'onclick': lookupValueWithFallback('counterClick').bind(null, lookupValueWithFallback('id')) }, [
                                     '\n ',
-                                    h('span', {}, ['Click me']),
+                                    h('span', null, ['Click me']),
                                     '\n '
                                 ]),
                                 '\n ',
-                                h('span', {}, [lookupValueWithFallback('counter')]),
+                                h('span', null, [lookupValueWithFallback('counter')]),
                                 '\n '
                             ]),
                             '\n '
@@ -419,7 +421,7 @@ return function (h, options) {
                 '\n '
             ]),
             '\n\n ',
-            h('div', {}, [
+            h('div', null, [
                 '\n ',
                 h('a', { 'href': lookupValueWithFallback('githubLink') }, [lookupValueWithFallback('githubLink')]),
                 '\n '
