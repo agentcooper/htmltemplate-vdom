@@ -431,7 +431,17 @@ return function (h, options) {
                 return acc;
             }, []),
             '\n\n ',
-            h('div', { 'attributes': { 'style': 'background: red' } }, [
+            h('div', {
+                'attributes': {
+                    'style': 'background: red',
+                    'class': lookupValueWithFallback('class_name') ? function () {
+                        return [
+                            'div-',
+                            lookupValueWithFallback('class_name')
+                        ].join('');
+                    }() : null
+                }
+            }, [
                 '\n ',
                 h('form', {
                     'attributes': {

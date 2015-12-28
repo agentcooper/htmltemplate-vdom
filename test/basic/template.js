@@ -354,7 +354,7 @@ return function (h, options) {
                                 'class': [
                                     'item ',
                                     lookupValueWithFallback('active') ? function () {
-                                        return ['item--active'];
+                                        return 'item--active';
                                     }() : null
                                 ].join('')
                             }
