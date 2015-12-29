@@ -340,37 +340,27 @@ return function (h, options) {
                     '\n ',
                     h('div', { 'className': 'common' }, ['\n This part is common for all items.\n        ']),
                     '\n\n ',
-                    lookupValueWithFallback('unskip') ? function () {
-                        return [
+                    lookupValueWithFallback('unskip') ? [
+                        '\n ',
+                        h('div', { 'className': 'unskipped' }, ['\n This item is unskipped.\n            ']),
+                        '\n '
+                    ] : lookupValueWithFallback('can_skip') ? [
+                        '\n ',
+                        lookupValueWithFallback('skippable') || lookupValueWithFallback('skippaduppable') ? '\n ' : [
                             '\n ',
-                            h('div', { 'className': 'unskipped' }, ['\n This item is unskipped.\n            ']),
+                            h('div', { 'className': 'not-skipped' }, ['\n Not skipped.\n                ']),
                             '\n '
-                        ];
-                    }() : lookupValueWithFallback('can_skip') ? function () {
-                        return [
+                        ]
+                    ] : null,
+                    !lookupValueWithFallback('unskip') && lookupValueWithFallback('can_skip') && (lookupValueWithFallback('skippable') || lookupValueWithFallback('skippaduppable')) ? null : [
+                        '\n\n ',
+                        h('div', { 'className': 'can-be-skipped' }, [
                             '\n ',
-                            lookupValueWithFallback('skippable') || lookupValueWithFallback('skippaduppable') ? function () {
-                                return ['\n '];
-                            }() : function () {
-                                return [
-                                    '\n ',
-                                    h('div', { 'className': 'not-skipped' }, ['\n Not skipped.\n                ']),
-                                    '\n '
-                                ];
-                            }()
-                        ];
-                    }() : null,
-                    !lookupValueWithFallback('unskip') && lookupValueWithFallback('can_skip') && (lookupValueWithFallback('skippable') || lookupValueWithFallback('skippaduppable')) ? null : function () {
-                        return [
-                            '\n\n ',
-                            h('div', { 'className': 'can-be-skipped' }, [
-                                '\n ',
-                                lookupValueWithFallback('value'),
-                                '\n '
-                            ]),
+                            lookupValueWithFallback('value'),
                             '\n '
-                        ];
-                    }()
+                        ]),
+                        '\n '
+                    ]
                 ]);
                 exitScope();
                 return acc;

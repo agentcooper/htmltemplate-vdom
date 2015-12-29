@@ -416,11 +416,7 @@ return function (h, options) {
                     '\n ',
                     h('div', {
                         'attributes': {
-                            'class': lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class'] ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['class_name'] ? function () {
-                                return [lookupValueWithFallback('div') && lookupValueWithFallback('div')['class_name']];
-                            }() : function () {
-                                return ['b-default'];
-                            }() : !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) && (lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) ? lookupValueWithFallback('div')['class_name'] || lookupValueWithFallback('div')['id'] : null,
+                            'class': lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class'] ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['class_name'] ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['class_name'] : 'b-default' : !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) && (lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) ? lookupValueWithFallback('div')['class_name'] || lookupValueWithFallback('div')['id'] : null,
                             'id': !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) && (lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['id'] : null,
                             'data-default': !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) && !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) ? 'true' : null
                         }
@@ -434,12 +430,10 @@ return function (h, options) {
             h('div', {
                 'attributes': {
                     'style': 'background: red',
-                    'class': lookupValueWithFallback('class_name') ? function () {
-                        return [
-                            'div-',
-                            lookupValueWithFallback('class_name')
-                        ].join('');
-                    }() : null
+                    'class': lookupValueWithFallback('class_name') ? [
+                        'div-',
+                        lookupValueWithFallback('class_name')
+                    ].join('') : null
                 }
             }, [
                 '\n ',

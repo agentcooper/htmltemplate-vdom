@@ -334,85 +334,45 @@ return function (h, options) {
         enterScope(state);
         var returnValue = h('div', { 'className': 'app' }, [
             '\n ',
-            lookupValueWithFallback('a') || lookupValueWithFallback('b') || lookupValueWithFallback('c') ? function () {
-                return ['x'];
-            }() : null,
+            lookupValueWithFallback('a') || lookupValueWithFallback('b') || lookupValueWithFallback('c') ? 'x' : null,
             '\n ',
-            (lookupValueWithFallback('a') || lookupValueWithFallback('b')) && lookupValueWithFallback('c') ? function () {
-                return ['x'];
-            }() : null,
+            (lookupValueWithFallback('a') || lookupValueWithFallback('b')) && lookupValueWithFallback('c') ? 'x' : null,
             '\n ',
-            lookupValueWithFallback('a') || (lookupValueWithFallback('b') || lookupValueWithFallback('c')) ? function () {
-                return ['x'];
-            }() : null,
+            lookupValueWithFallback('a') || (lookupValueWithFallback('b') || lookupValueWithFallback('c')) ? 'x' : null,
             '\n ',
-            !lookupValueWithFallback('a') && lookupValueWithFallback('b') || lookupValueWithFallback('c') && !lookupValueWithFallback('c') ? function () {
-                return ['x'];
-            }() : null,
+            !lookupValueWithFallback('a') && lookupValueWithFallback('b') || lookupValueWithFallback('c') && !lookupValueWithFallback('c') ? 'x' : null,
             '\n ',
-            lookupValueWithFallback('a') < lookupValueWithFallback('c') && lookupValueWithFallback('b') >= lookupValueWithFallback('c') ? function () {
-                return ['x'];
-            }() : null,
+            lookupValueWithFallback('a') < lookupValueWithFallback('c') && lookupValueWithFallback('b') >= lookupValueWithFallback('c') ? 'x' : null,
             '\n ',
-            lookupValueWithFallback('a') / lookupValueWithFallback('b') * lookupValueWithFallback('c') % lookupValueWithFallback('d') ? function () {
-                return ['x'];
-            }() : null,
+            lookupValueWithFallback('a') / lookupValueWithFallback('b') * lookupValueWithFallback('c') % lookupValueWithFallback('d') ? 'x' : null,
             '\n ',
-            !lookupValueWithFallback('a') && lookupValueWithFallback('b') || +lookupValueWithFallback('c') ? function () {
-                return ['x'];
-            }() : null,
+            !lookupValueWithFallback('a') && lookupValueWithFallback('b') || +lookupValueWithFallback('c') ? 'x' : null,
             '\n ',
-            lookupValueWithFallback('a') + lookupValueWithFallback('b') - lookupValueWithFallback('c') ? function () {
-                return ['x'];
-            }() : null,
+            lookupValueWithFallback('a') + lookupValueWithFallback('b') - lookupValueWithFallback('c') ? 'x' : null,
             '\n ',
-            (lookupValueWithFallback('a') ? lookupValueWithFallback('a') + lookupValueWithFallback('b') : lookupValueWithFallback('c')) ? function () {
-                return ['x'];
-            }() : null,
+            (lookupValueWithFallback('a') ? lookupValueWithFallback('a') + lookupValueWithFallback('b') : lookupValueWithFallback('c')) ? 'x' : null,
             '\n ',
-            lookupValueWithFallback('a') > 3 ? function () {
-                return ['x'];
-            }() : null,
+            lookupValueWithFallback('a') > 3 ? 'x' : null,
             '\n ',
-            5.5 * lookupValueWithFallback('a') >= 0.3 ? function () {
-                return ['x'];
-            }() : null,
+            5.5 * lookupValueWithFallback('a') >= 0.3 ? 'x' : null,
             '\n ',
-            String(lookupValueWithFallback('a')) !== 'ok' ? function () {
-                return ['x'];
-            }() : null,
+            String(lookupValueWithFallback('a')) !== 'ok' ? 'x' : null,
             '\n ',
-            lookupValueWithFallback('a')['prop'] && lookupValueWithFallback('b')[lookupValueWithFallback('prop')] && lookupValueWithFallback('a')['b']['c'] && lookupValueWithFallback('a')['b'][0][1] && lookupValueWithFallback('a')[1] && lookupValueWithFallback('a')['b'][9] && lookupValueWithFallback('a')[3] ? function () {
-                return ['x'];
-            }() : null,
+            lookupValueWithFallback('a')['prop'] && lookupValueWithFallback('b')[lookupValueWithFallback('prop')] && lookupValueWithFallback('a')['b']['c'] && lookupValueWithFallback('a')['b'][0][1] && lookupValueWithFallback('a')[1] && lookupValueWithFallback('a')['b'][9] && lookupValueWithFallback('a')[3] ? 'x' : null,
             '\n ',
-            lookupValueWithFallback('a')[lookupValueWithFallback('b')] && lookupValueWithFallback('a')[1][lookupValueWithFallback('b')] && lookupValueWithFallback('a')['b'][lookupValueWithFallback('c')] && lookupValueWithFallback('a')['b'] && lookupValueWithFallback('a')['1x1'] ? function () {
-                return ['x'];
-            }() : null,
+            lookupValueWithFallback('a')[lookupValueWithFallback('b')] && lookupValueWithFallback('a')[1][lookupValueWithFallback('b')] && lookupValueWithFallback('a')['b'][lookupValueWithFallback('c')] && lookupValueWithFallback('a')['b'] && lookupValueWithFallback('a')['1x1'] ? 'x' : null,
             '\n ',
-            lookupValueWithFallback('a')[lookupValueWithFallback('b') - 1] && lookupValueWithFallback('a')[lookupValueWithFallback('b') % 3] && lookupValueWithFallback('a')[0] ? function () {
-                return ['x'];
-            }() : null,
+            lookupValueWithFallback('a')[lookupValueWithFallback('b') - 1] && lookupValueWithFallback('a')[lookupValueWithFallback('b') % 3] && lookupValueWithFallback('a')[0] ? 'x' : null,
             '\n\n ',
-            externals['substr'](lookupValueWithFallback('string'), 1, -1) ? function () {
-                return ['x'];
-            }() : null,
+            externals['substr'](lookupValueWithFallback('string'), 1, -1) ? 'x' : null,
             '\n\n ',
-            lookupValueWithFallback('a1') && lookupValueWithFallback('b2') && !(lookupValueWithFallback('c3') || lookupValueWithFallback('d4')) && lookupValueWithFallback('e5') ? function () {
-                return ['x'];
-            }() : null,
+            lookupValueWithFallback('a1') && lookupValueWithFallback('b2') && !(lookupValueWithFallback('c3') || lookupValueWithFallback('d4')) && lookupValueWithFallback('e5') ? 'x' : null,
             '\n\n ',
-            (externals['fn'](lookupValueWithFallback('a'), lookupValueWithFallback('b')) >= 0 ? externals['substr'](lookupValueWithFallback('c'), externals['fn'](lookupValueWithFallback('c'), lookupValueWithFallback('b'))) : '') ? function () {
-                return ['x'];
-            }() : null,
+            (externals['fn'](lookupValueWithFallback('a'), lookupValueWithFallback('b')) >= 0 ? externals['substr'](lookupValueWithFallback('c'), externals['fn'](lookupValueWithFallback('c'), lookupValueWithFallback('b'))) : '') ? 'x' : null,
             '\n\n ',
-            !!lookupValueWithFallback('a') ? function () {
-                return ['x'];
-            }() : null,
+            !!lookupValueWithFallback('a') ? 'x' : null,
             '\n ',
-            /a|b|c|d/.test(lookupValueWithFallback('letter')) || /[0-9]+/g.test(lookupValueWithFallback('digit')) || !/^null$/.test(lookupValueWithFallback('text')) ? function () {
-                return [];
-            }() : null,
+            /a|b|c|d/.test(lookupValueWithFallback('letter')) || /[0-9]+/g.test(lookupValueWithFallback('digit')) || !/^null$/.test(lookupValueWithFallback('text')) ? null : null,
             '\n'
         ]);
         exitScope();

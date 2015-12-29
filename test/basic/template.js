@@ -336,9 +336,7 @@ return function (h, options) {
             '\n ',
             h('h2', null, [lookupValueWithFallback('title')]),
             '\n ',
-            lookupValueWithFallback('hide_subtitle') ? null : function () {
-                return ['Should be hidden'];
-            }(),
+            lookupValueWithFallback('hide_subtitle') ? null : 'Should be hidden',
             '\n\n ',
             h('p', null, [lookupValueWithFallback('description')]),
             '\n\n ',
@@ -353,9 +351,7 @@ return function (h, options) {
                             'attributes': {
                                 'class': [
                                     'item ',
-                                    lookupValueWithFallback('active') ? function () {
-                                        return 'item--active';
-                                    }() : null
+                                    lookupValueWithFallback('active') ? 'item--active' : null
                                 ].join('')
                             }
                         }, [
@@ -394,11 +390,7 @@ return function (h, options) {
                                 lookupValueWithFallback('city')
                             ]),
                             '\n\n ',
-                            lookupValueWithFallback('active') ? function () {
-                                return ['active'];
-                            }() : function () {
-                                return ['not active'];
-                            }(),
+                            lookupValueWithFallback('active') ? 'active' : 'not active',
                             '\n\n ',
                             h('div', null, [
                                 '\n ',

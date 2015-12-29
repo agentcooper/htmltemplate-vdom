@@ -38,10 +38,11 @@
   },
   "devDependencies": {
     "brfs": "^1.4.1",
-    "transform-loader": "^0.2.2",
     "husky": "^0.9.3",
     "json-loader": "^0.5.2",
     "mocha": "2.3.2",
-    "raw-loader": "^0.5.1"
+    "raw-loader": "^0.5.1",
+    "transform-loader": "^0.2.2",
+    "uglify-js": "2.6.1"
   }
 }

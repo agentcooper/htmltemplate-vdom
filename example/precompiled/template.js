@@ -44,7 +44,7 @@
         }
     }
 
-    function lookupValue(resolveLookup, propertyName, params) {
+    function lookupValue(propertyName, params, lookupFallback) {
         for (var i = scopeChain.length - 1; i >= 0; i--) {
             var scope = scopeChain[i];
 
@@ -57,8 +57,8 @@
             }
         }
 
-        if (isFunction(resolveLookup)) {
-            return resolveLookup(propertyName, params);
+        if (isFunction(lookupFallback)) {
+            return lookupFallback(propertyName, params);
         }
 
         return null;
@@ -324,19 +324,24 @@ return function (h, options) {
     options = options || {};
     var blocks = options.blocks || {};
     var externals = options.externals || {};
-    var lookupValueWithFallback = lookupValue.bind(null, options.resolveLookup);
+    var lookupValueWithFallback = function (propertyName, params) {
+        return lookupValue(propertyName, params, options.resolveLookup);
+    };
+    var resolveLookup = options.resolveLookup || function () {
+        return null;
+    };
     function block_person(blockParameters) {
         enterScope(blockParameters);
         var blockResult = [
             '\n ',
             h('li', {
-                'className': [
-                    'item ',
-                    lookupValueWithFallback('active') ? function () {
-                        return ['item--active'];
-                    }() : null
-                ].join(''),
-                'onclick': lookupValueWithFallback('itemClick').bind(null, lookupValueWithFallback('id'))
+                'onclick': lookupValueWithFallback('itemClick').bind(null, lookupValueWithFallback('id')),
+                'attributes': {
+                    'class': [
+                        'item ',
+                        lookupValueWithFallback('active') ? 'item--active' : null
+                    ].join('')
+                }
             }, [
                 '\n ',
                 lookupValueWithFallback('name'),
@@ -353,13 +358,13 @@ return function (h, options) {
                         'placeholder': 'Type something here'
                     })]),
                 '\n\n ',
-                h('ul', {}, [
+                h('ul', null, [
                     '\n ',
                     (lookupValueWithFallback('inner') || []).reduce(function (acc, item, index, arr) {
                         enterScope(item, deriveSpecialLoopVariables(arr, index));
                         acc.push.apply(acc, [
                             '\n ',
-                            h('li', {}, [lookupValueWithFallback('title')]),
+                            h('li', null, [lookupValueWithFallback('title')]),
                             '\n '
                         ]);
                         exitScope();
@@ -368,26 +373,22 @@ return function (h, options) {
                     '\n '
                 ]),
                 '\n\n ',
-                h('div', {}, [
+                h('div', null, [
                     lookupValueWithFallback('city_copy'),
                     lookupValueWithFallback('city')
                 ]),
                 '\n\n ',
-                lookupValueWithFallback('active') ? function () {
-                    return ['active'];
-                }() : function () {
-                    return ['not active'];
-                }(),
+                lookupValueWithFallback('active') ? 'active' : 'not active',
                 '\n\n ',
-                h('div', {}, [
+                h('div', null, [
                     '\n ',
                     h('button', { 'onclick': lookupValueWithFallback('counterClick').bind(null, lookupValueWithFallback('id')) }, [
                         '\n ',
-                        h('span', {}, ['Click me']),
+                        h('span', null, ['Click me']),
                         '\n '
                     ]),
                     '\n ',
-                    h('span', {}, [lookupValueWithFallback('counter')]),
+                    h('span', null, [lookupValueWithFallback('counter')]),
                     '\n '
                 ]),
                 '\n '
@@ -401,9 +402,9 @@ return function (h, options) {
         enterScope(state);
         var returnValue = h('div', { 'className': 'app' }, [
             '\n ',
-            h('h2', {}, [lookupValueWithFallback('title')]),
+            h('h2', null, [lookupValueWithFallback('title')]),
             '\n\n ',
-            h('p', {}, [lookupValueWithFallback('description')]),
+            h('p', null, [lookupValueWithFallback('description')]),
             '\n\n ',
             h('ul', { 'className': 'list' }, [
                 '\n ',
@@ -423,11 +424,11 @@ return function (h, options) {
                 '\n '
             ]),
             '\n\n ',
-            h('p', {}, [h('button', { 'onclick': lookupValueWithFallback('addClick').bind(null, lookupValueWithFallback('id')) }, ['Add person'])]),
+            h('p', null, [h('button', { 'onclick': lookupValueWithFallback('addClick').bind(null, lookupValueWithFallback('id')) }, ['Add person'])]),
             '\n ',
-            h('p', {}, [h('button', { 'onclick': lookupValueWithFallback('popClick').bind(null, lookupValueWithFallback('id')) }, ['Pop person'])]),
+            h('p', null, [h('button', { 'onclick': lookupValueWithFallback('popClick').bind(null, lookupValueWithFallback('id')) }, ['Pop person'])]),
             '\n\n ',
-            h('div', {}, [
+            h('div', null, [
                 '\n ',
                 h('a', { 'href': lookupValueWithFallback('githubLink') }, [lookupValueWithFallback('githubLink')]),
                 '\n '

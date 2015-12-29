@@ -338,13 +338,11 @@ return function (h, options) {
                 enterScope(item, deriveSpecialLoopVariables(arr, index));
                 acc.push.apply(acc, [
                     '\n ',
-                    lookupValueWithFallback('set_flag') ? function () {
-                        return [
-                            '\n ',
-                            assignLocalVariable('flag', ['1']),
-                            '\n '
-                        ];
-                    }() : null,
+                    lookupValueWithFallback('set_flag') ? [
+                        '\n ',
+                        assignLocalVariable('flag', ['1']),
+                        '\n '
+                    ] : null,
                     '\n '
                 ]);
                 exitScope();

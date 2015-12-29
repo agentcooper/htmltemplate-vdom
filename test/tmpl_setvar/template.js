@@ -352,27 +352,25 @@ return function (h, options) {
             '\n ',
             lookupValueWithFallback('superhero_alias'),
             '\n\n ',
-            lookupValueWithFallback('show') ? function () {
-                return [
-                    '\n ',
-                    (lookupValueWithFallback('items') || []).reduce(function (acc, item, index, arr) {
-                        enterScope(item, deriveSpecialLoopVariables(arr, index));
-                        acc.push.apply(acc, [
-                            '\n ',
-                            assignLocalVariable('name', [
-                                'Mr. ',
-                                lookupValueWithFallback('name')
-                            ]),
-                            '\n Name: ',
-                            lookupValueWithFallback('name'),
-                            '\n '
-                        ]);
-                        exitScope();
-                        return acc;
-                    }, []),
-                    '\n '
-                ];
-            }() : null,
+            lookupValueWithFallback('show') ? [
+                '\n ',
+                (lookupValueWithFallback('items') || []).reduce(function (acc, item, index, arr) {
+                    enterScope(item, deriveSpecialLoopVariables(arr, index));
+                    acc.push.apply(acc, [
+                        '\n ',
+                        assignLocalVariable('name', [
+                            'Mr. ',
+                            lookupValueWithFallback('name')
+                        ]),
+                        '\n Name: ',
+                        lookupValueWithFallback('name'),
+                        '\n '
+                    ]);
+                    exitScope();
+                    return acc;
+                }, []),
+                '\n '
+            ] : null,
             '\n'
         ]);
         exitScope();
