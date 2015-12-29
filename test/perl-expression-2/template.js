@@ -347,9 +347,9 @@ return function (h, options) {
                                     'className': [
                                         '\n notification\n                    ',
                                         String(lookupValueWithFallback('type')) === 'warning' ? function () {
-                                            return ['\n notification--warning\n                    '];
+                                            return '\n notification--warning\n                    ';
                                         }() : String(lookupValueWithFallback('type')) === 'urgent' ? function () {
-                                            return ['\n notification--urgent\n                    '];
+                                            return '\n notification--urgent\n                    ';
                                         }() : null,
                                         '\n '
                                     ].join('')

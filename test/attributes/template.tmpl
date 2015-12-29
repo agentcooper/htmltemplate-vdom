@@ -45,7 +45,7 @@
             ><TMPL_VAR div.content></div>
     </TMPL_FOR>
 
-    <div style="background: red">
+    <div style="background: red" class="<TMPL_IF class_name>div-<TMPL_VAR class_name></TMPL_IF>">
         <form action="/login" method="POST">
             <label for="login" data-for="login">
                 <span class="icon-user" role="presentation"></span>
