@@ -347,13 +347,11 @@ return function (h, options) {
                     acc.push.apply(acc, [
                         '\n ',
                         h('li', {
-                            'onclick': lookupValueWithFallback('itemClick').bind(null, lookupValueWithFallback('id')),
-                            'attributes': {
-                                'class': [
-                                    'item ',
-                                    lookupValueWithFallback('active') ? 'item--active' : null
-                                ].join('')
-                            }
+                            'className': [
+                                'item ',
+                                lookupValueWithFallback('active') ? 'item--active' : null
+                            ].join(''),
+                            'onclick': lookupValueWithFallback('itemClick').bind(null, lookupValueWithFallback('id'))
                         }, [
                             '\n ',
                             lookupValueWithFallback('name'),

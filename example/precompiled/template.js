@@ -335,13 +335,11 @@ return function (h, options) {
         var blockResult = [
             '\n ',
             h('li', {
-                'onclick': lookupValueWithFallback('itemClick').bind(null, lookupValueWithFallback('id')),
-                'attributes': {
-                    'class': [
-                        'item ',
-                        lookupValueWithFallback('active') ? 'item--active' : null
-                    ].join('')
-                }
+                'className': [
+                    'item ',
+                    lookupValueWithFallback('active') ? 'item--active' : null
+                ].join(''),
+                'onclick': lookupValueWithFallback('itemClick').bind(null, lookupValueWithFallback('id'))
             }, [
                 '\n ',
                 lookupValueWithFallback('name'),

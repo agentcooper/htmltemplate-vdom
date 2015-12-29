@@ -485,6 +485,15 @@ return function (h, options) {
                 ]),
                 '\n '
             ]),
+            '\n\n ',
+            h('input', {
+                'value': lookupValueWithFallback('page_title'),
+                'attributes': {
+                    'class': 'new-todo',
+                    'placeholder': 'What needs to be done?',
+                    'autofocus': true
+                }
+            }),
             '\n'
         ]);
         exitScope();

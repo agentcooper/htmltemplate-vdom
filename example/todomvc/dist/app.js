@@ -339,8 +339,8 @@ return function (h, options) {
                 h('h1', null, ['todos']),
                 '\n ',
                 h('input', {
+                    'value': lookupValueWithFallback('new_todo_label'),
                     'attributes': {
-                        'value': lookupValueWithFallback('new_todo_label'),
                         'class': 'new-todo',
                         'placeholder': 'What needs to be done?',
                         'autofocus': true
