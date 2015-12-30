@@ -344,9 +344,11 @@ return function (h, options) {
             '\n ',
             resolveLookup('greeting', { 'name': 'N/A' }),
             '\n ',
+            lookupValueWithFallback('greeting', { 'name': lookupValue('username') }),
+            '\n ',
             lookupValue('greeting'),
             '\n ',
-            (lookupValueWithFallback('items') || []).reduce(function (acc, item, index, arr) {
+            (lookupValue('items') || []).reduce(function (acc, item, index, arr) {
                 enterScope(item, deriveSpecialLoopVariables(arr, index));
                 acc.push('\n ', lookupValue('__counter__'), '\n ', lookupValue('label'), '\n ', lookupValueWithFallback('label'), '\n ', resolveLookup('label'), '\n ');
                 exitScope();

@@ -336,9 +336,9 @@ return function (h, options) {
             '\n ',
             assignLocalVariable('number', 1 + 2),
             '\n ',
-            assignLocalVariable('show', lookupValueWithFallback('logged_in') && lookupValueWithFallback('show_items')),
+            assignLocalVariable('show', lookupValue('logged_in') && lookupValue('show_items')),
             '\n ',
-            assignLocalVariable('superhero_alias', lookupValueWithFallback('superhero')),
+            assignLocalVariable('superhero_alias', lookupValue('superhero')),
             '\n\n ',
             assignLocalVariable('message', [
                 'Nanana ',
@@ -352,9 +352,9 @@ return function (h, options) {
             '\n ',
             lookupValueWithFallback('superhero_alias'),
             '\n\n ',
-            lookupValueWithFallback('show') ? [
+            lookupValue('show') ? [
                 '\n ',
-                (lookupValueWithFallback('items') || []).reduce(function (acc, item, index, arr) {
+                (lookupValue('items') || []).reduce(function (acc, item, index, arr) {
                     enterScope(item, deriveSpecialLoopVariables(arr, index));
                     acc.push('\n ', assignLocalVariable('name', [
                         'Mr. ',

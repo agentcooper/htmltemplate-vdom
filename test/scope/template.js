@@ -334,9 +334,9 @@ return function (h, options) {
         enterScope(state);
         var returnValue = h('div', { 'className': 'container' }, [
             '\n ',
-            (lookupValueWithFallback('items') || []).reduce(function (acc, item, index, arr) {
+            (lookupValue('items') || []).reduce(function (acc, item, index, arr) {
                 enterScope(item, deriveSpecialLoopVariables(arr, index));
-                acc.push('\n ', lookupValueWithFallback('set_flag') ? [
+                acc.push('\n ', lookupValue('set_flag') ? [
                     '\n ',
                     assignLocalVariable('flag', ['1']),
                     '\n '

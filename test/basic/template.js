@@ -336,20 +336,20 @@ return function (h, options) {
             '\n ',
             h('h2', null, [lookupValueWithFallback('title')]),
             '\n ',
-            lookupValueWithFallback('hide_subtitle') ? null : 'Should be hidden',
+            lookupValue('hide_subtitle') ? null : 'Should be hidden',
             '\n\n ',
             h('p', null, [lookupValueWithFallback('description')]),
             '\n\n ',
             h('ul', { 'className': 'list' }, [
                 '\n ',
-                (lookupValueWithFallback('people') || []).reduce(function (acc, item, index, arr) {
+                (lookupValue('people') || []).reduce(function (acc, item, index, arr) {
                     enterScope(item, deriveSpecialLoopVariables(arr, index));
                     acc.push('\n ', h('li', {
                         'className': [
                             'item ',
-                            lookupValueWithFallback('active') ? 'item--active' : null
+                            lookupValue('active') ? 'item--active' : null
                         ].join(''),
-                        'onclick': lookupValueWithFallback('itemClick').bind(null, lookupValueWithFallback('id'))
+                        'onclick': lookupValue('itemClick').bind(null, lookupValueWithFallback('id'))
                     }, [
                         '\n ',
                         lookupValueWithFallback('name'),
@@ -368,7 +368,7 @@ return function (h, options) {
                         '\n\n ',
                         h('ul', null, [
                             '\n ',
-                            (lookupValueWithFallback('inner') || []).reduce(function (acc, item, index, arr) {
+                            (lookupValue('inner') || []).reduce(function (acc, item, index, arr) {
                                 enterScope(item, deriveSpecialLoopVariables(arr, index));
                                 acc.push('\n ', h('li', null, [lookupValueWithFallback('title')]), '\n ');
                                 exitScope();
@@ -382,11 +382,11 @@ return function (h, options) {
                             lookupValueWithFallback('city')
                         ]),
                         '\n\n ',
-                        lookupValueWithFallback('active') ? 'active' : 'not active',
+                        lookupValue('active') ? 'active' : 'not active',
                         '\n\n ',
                         h('div', null, [
                             '\n ',
-                            h('button', { 'onclick': lookupValueWithFallback('counterClick').bind(null, lookupValueWithFallback('id')) }, [
+                            h('button', { 'onclick': lookupValue('counterClick').bind(null, lookupValueWithFallback('id')) }, [
                                 '\n ',
                                 h('span', null, ['Click me']),
                                 '\n '

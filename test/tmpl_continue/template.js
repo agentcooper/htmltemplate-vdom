@@ -334,20 +334,20 @@ return function (h, options) {
         enterScope(state);
         var returnValue = h('div', { 'className': 'container' }, [
             '\n ',
-            (lookupValueWithFallback('items') || []).reduce(function (acc, item, index, arr) {
+            (lookupValue('items') || []).reduce(function (acc, item, index, arr) {
                 enterScope(item, deriveSpecialLoopVariables(arr, index));
-                acc.push('\n ', h('div', { 'className': 'common' }, ['\n This part is common for all items.\n        ']), '\n\n ', lookupValueWithFallback('unskip') ? [
+                acc.push('\n ', h('div', { 'className': 'common' }, ['\n This part is common for all items.\n        ']), '\n\n ', lookupValue('unskip') ? [
                     '\n ',
                     h('div', { 'className': 'unskipped' }, ['\n This item is unskipped.\n            ']),
                     '\n '
-                ] : lookupValueWithFallback('can_skip') ? [
+                ] : lookupValue('can_skip') ? [
                     '\n ',
-                    lookupValueWithFallback('skippable') || lookupValueWithFallback('skippaduppable') ? '\n ' : [
+                    lookupValue('skippable') || lookupValue('skippaduppable') ? '\n ' : [
                         '\n ',
                         h('div', { 'className': 'not-skipped' }, ['\n Not skipped.\n                ']),
                         '\n '
                     ]
-                ] : null, !lookupValueWithFallback('unskip') && lookupValueWithFallback('can_skip') && (lookupValueWithFallback('skippable') || lookupValueWithFallback('skippaduppable')) ? null : [
+                ] : null, !lookupValue('unskip') && lookupValue('can_skip') && (lookupValue('skippable') || lookupValue('skippaduppable')) ? null : [
                     '\n\n ',
                     h('div', { 'className': 'can-be-skipped' }, [
                         '\n ',

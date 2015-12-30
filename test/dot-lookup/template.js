@@ -334,15 +334,15 @@ return function (h, options) {
         enterScope(state);
         var returnValue = h('div', { 'className': 'container' }, [
             '\n ',
-            lookupValueWithFallback('a') && lookupValueWithFallback('a')['b'] && lookupValueWithFallback('a')['b']['c'],
+            lookupValue('a') && lookupValue('a')['b'] && lookupValue('a')['b']['c'],
             '\n ',
-            lookupValueWithFallback('array') && lookupValueWithFallback('array')[1] && lookupValueWithFallback('array')[1]['c'] && lookupValueWithFallback('array')[1]['c'][3] && lookupValueWithFallback('array')[1]['c'][3]['field'],
+            lookupValue('array') && lookupValue('array')[1] && lookupValue('array')[1]['c'] && lookupValue('array')[1]['c'][3] && lookupValue('array')[1]['c'][3]['field'],
             '\n ',
-            lookupValueWithFallback('label', { 'attribute': lookupValueWithFallback('nested') && lookupValueWithFallback('nested')['attribute'] && lookupValueWithFallback('nested')['attribute']['access'] }),
+            lookupValueWithFallback('label', { 'attribute': lookupValue('nested') && lookupValue('nested')['attribute'] && lookupValue('nested')['attribute']['access'] }),
             '\n ',
             lookupValueWithFallback('label', { 'attribute': 'dotted.string' }),
             '\n ',
-            lookupValueWithFallback('label', { 'attribute': lookupValueWithFallback('expression') }),
+            lookupValueWithFallback('label', { 'attribute': lookupValue('expression') }),
             '\n'
         ]);
         exitScope();

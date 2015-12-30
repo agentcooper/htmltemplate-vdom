@@ -335,11 +335,11 @@ return function (h, options) {
         var returnValue = h('div', { 'className': 'container' }, [
             '\n ',
             h('h1', null, [
-                externals['substr'](lookupValueWithFallback('title'), 0, 10),
+                externals['substr'](lookupValue('title'), 0, 10),
                 '\u2026'
             ]),
             '\n ',
-            h('p', null, [externals['uc'](lookupValueWithFallback('subtitle'))]),
+            h('p', null, [externals['uc'](lookupValue('subtitle'))]),
             '\n'
         ]);
         exitScope();

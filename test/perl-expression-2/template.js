@@ -334,21 +334,21 @@ return function (h, options) {
         enterScope(state);
         var returnValue = h('div', { 'className': 'header' }, [
             '\n ',
-            lookupValueWithFallback('showNotifications') && lookupValueWithFallback('loggedIn') ? [
+            lookupValue('showNotifications') && lookupValue('loggedIn') ? [
                 '\n ',
                 h('div', { 'className': 'notifications' }, [
                     '\n ',
-                    (lookupValueWithFallback('notifications') || []).reduce(function (acc, item, index, arr) {
+                    (lookupValue('notifications') || []).reduce(function (acc, item, index, arr) {
                         enterScope(item, deriveSpecialLoopVariables(arr, index));
                         acc.push('\n ', h('div', {
                             'className': [
                                 '\n notification\n                    ',
-                                String(lookupValueWithFallback('type')) === 'warning' ? '\n notification--warning\n                    ' : String(lookupValueWithFallback('type')) === 'urgent' ? '\n notification--urgent\n                    ' : null,
+                                String(lookupValue('type')) === 'warning' ? '\n notification--warning\n                    ' : String(lookupValue('type')) === 'urgent' ? '\n notification--urgent\n                    ' : null,
                                 '\n '
                             ].join('')
                         }, [
                             '\n ',
-                            lookupValueWithFallback('text'),
+                            lookupValue('text'),
                             '\n '
                         ]), '\n ');
                         exitScope();

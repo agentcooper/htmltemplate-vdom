@@ -334,19 +334,19 @@ return function (h, options) {
         enterScope(state);
         var returnValue = h('div', { 'className': 'container' }, [
             '\n ',
-            (lookupValueWithFallback('items') || []).reduce(function (acc, item, index, arr) {
+            (lookupValue('items') || []).reduce(function (acc, item, index, arr) {
                 enterScope(item, deriveSpecialLoopVariables(arr, index));
-                acc.push(!lookupValueWithFallback('b_l___br0') ? [
+                acc.push(!lookupValue('b_l___br0') ? [
                     '\n ',
                     h('div', { 'className': 'common' }, ['\n This part is common for all items.\n        ']),
                     '\n\n ',
-                    lookupValueWithFallback('unbreak') ? [
+                    lookupValue('unbreak') ? [
                         '\n ',
                         h('div', { 'className': 'unskipped' }, ['\n This item is unskipped.\n            ']),
                         '\n '
-                    ] : lookupValueWithFallback('can_break') ? [
+                    ] : lookupValue('can_break') ? [
                         '\n ',
-                        lookupValueWithFallback('breakable') || 0 ? [
+                        lookupValue('breakable') || 0 ? [
                             '\n ',
                             assignLocalVariable('b_l___br0', 1)
                         ] : [
@@ -355,7 +355,7 @@ return function (h, options) {
                             '\n '
                         ]
                     ] : null,
-                    !lookupValueWithFallback('unbreak') && lookupValueWithFallback('can_break') && (lookupValueWithFallback('breakable') || 0) ? null : [
+                    !lookupValue('unbreak') && lookupValue('can_break') && (lookupValue('breakable') || 0) ? null : [
                         '\n\n ',
                         h('div', { 'className': 'can-be-skipped' }, [
                             '\n ',

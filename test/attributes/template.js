@@ -359,9 +359,9 @@ return function (h, options) {
             '\n ',
             block_title({ 'text': lookupValueWithFallback('page_title') }),
             '\n ',
-            block_title({ 'text': lookupValueWithFallback('page_title') }),
+            block_title({ 'text': lookupValue('page_title') }),
             '\n ',
-            block_title({ 'text': lookupValueWithFallback('page_title') + '!' }),
+            block_title({ 'text': lookupValue('page_title') + '!' }),
             '\n\n ',
             lookupValueWithFallback('title_copy'),
             '\n ',
@@ -369,11 +369,11 @@ return function (h, options) {
             '\n ',
             lookupValueWithFallback('title_copy', { 'text': lookupValueWithFallback('page_title') }),
             '\n ',
-            lookupValueWithFallback('title_copy', { 'text': lookupValueWithFallback('page_title') }),
+            lookupValueWithFallback('title_copy', { 'text': lookupValue('page_title') }),
             '\n ',
-            lookupValueWithFallback('title_copy', { 'text': lookupValueWithFallback('page_title') + '!' }),
+            lookupValueWithFallback('title_copy', { 'text': lookupValue('page_title') + '!' }),
             '\n\n ',
-            (lookupValueWithFallback('items') || []).reduce(function (acc, item, index, arr) {
+            (lookupValue('items') || []).reduce(function (acc, item, index, arr) {
                 enterScope(item, deriveSpecialLoopVariables(arr, index));
                 acc.push('\n ', lookupValueWithFallback('title'), '\n ');
                 exitScope();
@@ -382,35 +382,35 @@ return function (h, options) {
             '\n\n ',
             (lookupValueWithFallback('items') || []).reduce(function (acc, item, index, arr) {
                 enterScope(keyValue('item', item), deriveSpecialLoopVariables(arr, index));
-                acc.push('\n ', lookupValueWithFallback('item') && lookupValueWithFallback('item')['title'], '\n ');
+                acc.push('\n ', lookupValue('item') && lookupValue('item')['title'], '\n ');
                 exitScope();
                 return acc;
             }, []),
             '\n\n ',
             h('input', {
                 'type': 'checkbox',
-                'checked': lookupValueWithFallback('check_checkbox') ? true : null
+                'checked': lookupValue('check_checkbox') ? true : null
             }),
             '\n ',
             h('button', {
                 'type': 'checkbox',
-                'disabled': lookupValueWithFallback('disable_button') ? true : null
+                'disabled': lookupValue('disable_button') ? true : null
             }, ['\n Button\n    ']),
             '\n ',
             h('input', {
                 'type': 'text',
-                'className': lookupValueWithFallback('class_name') ? lookupValueWithFallback('class_name') : null
+                'className': lookupValue('class_name') ? lookupValueWithFallback('class_name') : null
             }),
             '\n ',
             (lookupValueWithFallback('divs') || []).reduce(function (acc, item, index, arr) {
                 enterScope(keyValue('div', item), deriveSpecialLoopVariables(arr, index));
                 acc.push('\n ', h('div', {
                     'attributes': {
-                        'class': lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class'] ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['class_name'] ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['class_name'] : 'b-default' : !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) && (lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) ? lookupValueWithFallback('div')['class_name'] || lookupValueWithFallback('div')['id'] : null,
-                        'id': !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) && (lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['id'] : null,
-                        'data-default': !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) && !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) ? 'true' : null
+                        'class': lookupValue('div') && lookupValue('div')['add_only_class'] ? lookupValue('div') && lookupValue('div')['class_name'] ? lookupValue('div') && lookupValue('div')['class_name'] : 'b-default' : !(lookupValue('div') && lookupValue('div')['add_only_class']) && (lookupValue('div') && lookupValue('div')['add_both_class_and_id']) ? lookupValue('div')['class_name'] || lookupValue('div')['id'] : null,
+                        'id': !(lookupValue('div') && lookupValue('div')['add_only_class']) && (lookupValue('div') && lookupValue('div')['add_both_class_and_id']) ? lookupValue('div') && lookupValue('div')['id'] : null,
+                        'data-default': !(lookupValue('div') && lookupValue('div')['add_both_class_and_id']) && !(lookupValue('div') && lookupValue('div')['add_only_class']) ? 'true' : null
                     }
-                }, [lookupValueWithFallback('div') && lookupValueWithFallback('div')['content']]), '\n ');
+                }, [lookupValue('div') && lookupValue('div')['content']]), '\n ');
                 exitScope();
                 return acc;
             }, []),
@@ -418,7 +418,7 @@ return function (h, options) {
             h('div', {
                 'attributes': {
                     'style': 'background: red',
-                    'class': lookupValueWithFallback('class_name') ? [
+                    'class': lookupValue('class_name') ? [
                         'div-',
                         lookupValueWithFallback('class_name')
                     ].join('') : null

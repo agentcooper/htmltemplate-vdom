@@ -334,7 +334,7 @@ return function (h, options) {
         enterScope(state);
         var returnValue = h('div', { 'className': 'container' }, [
             '\n Hello,\xA0world!\n    12\xB0C\n    ',
-            lookupValueWithFallback('show_price') ? '\n \u20AC12\n    ' : null,
+            lookupValue('show_price') ? '\n \u20AC12\n    ' : null,
             '\n'
         ]);
         exitScope();

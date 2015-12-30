@@ -362,7 +362,7 @@ return function (h, options) {
                 '\n Header\n        ',
                 assignLocalVariable('logo', ['Logo']),
                 '\n ',
-                block_navbar({ 'title': lookupValueWithFallback('logo') }),
+                block_navbar({ 'title': lookupValue('logo') }),
                 '\n '
             ]),
             '\n\n ',

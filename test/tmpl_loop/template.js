@@ -334,7 +334,7 @@ return function (h, options) {
         enterScope(state);
         var returnValue = h('div', null, [
             '\n ',
-            (lookupValueWithFallback('basicArray') || []).reduce(function (acc, item, index, arr) {
+            (lookupValue('basicArray') || []).reduce(function (acc, item, index, arr) {
                 enterScope(item, deriveSpecialLoopVariables(arr, index));
                 acc.push(lookupValueWithFallback('title'));
                 exitScope();
@@ -343,19 +343,19 @@ return function (h, options) {
             '\n\n ',
             (lookupValueWithFallback('basicArray') || []).reduce(function (acc, item, index, arr) {
                 enterScope(keyValue('item', item), deriveSpecialLoopVariables(arr, index));
-                acc.push(lookupValueWithFallback('item')['title']);
+                acc.push(lookupValue('item')['title']);
                 exitScope();
                 return acc;
             }, []),
             '\n\n ',
-            (lookupValueWithFallback('nested') && lookupValueWithFallback('nested')['items'] || []).reduce(function (acc, item, index, arr) {
+            (lookupValue('nested') && lookupValue('nested')['items'] || []).reduce(function (acc, item, index, arr) {
                 enterScope(item, deriveSpecialLoopVariables(arr, index));
                 acc.push('bla');
                 exitScope();
                 return acc;
             }, []),
             '\n\n ',
-            (lookupValueWithFallback('nested') && lookupValueWithFallback('nested')['moreItems'] || []).reduce(function (acc, item, index, arr) {
+            (lookupValue('nested') && lookupValue('nested')['moreItems'] || []).reduce(function (acc, item, index, arr) {
                 enterScope(keyValue('item', item), deriveSpecialLoopVariables(arr, index));
                 acc.push(lookupValueWithFallback('item'));
                 exitScope();
@@ -364,7 +364,7 @@ return function (h, options) {
             '\n\n ',
             lookupValueWithFallback('__counter__'),
             '\n ',
-            (lookupValueWithFallback('basicArray') || []).reduce(function (acc, item, index, arr) {
+            (lookupValue('basicArray') || []).reduce(function (acc, item, index, arr) {
                 enterScope(item, deriveSpecialLoopVariables(arr, index));
                 acc.push('\n ', lookupValueWithFallback('__counter__'), '\n ');
                 exitScope();
