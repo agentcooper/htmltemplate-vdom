@@ -29,7 +29,8 @@ describe('template => VDOM => HTML', function() {
     tests
     .filter(function(name) {
         return (
-            name.indexOf('.') === -1
+            name.indexOf('.') === -1 &&
+            name !== 'lifecycle-tests'
         );
     })
     .forEach(function(name) {
@@ -80,3 +81,5 @@ describe('template => VDOM => HTML', function() {
         });
     });
 });
+
+require('./lifecycle-tests');

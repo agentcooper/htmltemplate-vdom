@@ -1,0 +1,20 @@
+<div class="page">
+    <TMPL_INLINE ./blocks/header.inc
+        BLOCK_NAME="Header">
+
+    <div class="page__main">
+        <div class="page__sidebar">
+            <TMPL_UNLESS hide_sidebar>
+                <TMPL_INLINE ./blocks/sidebar.inc
+                    BLOCK_NAME="Sidebar">
+            </TMPL_UNLESS>
+        </div>
+        <div class="page__content">
+            <TMPL_IF show_messages>
+                <TMPL_INLINE ./blocks/messages.inc
+                    BLOCK_NAME="Messages"
+                    messages=messages>
+            </TMPL_IF>
+        </div>
+    </div>
+</div>

@@ -42,6 +42,7 @@
     "json-loader": "^0.5.2",
     "mocha": "2.3.2",
     "raw-loader": "^0.5.1",
+    "sinon": "1.17.2",
     "transform-loader": "^0.2.2",
     "uglify-js": "2.6.1"
   }
