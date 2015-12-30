@@ -408,6 +408,8 @@ return function (h, options) {
                 h('a', { 'href': lookupValueWithFallback('githubLink') }, [lookupValueWithFallback('githubLink')]),
                 '\n '
             ]),
+            '\n\n ',
+            h('textarea', { 'value': lookupValueWithFallback('title') }),
             '\n'
         ]);
         exitScope();
