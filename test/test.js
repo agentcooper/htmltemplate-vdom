@@ -63,13 +63,13 @@ describe('template => VDOM => HTML', function() {
                         'utf8'
                     );
 
-                    var options = {
-                        path: filepath
-                    };
+                    var options = {};
 
                     if (existsSync(path.join(__dirname, name, 'options.js'))) {
                         options = require(path.join(__dirname, name, 'options.js'));
                     }
+
+                    options.path = filepath;
 
                     var actual
                         = toHTML(htmltemplateVdom.render(template, env, h, options));

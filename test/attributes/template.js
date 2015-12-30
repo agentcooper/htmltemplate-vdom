@@ -330,7 +330,7 @@ return function (h, options) {
     var resolveLookup = options.resolveLookup || function () {
         return null;
     };
-    function block_title(blockParameters) {
+    function block_template_tmpl_title_local(blockParameters) {
         enterScope(blockParameters);
         var blockResult = [
             '\n ',
@@ -350,18 +350,18 @@ return function (h, options) {
             '\n ',
             assignLocalVariable('page_title', 'Attributes test'),
             '\n\n ',
-            block_title({}),
+            block_template_tmpl_title_local({}),
             '\n ',
-            block_title({
+            block_template_tmpl_title_local({
                 'text': 'Welcome',
                 'spellcheck': 1
             }),
             '\n ',
-            block_title({ 'text': lookupValueWithFallback('page_title') }),
+            block_template_tmpl_title_local({ 'text': lookupValueWithFallback('page_title') }),
             '\n ',
-            block_title({ 'text': lookupValue('page_title') }),
+            block_template_tmpl_title_local({ 'text': lookupValue('page_title') }),
             '\n ',
-            block_title({ 'text': lookupValue('page_title') + '!' }),
+            block_template_tmpl_title_local({ 'text': lookupValue('page_title') + '!' }),
             '\n\n ',
             lookupValueWithFallback('title_copy'),
             '\n ',

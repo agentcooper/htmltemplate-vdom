@@ -330,7 +330,7 @@ return function (h, options) {
     var resolveLookup = options.resolveLookup || function () {
         return null;
     };
-    function block_navbar(blockParameters) {
+    function block_template_tmpl_navbar_local(blockParameters) {
         enterScope(blockParameters);
         var blockResult = [
             '\n ',
@@ -354,6 +354,20 @@ return function (h, options) {
         exitScope();
         return blockResult;
     }
+    function block_template_tmpl_footer_local(blockParameters) {
+        enterScope(blockParameters);
+        var blockResult = [
+            '\n ',
+            h('footer', null, [
+                '\n Footer\n        ',
+                block_template_tmpl_navbar_local({ 'title': 'Bye bye' }),
+                '\n '
+            ]),
+            '\n'
+        ];
+        exitScope();
+        return blockResult;
+    }
     return function (state) {
         enterScope(state);
         var returnValue = h('div', null, [
@@ -362,29 +376,15 @@ return function (h, options) {
                 '\n Header\n        ',
                 assignLocalVariable('logo', ['Logo']),
                 '\n ',
-                block_navbar({ 'title': lookupValue('logo') }),
+                block_template_tmpl_navbar_local({ 'title': lookupValue('logo') }),
                 '\n '
             ]),
             '\n\n ',
-            block_footer({}),
+            block_template_tmpl_footer_local({}),
             '\n'
         ]);
         exitScope();
         return returnValue;
     };
-    function block_footer(blockParameters) {
-        enterScope(blockParameters);
-        var blockResult = [
-            '\n ',
-            h('footer', null, [
-                '\n Footer\n        ',
-                block_navbar({ 'title': 'Bye bye' }),
-                '\n '
-            ]),
-            '\n'
-        ];
-        exitScope();
-        return blockResult;
-    }
 };
 }));

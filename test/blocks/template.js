@@ -330,7 +330,7 @@ return function (h, options) {
     var resolveLookup = options.resolveLookup || function () {
         return null;
     };
-    function block_button(blockParameters) {
+    function block_template_tmpl_button_local(blockParameters) {
         enterScope(blockParameters);
         var blockResult = [
             '\n ',
@@ -344,7 +344,7 @@ return function (h, options) {
         exitScope();
         return blockResult;
     }
-    function block_form(blockParameters) {
+    function block_template_tmpl_form_local(blockParameters) {
         enterScope(blockParameters);
         var blockResult = [
             '\n ',
@@ -356,7 +356,7 @@ return function (h, options) {
                     'value': lookupValueWithFallback('value')
                 }),
                 '\n ',
-                new ViewBlockThunk(blocks['Button'], block_button, {
+                new ViewBlockThunk(blocks['Button'], block_template_tmpl_button_local, {
                     'type': 'button',
                     'label': 'Click'
                 }, 'Button'),
@@ -371,15 +371,15 @@ return function (h, options) {
         enterScope(state);
         var returnValue = h('div', { 'className': 'container' }, [
             '\n ',
-            new ViewBlockThunk(blocks['Form'], block_form, {
-                'name': 'a',
+            new ViewBlockThunk(blocks['Form'], block_template_tmpl_form_local, {
+                'foo': 'bar',
                 'value': '1'
             }, 'Form', 'a'),
             '\n ',
             h('hr'),
             '\n ',
-            new ViewBlockThunk(blocks['Form'], block_form, {
-                'name': 'b',
+            new ViewBlockThunk(blocks['Form'], block_template_tmpl_form_local, {
+                'foo': 'bar',
                 'value': '2'
             }, 'Form'),
             '\n'
