@@ -363,9 +363,9 @@ return function (h, options) {
             h('li', {
                 'className': [
                     '\n ',
-                    lookupValueWithFallback('todo') && lookupValueWithFallback('todo')['completed'] ? ' completed' : null,
+                    lookupValue('todo') && lookupValue('todo')['completed'] ? ' completed' : null,
                     '\n ',
-                    lookupValueWithFallback('todo') && lookupValueWithFallback('todo')['editing'] ? ' editing' : null,
+                    lookupValue('todo') && lookupValue('todo')['editing'] ? ' editing' : null,
                     '\n '
                 ].join('')
             }, [
@@ -375,10 +375,10 @@ return function (h, options) {
                     h('input', {
                         'className': 'toggle',
                         'type': 'checkbox',
-                        'checked': lookupValueWithFallback('todo') && lookupValueWithFallback('todo')['completed'] ? true : null
+                        'checked': lookupValue('todo') && lookupValue('todo')['completed'] ? true : null
                     }),
                     '\n ',
-                    h('label', null, [lookupValueWithFallback('todo') && lookupValueWithFallback('todo')['label']]),
+                    h('label', null, [lookupValue('todo') && lookupValue('todo')['label']]),
                     '\n ',
                     h('button', { 'className': 'destroy' }),
                     '\n '
@@ -386,7 +386,7 @@ return function (h, options) {
                 '\n ',
                 h('input', {
                     'className': 'edit',
-                    'value': lookupValueWithFallback('todo') && lookupValueWithFallback('todo')['label_draft']
+                    'value': lookupValue('todo') && lookupValue('todo')['label_draft']
                 }),
                 '\n'
             ]),
@@ -403,7 +403,7 @@ return function (h, options) {
                 h('input', {
                     'className': 'toggle-all',
                     'type': 'checkbox',
-                    'checked': +lookupValueWithFallback('left_count') === 0 ? true : null
+                    'checked': +lookupValue('left_count') === 0 ? true : null
                 }),
                 '\n ',
                 h('label', { 'attributes': { 'for': 'toggle-all' } }, ['Mark all as complete']),
@@ -412,14 +412,10 @@ return function (h, options) {
                     '\n ',
                     (lookupValueWithFallback('todos') || []).reduce(function (acc, item, index, arr) {
                         enterScope(keyValue('todo', item), deriveSpecialLoopVariables(arr, index));
-                        acc.push.apply(acc, [
-                            '\n ',
-                            new ViewBlockThunk(blocks['TodoItem'], block_todo_item_inc, {
-                                'todo': lookupValueWithFallback('todo'),
-                                'editing': lookupValueWithFallback('todo')['editing']
-                            }, 'TodoItem', lookupValueWithFallback('todo')['id']),
-                            '\n '
-                        ]);
+                        acc.push('\n ', new ViewBlockThunk(blocks['TodoItem'], block_todo_item_inc, {
+                            'todo': lookupValue('todo'),
+                            'editing': lookupValue('todo')['editing']
+                        }, 'TodoItem', lookupValue('todo')['id']), '\n ');
                         exitScope();
                         return acc;
                     }, []),
@@ -439,7 +435,7 @@ return function (h, options) {
                 '\n ',
                 h('span', { 'className': 'todo-count' }, [
                     '\n ',
-                    +lookupValueWithFallback('left_count') === 1 ? [
+                    +lookupValue('left_count') === 1 ? [
                         '\n ',
                         h('strong', null, ['1']),
                         ' item left\n        '
@@ -457,7 +453,7 @@ return function (h, options) {
                 '\n\n ',
                 null,
                 '\n ',
-                lookupValueWithFallback('completed_count') > 0 ? [
+                lookupValue('completed_count') > 0 ? [
                     '\n ',
                     h('button', { 'className': 'clear-completed' }, ['Clear completed']),
                     '\n '
@@ -479,7 +475,7 @@ return function (h, options) {
                 '\n\n ',
                 null,
                 '\n ',
-                externals['count'](lookupValueWithFallback('todos')) > 0 ? [
+                externals['count'](lookupValue('todos')) > 0 ? [
                     '\n ',
                     new ViewBlockThunk(blocks['Todos'], block_main_section_inc, {}, 'Todos'),
                     '\n '
@@ -487,11 +483,11 @@ return function (h, options) {
                 '\n\n ',
                 null,
                 '\n ',
-                externals['count'](lookupValueWithFallback('todos')) > 0 ? [
+                externals['count'](lookupValue('todos')) > 0 ? [
                     '\n ',
                     new ViewBlockThunk(blocks['Footer'], block_footer_inc, {
-                        'left_count': lookupValueWithFallback('left_count'),
-                        'completed_count': lookupValueWithFallback('completed_count')
+                        'left_count': lookupValue('left_count'),
+                        'completed_count': lookupValue('completed_count')
                     }, 'Footer'),
                     '\n '
                 ] : null,
