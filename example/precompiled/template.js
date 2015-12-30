@@ -330,16 +330,16 @@ return function (h, options) {
     var resolveLookup = options.resolveLookup || function () {
         return null;
     };
-    function block_person(blockParameters) {
+    function block_tmpl_inc_person_local(blockParameters) {
         enterScope(blockParameters);
         var blockResult = [
             '\n ',
             h('li', {
                 'className': [
                     'item ',
-                    lookupValueWithFallback('active') ? 'item--active' : null
+                    lookupValue('active') ? 'item--active' : null
                 ].join(''),
-                'onclick': lookupValueWithFallback('itemClick').bind(null, lookupValueWithFallback('id'))
+                'onclick': lookupValue('itemClick').bind(null, lookupValueWithFallback('id'))
             }, [
                 '\n ',
                 lookupValueWithFallback('name'),
@@ -358,13 +358,9 @@ return function (h, options) {
                 '\n\n ',
                 h('ul', null, [
                     '\n ',
-                    (lookupValueWithFallback('inner') || []).reduce(function (acc, item, index, arr) {
+                    (lookupValue('inner') || []).reduce(function (acc, item, index, arr) {
                         enterScope(item, deriveSpecialLoopVariables(arr, index));
-                        acc.push.apply(acc, [
-                            '\n ',
-                            h('li', null, [lookupValueWithFallback('title')]),
-                            '\n '
-                        ]);
+                        acc.push('\n ', h('li', null, [lookupValueWithFallback('title')]), '\n ');
                         exitScope();
                         return acc;
                     }, []),
@@ -376,11 +372,11 @@ return function (h, options) {
                     lookupValueWithFallback('city')
                 ]),
                 '\n\n ',
-                lookupValueWithFallback('active') ? 'active' : 'not active',
+                lookupValue('active') ? 'active' : 'not active',
                 '\n\n ',
                 h('div', null, [
                     '\n ',
-                    h('button', { 'onclick': lookupValueWithFallback('counterClick').bind(null, lookupValueWithFallback('id')) }, [
+                    h('button', { 'onclick': lookupValue('counterClick').bind(null, lookupValueWithFallback('id')) }, [
                         '\n ',
                         h('span', null, ['Click me']),
                         '\n '
@@ -406,25 +402,21 @@ return function (h, options) {
             '\n\n ',
             h('ul', { 'className': 'list' }, [
                 '\n ',
-                (lookupValueWithFallback('people') || []).reduce(function (acc, item, index, arr) {
+                (lookupValue('people') || []).reduce(function (acc, item, index, arr) {
                     enterScope(item, deriveSpecialLoopVariables(arr, index));
-                    acc.push.apply(acc, [
-                        '\n ',
-                        new ViewBlockThunk(blocks['Person'], block_person, {
-                            'p': lookupValueWithFallback('name'),
-                            'active': lookupValueWithFallback('active')
-                        }, 'Person'),
-                        '\n '
-                    ]);
+                    acc.push('\n ', new ViewBlockThunk(blocks['Person'], block_tmpl_inc_person_local, {
+                        'p': lookupValue('name'),
+                        'active': lookupValue('active')
+                    }, 'Person'), '\n ');
                     exitScope();
                     return acc;
                 }, []),
                 '\n '
             ]),
             '\n\n ',
-            h('p', null, [h('button', { 'onclick': lookupValueWithFallback('addClick').bind(null, lookupValueWithFallback('id')) }, ['Add person'])]),
+            h('p', null, [h('button', { 'onclick': lookupValue('addClick').bind(null, lookupValueWithFallback('id')) }, ['Add person'])]),
             '\n ',
-            h('p', null, [h('button', { 'onclick': lookupValueWithFallback('popClick').bind(null, lookupValueWithFallback('id')) }, ['Pop person'])]),
+            h('p', null, [h('button', { 'onclick': lookupValue('popClick').bind(null, lookupValueWithFallback('id')) }, ['Pop person'])]),
             '\n\n ',
             h('div', null, [
                 '\n ',
