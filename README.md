@@ -1,5 +1,7 @@
 ### htmltemplate-vdom
 
+![TravisCI](https://travis-ci.org/agentcooper/htmltemplate-vdom.svg)
+
 **WIP**
 
 ```bash
