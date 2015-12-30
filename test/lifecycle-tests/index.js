@@ -276,6 +276,77 @@ describe('block lifecycle', function() {
             assert.equal(this.messagesWillUnmountSpy.callCount, 0);
         });
     });
+
+    describe('shouldBlockUpdate hook', function() {
+        beforeEach(function() {
+            var stub = this.shouldBlockUpdateStub = sinon.stub();
+
+            this.Messages.prototype.shouldBlockUpdate = stub;
+
+            stub.returns(false);
+
+            this.loop.update({
+                show_messages: true,
+                messages: ['Hi']
+            });
+
+            this.clock.tick(TICK);
+
+            this.loop.update({
+                show_messages: true,
+                messages: ['Hello']
+            });
+
+            this.clock.tick(TICK);
+
+            this.loop.update({
+                show_messages: true,
+                messages: ['Goodbye']
+            });
+
+            this.clock.tick(TICK);
+
+            this.loop.update({
+                show_messages: false
+            });
+
+            this.clock.tick(TICK);
+        });
+
+        afterEach(function() {
+            delete this.Messages.prototype.shouldBlockUpdate;
+        });
+
+        it('should call blockWillMount once', function() {
+            assert.equal(this.messagesWillMountSpy.callCount, 1);
+        });
+
+        it('should call blockDidMount once', function() {
+            assert.equal(this.messagesDidMountSpy.callCount, 1);
+        });
+
+        it('should call shouldBlockUpdate after initial render', function() {
+            assert.equal(this.shouldBlockUpdateStub.callCount, 2);
+
+            assert.deepEqual(this.shouldBlockUpdateStub.getCall(0).args, [{ messages: ['Hello'] }]);
+            assert.deepEqual(this.shouldBlockUpdateStub.getCall(1).args, [{ messages: ['Goodbye'] }]);
+
+            assert.deepEqual(this.shouldBlockUpdateStub.getCall(0).thisValue.props, { messages: ['Hi'] });
+            assert.deepEqual(this.shouldBlockUpdateStub.getCall(1).thisValue.props, { messages: ['Hi'] });
+        });
+
+        it('should not call blockWillUpdate as stub prevents that', function() {
+            assert.equal(this.messagesWillUpdateSpy.callCount, 0);
+        });
+
+        it('should not call blockDidUpdate as stub prevents that', function() {
+            assert.equal(this.messagesDidUpdateSpy.callCount, 0);
+        });
+
+        it('should call blockWillUnmount anyway', function() {
+            assert.equal(this.messagesWillUnmountSpy.callCount, 1);
+        });
+    });
 });
 
 function compile(source, target) {
