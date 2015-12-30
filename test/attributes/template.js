@@ -375,22 +375,14 @@ return function (h, options) {
             '\n\n ',
             (lookupValueWithFallback('items') || []).reduce(function (acc, item, index, arr) {
                 enterScope(item, deriveSpecialLoopVariables(arr, index));
-                acc.push.apply(acc, [
-                    '\n ',
-                    lookupValueWithFallback('title'),
-                    '\n '
-                ]);
+                acc.push('\n ', lookupValueWithFallback('title'), '\n ');
                 exitScope();
                 return acc;
             }, []),
             '\n\n ',
             (lookupValueWithFallback('items') || []).reduce(function (acc, item, index, arr) {
                 enterScope(keyValue('item', item), deriveSpecialLoopVariables(arr, index));
-                acc.push.apply(acc, [
-                    '\n ',
-                    lookupValueWithFallback('item') && lookupValueWithFallback('item')['title'],
-                    '\n '
-                ]);
+                acc.push('\n ', lookupValueWithFallback('item') && lookupValueWithFallback('item')['title'], '\n ');
                 exitScope();
                 return acc;
             }, []),
@@ -412,17 +404,13 @@ return function (h, options) {
             '\n ',
             (lookupValueWithFallback('divs') || []).reduce(function (acc, item, index, arr) {
                 enterScope(keyValue('div', item), deriveSpecialLoopVariables(arr, index));
-                acc.push.apply(acc, [
-                    '\n ',
-                    h('div', {
-                        'attributes': {
-                            'class': lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class'] ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['class_name'] ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['class_name'] : 'b-default' : !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) && (lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) ? lookupValueWithFallback('div')['class_name'] || lookupValueWithFallback('div')['id'] : null,
-                            'id': !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) && (lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['id'] : null,
-                            'data-default': !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) && !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) ? 'true' : null
-                        }
-                    }, [lookupValueWithFallback('div') && lookupValueWithFallback('div')['content']]),
-                    '\n '
-                ]);
+                acc.push('\n ', h('div', {
+                    'attributes': {
+                        'class': lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class'] ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['class_name'] ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['class_name'] : 'b-default' : !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) && (lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) ? lookupValueWithFallback('div')['class_name'] || lookupValueWithFallback('div')['id'] : null,
+                        'id': !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) && (lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) ? lookupValueWithFallback('div') && lookupValueWithFallback('div')['id'] : null,
+                        'data-default': !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_both_class_and_id']) && !(lookupValueWithFallback('div') && lookupValueWithFallback('div')['add_only_class']) ? 'true' : null
+                    }
+                }, [lookupValueWithFallback('div') && lookupValueWithFallback('div')['content']]), '\n ');
                 exitScope();
                 return acc;
             }, []),

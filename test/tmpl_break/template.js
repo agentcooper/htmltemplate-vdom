@@ -336,35 +336,35 @@ return function (h, options) {
             '\n ',
             (lookupValueWithFallback('items') || []).reduce(function (acc, item, index, arr) {
                 enterScope(item, deriveSpecialLoopVariables(arr, index));
-                acc.push.apply(acc, [!lookupValueWithFallback('b_l___br0') ? [
+                acc.push(!lookupValueWithFallback('b_l___br0') ? [
+                    '\n ',
+                    h('div', { 'className': 'common' }, ['\n This part is common for all items.\n        ']),
+                    '\n\n ',
+                    lookupValueWithFallback('unbreak') ? [
                         '\n ',
-                        h('div', { 'className': 'common' }, ['\n This part is common for all items.\n        ']),
-                        '\n\n ',
-                        lookupValueWithFallback('unbreak') ? [
+                        h('div', { 'className': 'unskipped' }, ['\n This item is unskipped.\n            ']),
+                        '\n '
+                    ] : lookupValueWithFallback('can_break') ? [
+                        '\n ',
+                        lookupValueWithFallback('breakable') || 0 ? [
                             '\n ',
-                            h('div', { 'className': 'unskipped' }, ['\n This item is unskipped.\n            ']),
-                            '\n '
-                        ] : lookupValueWithFallback('can_break') ? [
+                            assignLocalVariable('b_l___br0', 1)
+                        ] : [
                             '\n ',
-                            lookupValueWithFallback('breakable') || 0 ? [
-                                '\n ',
-                                assignLocalVariable('b_l___br0', 1)
-                            ] : [
-                                '\n ',
-                                h('div', { 'className': 'not-skipped' }, ['\n Not skipped.\n                ']),
-                                '\n '
-                            ]
-                        ] : null,
-                        !lookupValueWithFallback('unbreak') && lookupValueWithFallback('can_break') && (lookupValueWithFallback('breakable') || 0) ? null : [
-                            '\n\n ',
-                            h('div', { 'className': 'can-be-skipped' }, [
-                                '\n ',
-                                lookupValueWithFallback('value'),
-                                '\n '
-                            ]),
+                            h('div', { 'className': 'not-skipped' }, ['\n Not skipped.\n                ']),
                             '\n '
                         ]
-                    ] : null]);
+                    ] : null,
+                    !lookupValueWithFallback('unbreak') && lookupValueWithFallback('can_break') && (lookupValueWithFallback('breakable') || 0) ? null : [
+                        '\n\n ',
+                        h('div', { 'className': 'can-be-skipped' }, [
+                            '\n ',
+                            lookupValueWithFallback('value'),
+                            '\n '
+                        ]),
+                        '\n '
+                    ]
+                ] : null);
                 exitScope();
                 return acc;
             }, []),

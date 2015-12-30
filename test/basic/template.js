@@ -344,67 +344,59 @@ return function (h, options) {
                 '\n ',
                 (lookupValueWithFallback('people') || []).reduce(function (acc, item, index, arr) {
                     enterScope(item, deriveSpecialLoopVariables(arr, index));
-                    acc.push.apply(acc, [
+                    acc.push('\n ', h('li', {
+                        'className': [
+                            'item ',
+                            lookupValueWithFallback('active') ? 'item--active' : null
+                        ].join(''),
+                        'onclick': lookupValueWithFallback('itemClick').bind(null, lookupValueWithFallback('id'))
+                    }, [
                         '\n ',
-                        h('li', {
-                            'className': [
-                                'item ',
-                                lookupValueWithFallback('active') ? 'item--active' : null
-                            ].join(''),
-                            'onclick': lookupValueWithFallback('itemClick').bind(null, lookupValueWithFallback('id'))
-                        }, [
+                        lookupValueWithFallback('name'),
+                        ' ',
+                        h('a', {
+                            'href': [
+                                '#/items/',
+                                lookupValueWithFallback('id')
+                            ].join('')
+                        }, ['some link']),
+                        '\n\n ',
+                        h('div', { 'className': 'input' }, [h('input', {
+                                'type': 'text',
+                                'placeholder': 'Type something here'
+                            })]),
+                        '\n\n ',
+                        h('ul', null, [
                             '\n ',
-                            lookupValueWithFallback('name'),
-                            ' ',
-                            h('a', {
-                                'href': [
-                                    '#/items/',
-                                    lookupValueWithFallback('id')
-                                ].join('')
-                            }, ['some link']),
-                            '\n\n ',
-                            h('div', { 'className': 'input' }, [h('input', {
-                                    'type': 'text',
-                                    'placeholder': 'Type something here'
-                                })]),
-                            '\n\n ',
-                            h('ul', null, [
+                            (lookupValueWithFallback('inner') || []).reduce(function (acc, item, index, arr) {
+                                enterScope(item, deriveSpecialLoopVariables(arr, index));
+                                acc.push('\n ', h('li', null, [lookupValueWithFallback('title')]), '\n ');
+                                exitScope();
+                                return acc;
+                            }, []),
+                            '\n '
+                        ]),
+                        '\n\n ',
+                        h('div', null, [
+                            lookupValueWithFallback('city_copy'),
+                            lookupValueWithFallback('city')
+                        ]),
+                        '\n\n ',
+                        lookupValueWithFallback('active') ? 'active' : 'not active',
+                        '\n\n ',
+                        h('div', null, [
+                            '\n ',
+                            h('button', { 'onclick': lookupValueWithFallback('counterClick').bind(null, lookupValueWithFallback('id')) }, [
                                 '\n ',
-                                (lookupValueWithFallback('inner') || []).reduce(function (acc, item, index, arr) {
-                                    enterScope(item, deriveSpecialLoopVariables(arr, index));
-                                    acc.push.apply(acc, [
-                                        '\n ',
-                                        h('li', null, [lookupValueWithFallback('title')]),
-                                        '\n '
-                                    ]);
-                                    exitScope();
-                                    return acc;
-                                }, []),
+                                h('span', null, ['Click me']),
                                 '\n '
                             ]),
-                            '\n\n ',
-                            h('div', null, [
-                                lookupValueWithFallback('city_copy'),
-                                lookupValueWithFallback('city')
-                            ]),
-                            '\n\n ',
-                            lookupValueWithFallback('active') ? 'active' : 'not active',
-                            '\n\n ',
-                            h('div', null, [
-                                '\n ',
-                                h('button', { 'onclick': lookupValueWithFallback('counterClick').bind(null, lookupValueWithFallback('id')) }, [
-                                    '\n ',
-                                    h('span', null, ['Click me']),
-                                    '\n '
-                                ]),
-                                '\n ',
-                                h('span', null, [lookupValueWithFallback('counter')]),
-                                '\n '
-                            ]),
+                            '\n ',
+                            h('span', null, [lookupValueWithFallback('counter')]),
                             '\n '
                         ]),
                         '\n '
-                    ]);
+                    ]), '\n ');
                     exitScope();
                     return acc;
                 }, []),

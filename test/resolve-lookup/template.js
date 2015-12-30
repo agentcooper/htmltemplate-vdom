@@ -348,17 +348,7 @@ return function (h, options) {
             '\n ',
             (lookupValueWithFallback('items') || []).reduce(function (acc, item, index, arr) {
                 enterScope(item, deriveSpecialLoopVariables(arr, index));
-                acc.push.apply(acc, [
-                    '\n ',
-                    lookupValue('__counter__'),
-                    '\n ',
-                    lookupValue('label'),
-                    '\n ',
-                    lookupValueWithFallback('label'),
-                    '\n ',
-                    resolveLookup('label'),
-                    '\n '
-                ]);
+                acc.push('\n ', lookupValue('__counter__'), '\n ', lookupValue('label'), '\n ', lookupValueWithFallback('label'), '\n ', resolveLookup('label'), '\n ');
                 exitScope();
                 return acc;
             }, []),

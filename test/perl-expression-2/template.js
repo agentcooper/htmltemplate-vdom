@@ -340,21 +340,17 @@ return function (h, options) {
                     '\n ',
                     (lookupValueWithFallback('notifications') || []).reduce(function (acc, item, index, arr) {
                         enterScope(item, deriveSpecialLoopVariables(arr, index));
-                        acc.push.apply(acc, [
-                            '\n ',
-                            h('div', {
-                                'className': [
-                                    '\n notification\n                    ',
-                                    String(lookupValueWithFallback('type')) === 'warning' ? '\n notification--warning\n                    ' : String(lookupValueWithFallback('type')) === 'urgent' ? '\n notification--urgent\n                    ' : null,
-                                    '\n '
-                                ].join('')
-                            }, [
-                                '\n ',
-                                lookupValueWithFallback('text'),
+                        acc.push('\n ', h('div', {
+                            'className': [
+                                '\n notification\n                    ',
+                                String(lookupValueWithFallback('type')) === 'warning' ? '\n notification--warning\n                    ' : String(lookupValueWithFallback('type')) === 'urgent' ? '\n notification--urgent\n                    ' : null,
                                 '\n '
-                            ]),
+                            ].join('')
+                        }, [
+                            '\n ',
+                            lookupValueWithFallback('text'),
                             '\n '
-                        ]);
+                        ]), '\n ');
                         exitScope();
                         return acc;
                     }, []),

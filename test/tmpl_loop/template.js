@@ -336,28 +336,28 @@ return function (h, options) {
             '\n ',
             (lookupValueWithFallback('basicArray') || []).reduce(function (acc, item, index, arr) {
                 enterScope(item, deriveSpecialLoopVariables(arr, index));
-                acc.push.apply(acc, [lookupValueWithFallback('title')]);
+                acc.push(lookupValueWithFallback('title'));
                 exitScope();
                 return acc;
             }, []),
             '\n\n ',
             (lookupValueWithFallback('basicArray') || []).reduce(function (acc, item, index, arr) {
                 enterScope(keyValue('item', item), deriveSpecialLoopVariables(arr, index));
-                acc.push.apply(acc, [lookupValueWithFallback('item')['title']]);
+                acc.push(lookupValueWithFallback('item')['title']);
                 exitScope();
                 return acc;
             }, []),
             '\n\n ',
             (lookupValueWithFallback('nested') && lookupValueWithFallback('nested')['items'] || []).reduce(function (acc, item, index, arr) {
                 enterScope(item, deriveSpecialLoopVariables(arr, index));
-                acc.push.apply(acc, ['bla']);
+                acc.push('bla');
                 exitScope();
                 return acc;
             }, []),
             '\n\n ',
             (lookupValueWithFallback('nested') && lookupValueWithFallback('nested')['moreItems'] || []).reduce(function (acc, item, index, arr) {
                 enterScope(keyValue('item', item), deriveSpecialLoopVariables(arr, index));
-                acc.push.apply(acc, [lookupValueWithFallback('item')]);
+                acc.push(lookupValueWithFallback('item'));
                 exitScope();
                 return acc;
             }, []),
@@ -366,11 +366,7 @@ return function (h, options) {
             '\n ',
             (lookupValueWithFallback('basicArray') || []).reduce(function (acc, item, index, arr) {
                 enterScope(item, deriveSpecialLoopVariables(arr, index));
-                acc.push.apply(acc, [
-                    '\n ',
-                    lookupValueWithFallback('__counter__'),
-                    '\n '
-                ]);
+                acc.push('\n ', lookupValueWithFallback('__counter__'), '\n ');
                 exitScope();
                 return acc;
             }, []),

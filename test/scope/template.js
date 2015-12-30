@@ -336,15 +336,11 @@ return function (h, options) {
             '\n ',
             (lookupValueWithFallback('items') || []).reduce(function (acc, item, index, arr) {
                 enterScope(item, deriveSpecialLoopVariables(arr, index));
-                acc.push.apply(acc, [
+                acc.push('\n ', lookupValueWithFallback('set_flag') ? [
                     '\n ',
-                    lookupValueWithFallback('set_flag') ? [
-                        '\n ',
-                        assignLocalVariable('flag', ['1']),
-                        '\n '
-                    ] : null,
+                    assignLocalVariable('flag', ['1']),
                     '\n '
-                ]);
+                ] : null, '\n ');
                 exitScope();
                 return acc;
             }, []),
