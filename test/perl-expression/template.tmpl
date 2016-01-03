@@ -1,4 +1,23 @@
 <div class="app">
+    <div class="header">
+        <TMPL_IF [% $showNotifications && $loggedIn %]>
+            <div class="notifications">
+                <TMPL_LOOP notifications>
+                    <div class="
+                        notification
+                        <TMPL_IF [% $type eq 'warning' %]>
+                            notification--warning
+                        <TMPL_ELSIF [% $type eq 'urgent' %]>
+                            notification--urgent
+                        </TMPL_IF>
+                    ">
+                    <TMPL_VAR [% $text %]>
+                    </div>
+                </TMPL_LOOP>
+            </div>
+        </TMPL_IF>
+    </div>
+
     <TMPL_IF [% $a or $b or $c %]>x</TMPL_IF>
     <TMPL_IF [% ($a or $b) and $c %]>x</TMPL_IF>
     <TMPL_IF [% $a or $b || $c %]>x</TMPL_IF>

@@ -334,6 +334,35 @@ return function (h, options) {
         enterScope(state);
         var returnValue = h('div', { 'className': 'app' }, [
             '\n ',
+            h('div', { 'className': 'header' }, [
+                '\n ',
+                lookupValue('showNotifications') && lookupValue('loggedIn') ? [
+                    '\n ',
+                    h('div', { 'className': 'notifications' }, [
+                        '\n ',
+                        (lookupValue('notifications') || []).reduce(function (acc, item, index, arr) {
+                            enterScope(item, deriveSpecialLoopVariables(arr, index));
+                            acc.push('\n ', h('div', {
+                                'className': [
+                                    '\n notification\n                        ',
+                                    String(lookupValue('type')) === 'warning' ? '\n notification--warning\n                        ' : String(lookupValue('type')) === 'urgent' ? '\n notification--urgent\n                        ' : null,
+                                    '\n '
+                                ].join('')
+                            }, [
+                                '\n ',
+                                lookupValue('text'),
+                                '\n '
+                            ]), '\n ');
+                            exitScope();
+                            return acc;
+                        }, []),
+                        '\n '
+                    ]),
+                    '\n '
+                ] : null,
+                '\n '
+            ]),
+            '\n\n ',
             lookupValue('a') || lookupValue('b') || lookupValue('c') ? 'x' : null,
             '\n ',
             (lookupValue('a') || lookupValue('b')) && lookupValue('c') ? 'x' : null,
